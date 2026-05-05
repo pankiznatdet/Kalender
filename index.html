@@ -22,7 +22,7 @@
       --bg: #F1E9D9;
       --bg-warm: #ECE2CF;
       --card: #FFFFFF;
-      --card-fav: #FBF3DF;
+      --card-fav: #D8E8C0;
       --ink: #1A1612;
       --ink-mid: rgba(26, 22, 18, 0.72);
       --ink-dim: rgba(26, 22, 18, 0.55);
@@ -304,10 +304,12 @@
 
     .event-countdown {
       font-family: var(--mono);
-      font-size: 0.68rem;
-      letter-spacing: 0.06em;
-      color: var(--ink-faint);
+      font-size: 0.76rem;
+      letter-spacing: 0.05em;
+      color: var(--ink-dim);
       text-transform: uppercase;
+      margin-top: 3px;
+      font-weight: 500;
     }
 
     .event-countdown.soon  { color: var(--rose); }
@@ -1295,14 +1297,7 @@
       if (days === 1)  return 'Yarın';
       if (days === -1) return 'Dün';
       if (days < 0)    return `${Math.abs(days)} gün önce`;
-      if (days < 30)   return `${days} gün kaldı`;
-      if (days < 365) {
-        const months = Math.round(days / 30);
-        return `~${months} ay kaldı`;
-      }
-      const years = Math.floor(days / 365);
-      const months = Math.round((days - years * 365) / 30);
-      return months === 0 ? `${years} yıl kaldı` : `${years} yıl ${months} ay kaldı`;
+      return `${days} gün kaldı`;
     }
 
     function fmtDateMedium(date) {
