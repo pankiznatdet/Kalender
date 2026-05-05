@@ -1,0 +1,1875 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#F1E9D9">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Kalender">
+  <title>Kalender</title>
+
+  <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png">
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png">
+  <link rel="manifest" href="./manifest.json">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #F1E9D9;
+      --bg-warm: #ECE2CF;
+      --card: #FFFFFF;
+      --card-fav: #FBF3DF;
+      --ink: #1A1612;
+      --ink-mid: rgba(26, 22, 18, 0.72);
+      --ink-dim: rgba(26, 22, 18, 0.55);
+      --ink-faint: rgba(26, 22, 18, 0.32);
+      --rule: rgba(26, 22, 18, 0.08);
+      --rule-strong: rgba(26, 22, 18, 0.16);
+      --shadow-sm: 0 1px 3px rgba(26, 22, 18, 0.04), 0 2px 8px rgba(26, 22, 18, 0.04);
+      --shadow-disc: 0 8px 28px rgba(26, 22, 18, 0.10), 0 2px 6px rgba(26, 22, 18, 0.06);
+
+      --gold: #B8842F;
+      --rose: #C7635E;
+
+      --cat-dugun: #F2C2CD;
+      --cat-dogum: #F6BF8E;
+      --cat-yildonumu: #EDA0A0;
+      --cat-kutlama: #F1D17A;
+      --cat-seyahat: #A7C9D6;
+      --cat-mezuniyet: #B5CC9C;
+      --cat-toplanti: #C7BEE2;
+      --cat-hediye: #F0AFA0;
+      --cat-diger: #DDD2BE;
+
+      --display: 'Fraunces', Georgia, serif;
+      --sans: 'DM Sans', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+      --mono: 'JetBrains Mono', ui-monospace, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--sans);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+
+    body { background-attachment: fixed; }
+    body.locked { overflow: hidden; }
+
+    .app {
+      max-width: 580px;
+      margin: 0 auto;
+      padding: max(20px, env(safe-area-inset-top)) 22px 140px;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 0 8px;
+    }
+
+    .brand {
+      font-family: var(--display);
+      font-style: italic;
+      font-weight: 400;
+      font-size: 1.05rem;
+      letter-spacing: -0.01em;
+      color: var(--ink-mid);
+    }
+
+    .brand .glyph { color: var(--gold); margin-right: 4px; }
+
+    .add-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: none;
+      background: var(--ink);
+      color: var(--bg);
+      font-size: 1.5rem;
+      font-weight: 300;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      transition: transform 0.15s ease, background 0.2s ease;
+      flex-shrink: 0;
+      font-family: var(--sans);
+      line-height: 1;
+      padding-bottom: 3px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .add-btn:hover { background: #2B241D; }
+    .add-btn:active { transform: scale(0.94); }
+
+    /* Display headline */
+    .display { padding: 22px 0 26px; }
+
+    .display h1 {
+      font-family: var(--display);
+      font-weight: 350;
+      font-size: clamp(2.1rem, 8.5vw, 2.85rem);
+      letter-spacing: -0.025em;
+      line-height: 1.05;
+      color: var(--ink);
+    }
+
+    .display h1 .it {
+      font-style: italic;
+      font-weight: 350;
+      display: block;
+    }
+
+    .display .meta {
+      margin-top: 14px;
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 6px;
+      padding: 4px;
+      background: var(--bg-warm);
+      border-radius: 999px;
+      margin-bottom: 22px;
+      width: fit-content;
+    }
+
+    .tab {
+      background: none;
+      border: none;
+      padding: 10px 18px;
+      font-family: var(--sans);
+      font-size: 0.84rem;
+      font-weight: 500;
+      color: var(--ink-dim);
+      cursor: pointer;
+      border-radius: 999px;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tab:hover { color: var(--ink); }
+
+    .tab.active {
+      background: var(--card);
+      color: var(--ink);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .tab .count {
+      display: inline-block;
+      padding: 1px 7px;
+      border-radius: 999px;
+      background: var(--rule);
+      font-size: 0.68rem;
+      color: var(--ink-dim);
+      font-weight: 600;
+      font-family: var(--mono);
+    }
+
+    .tab.active .count { background: var(--gold); color: #FFF; }
+
+    /* Card list */
+    .events { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+
+    .event-row {
+      position: relative;
+      border-radius: 22px;
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .event-actions {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      width: 168px;
+      z-index: 0;
+    }
+
+    .event-action {
+      flex: 1;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-family: var(--sans);
+      font-size: 0.74rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: #FFF;
+    }
+
+    .event-action:active { opacity: 0.78; }
+    .event-action .glyph { font-size: 1.15rem; line-height: 1; }
+    .action-fav { background: var(--gold); }
+    .action-delete { background: var(--rose); }
+
+    .event {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 56px 1fr 40px;
+      gap: 16px;
+      align-items: center;
+      padding: 18px 18px 18px 16px;
+      cursor: pointer;
+      background: var(--card);
+      border-radius: 22px;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1);
+      touch-action: pan-y;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .event-row.open .event { transform: translateX(-168px); }
+    .event.dragging { transition: none; }
+    .event.is-fav { background: var(--card-fav); }
+
+    .badge {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    .badge.cat-dugun     { background: var(--cat-dugun); }
+    .badge.cat-dogum     { background: var(--cat-dogum); }
+    .badge.cat-yildonumu { background: var(--cat-yildonumu); }
+    .badge.cat-kutlama   { background: var(--cat-kutlama); }
+    .badge.cat-seyahat   { background: var(--cat-seyahat); }
+    .badge.cat-mezuniyet { background: var(--cat-mezuniyet); }
+    .badge.cat-toplanti  { background: var(--cat-toplanti); }
+    .badge.cat-hediye    { background: var(--cat-hediye); }
+    .badge.cat-diger     { background: var(--cat-diger); }
+
+    .event-body { min-width: 0; }
+
+    .event-title-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+
+    .event-title {
+      font-family: var(--display);
+      font-style: italic;
+      font-weight: 400;
+      font-size: 1.08rem;
+      line-height: 1.2;
+      color: var(--ink);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .fav-star { color: var(--gold); font-size: 0.85rem; flex-shrink: 0; }
+
+    .event-date {
+      font-family: var(--sans);
+      font-size: 0.86rem;
+      color: var(--ink-mid);
+      font-weight: 500;
+      margin-bottom: 2px;
+    }
+
+    .event-countdown {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.06em;
+      color: var(--ink-faint);
+      text-transform: uppercase;
+    }
+
+    .event-countdown.soon  { color: var(--rose); }
+    .event-countdown.today { color: var(--rose); font-weight: 500; }
+
+    .arrow-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--ink);
+      color: var(--bg);
+      display: grid;
+      place-items: center;
+      font-size: 0.95rem;
+      flex-shrink: 0;
+      transition: transform 0.15s ease;
+    }
+
+    .event:active .arrow-btn { transform: translateX(2px); }
+
+    /* Empty */
+    .empty { text-align: center; padding: 70px 20px 40px; }
+
+    .empty-glyph {
+      font-family: var(--display);
+      font-style: italic;
+      font-size: 4rem;
+      color: var(--gold);
+      opacity: 0.85;
+      margin-bottom: 18px;
+      line-height: 1;
+    }
+
+    .empty h2 {
+      font-family: var(--display);
+      font-weight: 400;
+      font-style: italic;
+      font-size: 1.45rem;
+      margin-bottom: 12px;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+    }
+
+    .empty p {
+      color: var(--ink-dim);
+      font-size: 0.94rem;
+      line-height: 1.55;
+      margin-bottom: 28px;
+      max-width: 320px;
+      margin-inline: auto;
+    }
+
+    .empty .cta {
+      background: var(--ink);
+      color: var(--bg);
+      border: none;
+      padding: 14px 28px;
+      border-radius: 999px;
+      font-family: var(--sans);
+      font-weight: 500;
+      font-size: 0.92rem;
+      cursor: pointer;
+      transition: transform 0.15s ease;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .empty .cta:active { transform: scale(0.97); }
+
+    /* Past */
+    .past-toggle {
+      width: 100%;
+      background: none;
+      border: none;
+      color: var(--ink-faint);
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 30px 0 14px;
+      cursor: pointer;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .past-toggle:hover { color: var(--ink-dim); }
+    .past-toggle .chev {
+      transition: transform 0.25s ease;
+      display: inline-block;
+      font-family: var(--sans);
+      font-size: 1rem;
+      line-height: 1;
+    }
+    .past-toggle.open .chev { transform: rotate(90deg); }
+
+    .past-events {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease;
+    }
+    .past-events.open { max-height: 8000px; padding-top: 4px; }
+    .past-events .event { opacity: 0.62; }
+
+    /* Detail view */
+    .detail {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 60;
+      transform: translateY(100%);
+      transition: transform 0.42s cubic-bezier(0.32, 0.72, 0, 1);
+      overflow-y: auto;
+    }
+
+    .detail.open { transform: translateY(0); }
+
+    .detail-inner {
+      max-width: 580px;
+      margin: 0 auto;
+      width: 100%;
+      padding: max(20px, env(safe-area-inset-top)) 22px max(28px, env(safe-area-inset-bottom));
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .detail-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 0 8px;
+      gap: 12px;
+    }
+
+    .detail-back, .detail-edit {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: none;
+      background: var(--card);
+      color: var(--ink);
+      font-size: 1.25rem;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.15s ease;
+      font-family: var(--sans);
+      line-height: 1;
+    }
+
+    .detail-back { padding-right: 3px; }
+    .detail-back:active, .detail-edit:active { transform: scale(0.92); }
+
+    .detail-cat-pill {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: var(--card);
+      box-shadow: var(--shadow-sm);
+      color: var(--ink-mid);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .detail-disc-wrap {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 36px 0 24px;
+    }
+
+    .detail-halo {
+      position: absolute;
+      width: 110%;
+      height: 110%;
+      top: -5%;
+      left: -5%;
+      pointer-events: none;
+      filter: blur(50px);
+      opacity: 0.85;
+      background:
+        radial-gradient(circle at 28% 36%, rgba(241, 209, 122, 1), transparent 38%),
+        radial-gradient(circle at 72% 32%, rgba(240, 175, 160, 0.95), transparent 40%),
+        radial-gradient(circle at 40% 72%, rgba(181, 204, 156, 0.9), transparent 40%),
+        radial-gradient(circle at 78% 70%, rgba(199, 190, 226, 0.85), transparent 40%);
+    }
+
+    .detail-disc {
+      position: relative;
+      width: clamp(260px, 72vw, 320px);
+      aspect-ratio: 1;
+      background: var(--card);
+      border-radius: 50%;
+      box-shadow: var(--shadow-disc);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 20px;
+      z-index: 1;
+    }
+
+    .detail-pre {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      margin-bottom: 4px;
+    }
+
+    .detail-number {
+      font-family: var(--display);
+      font-style: italic;
+      font-weight: 350;
+      font-size: clamp(6rem, 28vw, 9rem);
+      line-height: 0.85;
+      letter-spacing: -0.05em;
+      color: var(--ink);
+    }
+
+    .detail-number.word { font-size: clamp(3rem, 14vw, 4.5rem); }
+
+    .detail-unit {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--ink-mid);
+      margin-top: 10px;
+    }
+
+    .detail-info {
+      padding: 6px 0 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      text-align: center;
+    }
+
+    .detail-fav-mark {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .detail-fav-mark .star { font-family: var(--sans); font-size: 0.95rem; }
+
+    .detail-title {
+      font-family: var(--display);
+      font-style: italic;
+      font-weight: 400;
+      font-size: clamp(1.55rem, 6vw, 1.95rem);
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+      color: var(--ink);
+      max-width: 480px;
+    }
+
+    .detail-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--sans);
+      font-size: 0.94rem;
+      color: var(--ink-mid);
+      font-weight: 500;
+    }
+
+    .detail-row .ico {
+      font-family: var(--sans);
+      font-size: 0.85rem;
+      color: var(--ink-faint);
+      flex-shrink: 0;
+    }
+
+    .detail-desc {
+      font-family: var(--sans);
+      font-size: 0.95rem;
+      color: var(--ink-mid);
+      line-height: 1.6;
+      max-width: 460px;
+      padding: 16px 22px;
+      background: var(--card);
+      border-radius: 18px;
+      margin-top: 4px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .detail-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      padding-top: 10px;
+      margin-top: auto;
+    }
+
+    .detail-action-btn {
+      background: var(--ink);
+      color: var(--bg);
+      border: none;
+      padding: 14px 32px;
+      border-radius: 999px;
+      font-family: var(--sans);
+      font-weight: 500;
+      font-size: 0.94rem;
+      cursor: pointer;
+      transition: transform 0.15s ease;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .detail-action-btn:active { transform: scale(0.97); }
+
+    /* Sheet */
+    .scrim {
+      position: fixed;
+      inset: 0;
+      background: rgba(26, 22, 18, 0.4);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+      z-index: 70;
+    }
+
+    .scrim.open { opacity: 1; pointer-events: auto; }
+
+    .sheet-wrap {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 71;
+      display: flex;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    .sheet {
+      background: var(--bg);
+      border-radius: 26px 26px 0 0;
+      padding: 8px 24px 32px;
+      padding-bottom: max(32px, env(safe-area-inset-bottom));
+      transform: translateY(100%);
+      transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1);
+      width: 100%;
+      max-width: 580px;
+      max-height: 92vh;
+      overflow-y: auto;
+      box-shadow: 0 -10px 40px rgba(26, 22, 18, 0.15);
+      pointer-events: auto;
+    }
+
+    .sheet.open { transform: translateY(0); }
+
+    .sheet-handle {
+      width: 38px;
+      height: 4px;
+      background: var(--rule-strong);
+      border-radius: 2px;
+      margin: 0 auto 18px;
+    }
+
+    .sheet h2 {
+      font-family: var(--display);
+      font-weight: 400;
+      font-style: italic;
+      font-size: 1.6rem;
+      margin-bottom: 26px;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+    }
+
+    .field { margin-bottom: 20px; }
+
+    .field label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink-dim);
+      margin-bottom: 9px;
+    }
+
+    .field input[type="text"],
+    .field input[type="date"],
+    .field input[type="number"],
+    .field textarea {
+      width: 100%;
+      background: var(--card);
+      border: 1px solid var(--rule);
+      border-radius: 14px;
+      color: var(--ink);
+      padding: 14px 16px;
+      font-family: var(--sans);
+      font-size: 1rem;
+      transition: border-color 0.2s ease;
+      -webkit-appearance: none;
+      appearance: none;
+      -moz-appearance: textfield;
+    }
+
+    .field input[type="number"]::-webkit-outer-spin-button,
+    .field input[type="number"]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    .field input:focus, .field textarea:focus {
+      outline: none;
+      border-color: var(--ink);
+    }
+
+    .field textarea {
+      resize: vertical;
+      min-height: 84px;
+      line-height: 1.5;
+    }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+
+    .chip {
+      background: var(--card);
+      border: 1px solid var(--rule);
+      border-radius: 999px;
+      padding: 9px 14px;
+      color: var(--ink-mid);
+      font-family: var(--sans);
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .chip:hover { color: var(--ink); }
+
+    .chip.selected {
+      background: var(--ink);
+      border-color: var(--ink);
+      color: var(--bg);
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 0 4px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .toggle-row input { display: none; }
+
+    .check-box {
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      border: 1.5px solid var(--rule-strong);
+      background: var(--card);
+      display: grid;
+      place-items: center;
+      transition: all 0.15s ease;
+      flex-shrink: 0;
+    }
+
+    .toggle-row input:checked ~ .check-box {
+      background: var(--ink);
+      border-color: var(--ink);
+    }
+
+    .check-box::after {
+      content: '✓';
+      color: var(--bg);
+      font-size: 14px;
+      font-weight: 700;
+      opacity: 0;
+      transition: opacity 0.1s ease;
+    }
+
+    .toggle-row input:checked ~ .check-box::after { opacity: 1; }
+
+    .toggle-text { display: flex; flex-direction: column; gap: 2px; }
+    .toggle-text .main { font-size: 0.95rem; color: var(--ink); }
+    .toggle-text .hint { font-size: 0.78rem; color: var(--ink-dim); }
+
+    .sheet-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 14px 20px;
+      border-radius: 14px;
+      border: none;
+      font-family: var(--sans);
+      font-weight: 500;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: transform 0.15s ease, opacity 0.2s ease, background 0.2s ease;
+    }
+
+    .btn:active { transform: scale(0.98); }
+
+    .btn-primary { background: var(--ink); color: var(--bg); }
+    .btn-primary:hover { background: #2B241D; }
+
+    .btn-secondary {
+      background: var(--card);
+      color: var(--ink);
+      border: 1px solid var(--rule);
+    }
+
+    .btn-danger {
+      background: transparent;
+      color: var(--rose);
+      border: 1px solid var(--rule);
+      width: 100%;
+      margin-top: 14px;
+      padding: 12px 20px;
+      border-radius: 14px;
+      font-family: var(--sans);
+      font-weight: 500;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
+    /* ─── Bottom nav ─── */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(241, 233, 217, 0.88);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border-top: 1px solid var(--rule);
+      padding: 8px 0;
+      padding-bottom: max(10px, env(safe-area-inset-bottom));
+      display: flex;
+      justify-content: center;
+      z-index: 50;
+    }
+
+    .bottom-nav-inner {
+      display: flex;
+      max-width: 580px;
+      width: 100%;
+      padding: 0 22px;
+      gap: 4px;
+    }
+
+    .nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 8px 4px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--ink-faint);
+      font-family: var(--sans);
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.005em;
+      transition: color 0.2s ease, transform 0.15s ease;
+      border-radius: 12px;
+    }
+
+    .nav-item:active { transform: scale(0.96); }
+
+    .nav-item .icon {
+      font-family: var(--sans);
+      font-size: 1.3rem;
+      line-height: 1;
+    }
+
+    .nav-item.active { color: var(--ink); }
+    .nav-item.active .icon-glow { color: var(--gold); }
+
+    /* ─── Premium view ─── */
+    .premium-view { display: none; }
+    .premium-view.active { display: block; }
+
+    .feature-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 36px;
+    }
+
+    .feature-card {
+      display: grid;
+      grid-template-columns: 56px 1fr;
+      gap: 16px;
+      padding: 18px 18px 18px 16px;
+      background: var(--card);
+      border-radius: 22px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .feature-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    .feature-icon.f-bell { background: var(--cat-kutlama); }
+    .feature-icon.f-tree { background: var(--cat-mezuniyet); }
+    .feature-icon.f-coin { background: var(--cat-dogum); }
+
+    .feature-body { min-width: 0; padding-top: 2px; }
+
+    .feature-title {
+      font-family: var(--display);
+      font-style: italic;
+      font-weight: 400;
+      font-size: 1.12rem;
+      line-height: 1.2;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+
+    .feature-desc {
+      font-family: var(--sans);
+      font-size: 0.88rem;
+      color: var(--ink-mid);
+      line-height: 1.5;
+    }
+
+    .premium-cta {
+      text-align: center;
+      padding: 20px 6px 8px;
+    }
+
+    .premium-cta p {
+      font-family: var(--display);
+      font-style: italic;
+      font-weight: 400;
+      font-size: 1.05rem;
+      color: var(--ink-mid);
+      line-height: 1.5;
+      margin-bottom: 22px;
+      max-width: 420px;
+      margin-inline: auto;
+    }
+
+    .premium-cta-btn {
+      background: var(--ink);
+      color: var(--bg);
+      border: none;
+      padding: 16px 32px;
+      border-radius: 999px;
+      font-family: var(--sans);
+      font-weight: 500;
+      font-size: 0.96rem;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+      box-shadow: var(--shadow-sm);
+      width: 100%;
+      max-width: 320px;
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .premium-cta-soon {
+      display: block;
+      margin-top: 12px;
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+
+    /* ─── Spending field ─── */
+    .field.spending {
+      padding: 16px 16px 14px;
+      background: var(--card-fav);
+      border-radius: 14px;
+    }
+
+    .field.spending label {
+      color: var(--gold);
+      margin-bottom: 12px;
+    }
+
+    .field.spending input {
+      background: var(--card);
+    }
+
+    /* ─── Detail spending card ─── */
+    .detail-spending {
+      background: var(--card-fav);
+      border-radius: 18px;
+      padding: 18px 22px;
+      margin-top: 4px;
+      box-shadow: var(--shadow-sm);
+      max-width: 460px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .spend-label {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 6px;
+    }
+
+    .spend-amount {
+      font-family: var(--display);
+      font-style: italic;
+      font-weight: 400;
+      font-size: 1.85rem;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      line-height: 1;
+    }
+
+    .spend-note {
+      margin-top: 8px;
+      font-family: var(--sans);
+      font-size: 0.85rem;
+      color: var(--ink-mid);
+      line-height: 1.4;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .anim { animation: fadeUp 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) backwards; }
+
+    @media (min-width: 600px) {
+      .display { padding: 32px 0 30px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header id="appHeader">
+      <span class="brand"><span class="glyph">✦</span>Kalender</span>
+      <button class="add-btn" id="addBtn" aria-label="Yeni gün ekle">+</button>
+    </header>
+
+    <div class="days-view" id="daysView">
+      <section class="display" id="display"></section>
+
+      <nav class="tabs" id="tabs" hidden>
+        <button class="tab active" data-tab="upcoming" type="button">Yaklaşan</button>
+        <button class="tab" data-tab="favorites" type="button">Favoriler<span class="count" id="favCount">0</span></button>
+      </nav>
+
+      <main id="content"></main>
+    </div>
+
+    <section class="premium-view" id="premiumView">
+      <div class="display">
+        <h1 class="anim">Premium ile <span class="it">daha fazlası</span></h1>
+        <div class="meta anim" style="animation-delay: 0.08s">YAKINDA · ÜCRETSİZ DENEME PLANLANIYOR</div>
+      </div>
+
+      <div class="feature-list">
+        <div class="feature-card anim" style="animation-delay: 0.15s">
+          <div class="feature-icon f-bell">🔔</div>
+          <div class="feature-body">
+            <h3 class="feature-title">Önceden bildirimler</h3>
+            <p class="feature-desc">Önemli günleriniz için 1 ay, 1 hafta ve 1 gün önce hatırlatma alın. Hediye almak için zaman kalsın.</p>
+          </div>
+        </div>
+
+        <div class="feature-card anim" style="animation-delay: 0.22s">
+          <div class="feature-icon f-tree">🌳</div>
+          <div class="feature-body">
+            <h3 class="feature-title">Aile soyağacı</h3>
+            <p class="feature-desc">Tüm aile üyelerinizi ekleyin, doğum günü ve yıldönümlerini tek bir yerde takip edin. Kuşaklar arası bağı koruyun.</p>
+          </div>
+        </div>
+
+        <div class="feature-card anim" style="animation-delay: 0.29s">
+          <div class="feature-icon f-coin">💰</div>
+          <div class="feature-body">
+            <h3 class="feature-title">Aylık masraf raporu</h3>
+            <p class="feature-desc">Düğün takıları ve doğum günü hediyelerinin aylık dökümünü görün. Bütçenizi planlayın, ne kadar harcadığınızı bilin.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="premium-cta">
+        <p>Premium ile, önemli günleriniz daha hazırlıklı ve daha bağlı geçer.</p>
+        <button class="premium-cta-btn" disabled type="button">Premium Üye Ol</button>
+        <span class="premium-cta-soon">Yakında</span>
+      </div>
+    </section>
+  </div>
+
+  <nav class="bottom-nav">
+    <div class="bottom-nav-inner">
+      <button class="nav-item active" data-view="days" type="button">
+        <span class="icon">⌗</span>
+        <span>Günler</span>
+      </button>
+      <button class="nav-item" data-view="premium" type="button">
+        <span class="icon icon-glow">✦</span>
+        <span>Premium</span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="detail" id="detail" aria-hidden="true">
+    <div class="detail-inner" id="detailInner"></div>
+  </div>
+
+  <div class="scrim" id="scrim"></div>
+  <div class="sheet-wrap">
+    <div class="sheet" id="sheet" role="dialog" aria-modal="true">
+      <div class="sheet-handle"></div>
+      <h2 id="sheetTitle">Yeni Gün</h2>
+
+      <form id="form">
+        <div class="field">
+          <label for="titleInput">Başlık</label>
+          <input type="text" id="titleInput" placeholder="ör. Ahmet & Ayşe'nin Düğünü" required maxlength="120">
+        </div>
+
+        <div class="field">
+          <label for="dateInput">Tarih</label>
+          <input type="date" id="dateInput" required>
+        </div>
+
+        <div class="field">
+          <label for="locationInput">Mekan (opsiyonel)</label>
+          <input type="text" id="locationInput" placeholder="ör. Çırağan Sarayı, İstanbul" maxlength="200">
+        </div>
+
+        <div class="field">
+          <label>Kategori</label>
+          <div class="chips" id="chips"></div>
+        </div>
+
+        <div class="field spending" id="spendingField" hidden>
+          <label id="spendingLabel">Hediye Harcaması (₺)</label>
+          <input type="number" id="spendingAmount" min="0" step="50" placeholder="0" inputmode="numeric">
+          <input type="text" id="spendingNote" placeholder="ör. 1 çeyrek altın + 1000 TL" maxlength="100" style="margin-top:8px">
+        </div>
+
+        <div class="field">
+          <label for="descInput">Açıklama (opsiyonel)</label>
+          <textarea id="descInput" placeholder="ör. Akşam 19:00. Hediye olarak çiçek sepeti." maxlength="500"></textarea>
+        </div>
+
+        <label class="toggle-row">
+          <input type="checkbox" id="recurringInput">
+          <span class="check-box"></span>
+          <span class="toggle-text">
+            <span class="main">Her yıl tekrarlasın</span>
+            <span class="hint">Doğum günü ve yıldönümleri için</span>
+          </span>
+        </label>
+
+        <label class="toggle-row">
+          <input type="checkbox" id="favoriteInput">
+          <span class="check-box"></span>
+          <span class="toggle-text">
+            <span class="main">Favorilere ekle</span>
+            <span class="hint">Favoriler sekmesinde görünür</span>
+          </span>
+        </label>
+
+        <div class="sheet-actions">
+          <button type="button" class="btn btn-secondary" id="cancelBtn">İptal</button>
+          <button type="submit" class="btn btn-primary" id="saveBtn">Kaydet</button>
+        </div>
+
+        <button type="button" class="btn-danger" id="deleteBtn" style="display:none">Bu Günü Sil</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'onemliGunler.v1';
+
+    const CATEGORIES = {
+      dugun:     { label: 'Düğün',      icon: '💍', cls: 'cat-dugun' },
+      dogum:     { label: 'Doğum Günü', icon: '🎂', cls: 'cat-dogum' },
+      yildonumu: { label: 'Yıldönümü',  icon: '💝', cls: 'cat-yildonumu' },
+      kutlama:   { label: 'Kutlama',    icon: '🎉', cls: 'cat-kutlama' },
+      seyahat:   { label: 'Seyahat',    icon: '✈️', cls: 'cat-seyahat' },
+      mezuniyet: { label: 'Mezuniyet',  icon: '🎓', cls: 'cat-mezuniyet' },
+      toplanti:  { label: 'Toplantı',   icon: '📅', cls: 'cat-toplanti' },
+      hediye:    { label: 'Hediye',     icon: '🎁', cls: 'cat-hediye' },
+      diger:     { label: 'Diğer',      icon: '✦',  cls: 'cat-diger' }
+    };
+
+    const TR_MONTHS_FULL       = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+    const TR_MONTHS_FULL_UPPER = ['OCAK','ŞUBAT','MART','NİSAN','MAYIS','HAZİRAN','TEMMUZ','AĞUSTOS','EYLÜL','EKİM','KASIM','ARALIK'];
+    const TR_DAYS              = ['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'];
+    const TR_DAYS_UPPER        = ['PAZAR','PAZARTESİ','SALI','ÇARŞAMBA','PERŞEMBE','CUMA','CUMARTESİ'];
+
+    let events = loadEvents();
+    let editingId = null;
+    let detailId = null;
+    let selectedCategory = 'diger';
+    let activeTab = 'upcoming';
+    let currentView = 'days'; // 'days' | 'premium'
+
+    function loadEvents() {
+      try { const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : []; }
+      catch { return []; }
+    }
+
+    function saveEvents() {
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(events)); }
+      catch (e) { console.warn('Kaydedilemedi:', e); }
+    }
+
+    function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+
+    function formatTRY(n) {
+      try { return new Intl.NumberFormat('tr-TR').format(n); }
+      catch { return String(n); }
+    }
+
+    const SPENDING_CATEGORIES = ['dugun', 'dogum'];
+    const SPENDING_CONFIG = {
+      dugun: {
+        label: 'Takı + Para (₺)',
+        notePlaceholder: 'ör. 2 çeyrek altın + 2000 TL',
+        detailLabel: 'TAKI + PARA'
+      },
+      dogum: {
+        label: 'Hediye Harcaması (₺)',
+        notePlaceholder: 'ör. Hediye + tatlı, 800 TL',
+        detailLabel: 'HEDİYE'
+      }
+    };
+
+    function todayDate() { const d = new Date(); d.setHours(0, 0, 0, 0); return d; }
+    function parseDate(s) { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); }
+
+    function nextOccurrence(ev) {
+      const original = parseDate(ev.date);
+      if (!ev.recurring) return original;
+      const today = todayDate();
+      const candidate = new Date(today.getFullYear(), original.getMonth(), original.getDate());
+      if (candidate < today) candidate.setFullYear(today.getFullYear() + 1);
+      return candidate;
+    }
+
+    function daysUntil(date) { return Math.round((date - todayDate()) / 86400000); }
+
+    function fmtRelative(days) {
+      if (days === 0)  return 'Bugün';
+      if (days === 1)  return 'Yarın';
+      if (days === -1) return 'Dün';
+      if (days < 0)    return `${Math.abs(days)} gün önce`;
+      if (days < 30)   return `${days} gün kaldı`;
+      if (days < 365) {
+        const months = Math.round(days / 30);
+        return `~${months} ay kaldı`;
+      }
+      const years = Math.floor(days / 365);
+      const months = Math.round((days - years * 365) / 30);
+      return months === 0 ? `${years} yıl kaldı` : `${years} yıl ${months} ay kaldı`;
+    }
+
+    function fmtDateMedium(date) {
+      return `${date.getDate()} ${TR_MONTHS_FULL[date.getMonth()]} · ${TR_DAYS[date.getDay()]}`;
+    }
+
+    function fmtDateLong(date) {
+      return `${date.getDate()} ${TR_MONTHS_FULL_UPPER[date.getMonth()]} ${date.getFullYear()} · ${TR_DAYS_UPPER[date.getDay()]}`;
+    }
+
+    function getCountdownClass(days) {
+      if (days === 0) return 'today';
+      if (days > 0 && days <= 7)  return 'soon';
+      return '';
+    }
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+
+    const content = document.getElementById('content');
+    const display = document.getElementById('display');
+    const tabsNav = document.getElementById('tabs');
+    const favCountEl = document.getElementById('favCount');
+
+    function render() {
+      const today = todayDate();
+      const decorated = events.map(ev => ({ ev, occursAt: nextOccurrence(ev) }));
+
+      const favTotal = events.filter(e => e.favorite).length;
+      favCountEl.textContent = favTotal;
+      tabsNav.hidden = events.length === 0;
+
+      const sourceList = activeTab === 'favorites'
+        ? decorated.filter(x => x.ev.favorite)
+        : decorated;
+
+      const upcoming = sourceList
+        .filter(x => x.occursAt >= today || x.ev.recurring)
+        .sort((a, b) => a.occursAt - b.occursAt);
+
+      const past = activeTab === 'upcoming'
+        ? sourceList.filter(x => !x.ev.recurring && x.occursAt < today)
+                    .sort((a, b) => b.occursAt - a.occursAt)
+        : [];
+
+      renderDisplay(upcoming, past);
+
+      if (events.length === 0) {
+        content.innerHTML = `
+          <div class="empty anim">
+            <div class="empty-glyph">✦</div>
+            <h2>Henüz bir gün eklemediniz</h2>
+            <p>Düğünler, doğum günleri, yıldönümleri — unutulmayacak tarihleri buraya ekleyin.</p>
+            <button class="cta" id="emptyAdd">İlk gününüzü ekleyin</button>
+          </div>`;
+        document.getElementById('emptyAdd').addEventListener('click', () => openSheet());
+        return;
+      }
+
+      if (activeTab === 'favorites' && upcoming.length === 0) {
+        content.innerHTML = `
+          <div class="empty anim" style="padding-top:50px">
+            <div class="empty-glyph">★</div>
+            <h2>Henüz favori yok</h2>
+            <p>Bir günün üstüne sola çekin ya da düzenlerken favoriye ekleyin.</p>
+          </div>`;
+        return;
+      }
+
+      let html = `<ul class="events">`;
+      upcoming.forEach((x, i) => { html += renderEventRow(x.ev, x.occursAt, 0.05 + i * 0.04); });
+      html += `</ul>`;
+
+      if (past.length > 0) {
+        html += `
+          <button class="past-toggle" id="pastToggle">
+            <span class="chev">›</span>
+            <span>Geçmiş Günler · ${past.length}</span>
+          </button>
+          <ul class="past-events events" id="pastList">
+            ${past.map(x => renderEventRow(x.ev, x.occursAt, 0)).join('')}
+          </ul>`;
+      }
+
+      content.innerHTML = html;
+
+      const pt = document.getElementById('pastToggle');
+      if (pt) pt.addEventListener('click', () => {
+        pt.classList.toggle('open');
+        document.getElementById('pastList').classList.toggle('open');
+      });
+
+      content.querySelectorAll('.event-row').forEach(attachSwipe);
+    }
+
+    function renderDisplay(upcoming, past) {
+      let title, meta;
+
+      if (events.length === 0) {
+        title = `<span class="it">Önemli günler</span> bekliyor.`;
+        meta = '';
+      } else if (activeTab === 'favorites') {
+        const n = events.filter(e => e.favorite).length;
+        title = n > 0 ? `<span class="it">Favori</span> günleriniz` : `Henüz <span class="it">favori</span> yok`;
+        meta = n > 0 ? `${n} GÜN · KAYITLI` : '';
+      } else if (upcoming.length > 0) {
+        const next = upcoming[0];
+        const d = daysUntil(next.occursAt);
+        if (d === 0) title = `<span class="it">Bugün</span> önemli bir gün.`;
+        else if (d === 1) title = `<span class="it">Yarın</span> önemli bir gün.`;
+        else if (d <= 7) title = `${d} gün sonra <span class="it">önemli bir gün</span> var.`;
+        else if (d < 30) title = `Yaklaşan <span class="it">${d} gün</span> içinde.`;
+        else title = `Yaklaşan <span class="it">günleriniz</span>`;
+        meta = `${events.length} GÜN · ${upcoming.length} YAKLAŞAN${past.length ? ' · ' + past.length + ' GEÇMİŞ' : ''}`;
+      } else {
+        title = `<span class="it">Geçmiş günleriniz</span>`;
+        meta = `${events.length} GÜN · KAYITLI`;
+      }
+
+      display.innerHTML = `
+        <h1 class="anim">${title}</h1>
+        ${meta ? `<div class="meta anim" style="animation-delay: 0.1s">${meta}</div>` : ''}
+      `;
+    }
+
+    function renderEventRow(ev, occursAt, delay) {
+      const cat = CATEGORIES[ev.category] || CATEGORIES.diger;
+      const days = daysUntil(occursAt);
+      const cls = getCountdownClass(days);
+      const favClass = ev.favorite ? ' is-fav' : '';
+
+      return `
+        <li class="event-row anim" data-id="${ev.id}" style="animation-delay: ${Math.min(delay, 0.5)}s">
+          <div class="event-actions">
+            <button class="event-action action-fav" data-act="fav" type="button" aria-label="Favori">
+              <span class="glyph">${ev.favorite ? '★' : '☆'}</span>
+              <span>${ev.favorite ? 'Çıkar' : 'Favori'}</span>
+            </button>
+            <button class="event-action action-delete" data-act="delete" type="button" aria-label="Sil">
+              <span class="glyph">✕</span>
+              <span>Sil</span>
+            </button>
+          </div>
+          <div class="event${favClass}" data-card="1">
+            <div class="badge ${cat.cls}">${cat.icon}</div>
+            <div class="event-body">
+              <div class="event-title-row">
+                <span class="event-title">${escapeHtml(ev.title)}</span>
+                ${ev.favorite ? '<span class="fav-star">★</span>' : ''}
+              </div>
+              <div class="event-date">${fmtDateMedium(occursAt)}</div>
+              <div class="event-countdown ${cls}">${fmtRelative(days)}${ev.recurring ? ' · her yıl' : ''}</div>
+            </div>
+            <div class="arrow-btn">›</div>
+          </div>
+        </li>
+      `;
+    }
+
+    // Detail view
+    const detail = document.getElementById('detail');
+    const detailInner = document.getElementById('detailInner');
+
+    function openDetail(id) {
+      const ev = events.find(x => x.id === id);
+      if (!ev) return;
+      detailId = id;
+
+      const occursAt = nextOccurrence(ev);
+      const days = daysUntil(occursAt);
+      const cat = CATEGORIES[ev.category] || CATEGORIES.diger;
+
+      let bigNumber, isWord = false, unitText = '';
+      if (days === 0) { bigNumber = 'Bugün'; isWord = true; }
+      else if (days === 1) { bigNumber = '1'; unitText = 'gün sonra'; }
+      else if (days < 0) { bigNumber = Math.abs(days); unitText = 'gün önce'; }
+      else { bigNumber = days; unitText = 'gün kaldı'; }
+
+      let preText = 'YAKLAŞAN';
+      if (days < 0) preText = 'GEÇMİŞ';
+      if (days === 0) preText = 'BUGÜN';
+      if (ev.recurring) preText = 'HER YIL';
+
+      detailInner.innerHTML = `
+        <div class="detail-top">
+          <button class="detail-back" id="detailBack" aria-label="Geri">‹</button>
+          <span class="detail-cat-pill"><span>${cat.icon}</span><span>${cat.label}</span></span>
+          <button class="detail-edit" id="detailEdit" aria-label="Düzenle">✎</button>
+        </div>
+
+        <div class="detail-disc-wrap">
+          <div class="detail-halo"></div>
+          <div class="detail-disc">
+            <span class="detail-pre">${preText}</span>
+            <span class="detail-number${isWord ? ' word' : ''}">${bigNumber}</span>
+            ${unitText ? `<span class="detail-unit">${unitText}</span>` : ''}
+          </div>
+        </div>
+
+        <div class="detail-info">
+          ${ev.favorite ? '<div class="detail-fav-mark"><span class="star">★</span><span>Favori</span></div>' : ''}
+          <h2 class="detail-title">${escapeHtml(ev.title)}</h2>
+          <div class="detail-row"><span class="ico">⌗</span>${fmtDateLong(occursAt)}</div>
+          ${ev.location ? `<div class="detail-row"><span class="ico">↳</span>${escapeHtml(ev.location)}</div>` : ''}
+          ${ev.spendingAmount && SPENDING_CONFIG[ev.category] ? `
+            <div class="detail-spending">
+              <div class="spend-label">${SPENDING_CONFIG[ev.category].detailLabel}</div>
+              <div class="spend-amount">₺${formatTRY(ev.spendingAmount)}</div>
+              ${ev.spendingNote ? `<div class="spend-note">${escapeHtml(ev.spendingNote)}</div>` : ''}
+            </div>
+          ` : ''}
+          ${ev.description ? `<div class="detail-desc">${escapeHtml(ev.description)}</div>` : ''}
+        </div>
+
+        <div class="detail-actions">
+          <button class="detail-action-btn" id="detailEditBtn">Düzenle</button>
+        </div>
+      `;
+
+      detail.classList.add('open');
+      detail.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('locked');
+
+      document.getElementById('detailBack').addEventListener('click', closeDetail);
+      const editBtnTop = document.getElementById('detailEdit');
+      const editBtnBottom = document.getElementById('detailEditBtn');
+      [editBtnTop, editBtnBottom].forEach(btn => btn && btn.addEventListener('click', () => openSheet(ev)));
+    }
+
+    function closeDetail() {
+      detail.classList.remove('open');
+      detail.setAttribute('aria-hidden', 'true');
+      if (!sheet.classList.contains('open')) document.body.classList.remove('locked');
+      detailId = null;
+      setTimeout(() => { if (!detail.classList.contains('open')) detailInner.innerHTML = ''; }, 500);
+    }
+
+    // Tabs
+    tabsNav.addEventListener('click', e => {
+      const tab = e.target.closest('.tab');
+      if (!tab) return;
+      const target = tab.dataset.tab;
+      if (target === activeTab) return;
+      activeTab = target;
+      tabsNav.querySelectorAll('.tab').forEach(t => {
+        t.classList.toggle('active', t.dataset.tab === activeTab);
+      });
+      closeAllSwipes();
+      render();
+    });
+
+    // Swipe
+    const SWIPE_OPEN_X = -168;
+    const SWIPE_THRESHOLD = 60;
+    let swipeJustHappened = false;
+
+    function closeAllSwipes(except = null) {
+      document.querySelectorAll('.event-row.open').forEach(row => {
+        if (row === except) return;
+        row.classList.remove('open');
+        const card = row.querySelector('.event');
+        if (card) card.style.transform = '';
+      });
+    }
+
+    function attachSwipe(row) {
+      const card = row.querySelector('.event');
+      if (!card) return;
+      let startX = 0, startY = 0, currentX = 0;
+      let dragging = false, direction = null, baseOffset = 0;
+
+      card.addEventListener('pointerdown', e => {
+        if (e.target.closest('.event-action')) return;
+        startX = currentX = e.clientX;
+        startY = e.clientY;
+        dragging = true;
+        direction = null;
+        baseOffset = row.classList.contains('open') ? SWIPE_OPEN_X : 0;
+        card.classList.add('dragging');
+      });
+
+      card.addEventListener('pointermove', e => {
+        if (!dragging) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        if (direction === null) {
+          if (Math.abs(dx) > 6 || Math.abs(dy) > 6) {
+            direction = Math.abs(dx) > Math.abs(dy) ? 'h' : 'v';
+          }
+        }
+        if (direction === 'h') {
+          e.preventDefault();
+          currentX = e.clientX;
+          let offset = baseOffset + dx;
+          offset = Math.min(0, Math.max(-200, offset));
+          card.style.transform = `translateX(${offset}px)`;
+        }
+      });
+
+      card.addEventListener('pointerup', () => {
+        if (!dragging) return;
+        dragging = false;
+        card.classList.remove('dragging');
+        if (direction !== 'h') return;
+        const dx = currentX - startX;
+        const wasOpen = baseOffset === SWIPE_OPEN_X;
+        const shouldOpen = wasOpen ? dx < SWIPE_THRESHOLD : dx < -SWIPE_THRESHOLD;
+        if (shouldOpen) {
+          card.style.transform = `translateX(${SWIPE_OPEN_X}px)`;
+          row.classList.add('open');
+          closeAllSwipes(row);
+        } else {
+          card.style.transform = '';
+          row.classList.remove('open');
+        }
+        if (Math.abs(dx) > 6) {
+          swipeJustHappened = true;
+          setTimeout(() => { swipeJustHappened = false; }, 80);
+        }
+      });
+
+      card.addEventListener('pointercancel', () => {
+        if (!dragging) return;
+        dragging = false;
+        card.classList.remove('dragging');
+        card.style.transform = row.classList.contains('open') ? `translateX(${SWIPE_OPEN_X}px)` : '';
+      });
+    }
+
+    content.addEventListener('click', e => {
+      const clickedRow = e.target.closest('.event-row');
+      if (!clickedRow) closeAllSwipes();
+
+      const action = e.target.closest('.event-action');
+      if (action && clickedRow) {
+        const id = clickedRow.dataset.id;
+        const ev = events.find(x => x.id === id);
+        if (!ev) return;
+        if (action.dataset.act === 'fav') {
+          ev.favorite = !ev.favorite;
+          saveEvents();
+          closeAllSwipes();
+          render();
+        } else if (action.dataset.act === 'delete') {
+          if (confirm(`"${ev.title}" silinsin mi?`)) {
+            events = events.filter(x => x.id !== id);
+            saveEvents();
+            render();
+          } else closeAllSwipes();
+        }
+        return;
+      }
+
+      if (swipeJustHappened) return;
+
+      if (clickedRow && clickedRow.classList.contains('open')) {
+        closeAllSwipes();
+        return;
+      }
+
+      const target = e.target.closest('[data-id]');
+      if (!target) return;
+      openDetail(target.dataset.id);
+    });
+
+    let scrollTimer;
+    window.addEventListener('scroll', () => {
+      clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(closeAllSwipes, 100);
+    }, { passive: true });
+
+    // Sheet
+    const scrim = document.getElementById('scrim');
+    const sheet = document.getElementById('sheet');
+    const form = document.getElementById('form');
+    const titleInput = document.getElementById('titleInput');
+    const dateInput = document.getElementById('dateInput');
+    const locationInput = document.getElementById('locationInput');
+    const descInput = document.getElementById('descInput');
+    const recurringInput = document.getElementById('recurringInput');
+    const favoriteInput = document.getElementById('favoriteInput');
+    const sheetTitle = document.getElementById('sheetTitle');
+    const deleteBtn = document.getElementById('deleteBtn');
+    const chipsEl = document.getElementById('chips');
+    const spendingField = document.getElementById('spendingField');
+    const spendingLabel = document.getElementById('spendingLabel');
+    const spendingAmount = document.getElementById('spendingAmount');
+    const spendingNote = document.getElementById('spendingNote');
+
+    function updateSpendingField() {
+      const cfg = SPENDING_CONFIG[selectedCategory];
+      if (cfg) {
+        spendingLabel.textContent = cfg.label;
+        spendingNote.placeholder = cfg.notePlaceholder;
+        spendingField.hidden = false;
+      } else {
+        spendingField.hidden = true;
+      }
+    }
+
+    function renderChips() {
+      chipsEl.innerHTML = Object.entries(CATEGORIES).map(([k, c]) => `
+        <button type="button" class="chip ${k === selectedCategory ? 'selected' : ''}" data-cat="${k}">
+          <span>${c.icon}</span><span>${c.label}</span>
+        </button>`).join('');
+    }
+
+    chipsEl.addEventListener('click', e => {
+      const chip = e.target.closest('.chip');
+      if (!chip) return;
+      selectedCategory = chip.dataset.cat;
+      renderChips();
+      updateSpendingField();
+    });
+
+    function openSheet(ev = null) {
+      editingId = ev ? ev.id : null;
+      sheetTitle.textContent = ev ? 'Günü Düzenle' : 'Yeni Gün';
+
+      if (ev) {
+        titleInput.value = ev.title;
+        dateInput.value = ev.date;
+        locationInput.value = ev.location || '';
+        descInput.value = ev.description || '';
+        recurringInput.checked = !!ev.recurring;
+        favoriteInput.checked = !!ev.favorite;
+        spendingAmount.value = ev.spendingAmount || '';
+        spendingNote.value = ev.spendingNote || '';
+        selectedCategory = ev.category || 'diger';
+        deleteBtn.style.display = 'block';
+      } else {
+        titleInput.value = '';
+        dateInput.value = new Date().toISOString().split('T')[0];
+        locationInput.value = '';
+        descInput.value = '';
+        recurringInput.checked = false;
+        favoriteInput.checked = false;
+        spendingAmount.value = '';
+        spendingNote.value = '';
+        selectedCategory = 'diger';
+        deleteBtn.style.display = 'none';
+      }
+
+      renderChips();
+      updateSpendingField();
+
+      requestAnimationFrame(() => {
+        scrim.classList.add('open');
+        sheet.classList.add('open');
+        document.body.classList.add('locked');
+      });
+
+      setTimeout(() => titleInput.focus(), 320);
+    }
+
+    function closeSheet() {
+      scrim.classList.remove('open');
+      sheet.classList.remove('open');
+      if (!detail.classList.contains('open')) document.body.classList.remove('locked');
+      editingId = null;
+    }
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const title = titleInput.value.trim();
+      const date = dateInput.value;
+      if (!title || !date) return;
+
+      const spendNum = parseFloat(spendingAmount.value);
+      const data = {
+        id: editingId || uid(),
+        title,
+        date,
+        location: locationInput.value.trim(),
+        description: descInput.value.trim(),
+        category: selectedCategory,
+        recurring: recurringInput.checked,
+        favorite: favoriteInput.checked,
+        spendingAmount: SPENDING_CATEGORIES.includes(selectedCategory) && !isNaN(spendNum) && spendNum > 0 ? spendNum : null,
+        spendingNote: SPENDING_CATEGORIES.includes(selectedCategory) ? spendingNote.value.trim() : ''
+      };
+
+      const wasEditing = !!editingId;
+      if (editingId) {
+        const idx = events.findIndex(x => x.id === editingId);
+        if (idx >= 0) events[idx] = data;
+      } else {
+        events.push(data);
+      }
+
+      saveEvents();
+      closeSheet();
+      render();
+
+      if (wasEditing && detailId === data.id) openDetail(data.id);
+    });
+
+    document.getElementById('cancelBtn').addEventListener('click', closeSheet);
+    document.getElementById('addBtn').addEventListener('click', () => openSheet());
+
+    deleteBtn.addEventListener('click', () => {
+      if (!editingId) return;
+      const ev = events.find(x => x.id === editingId);
+      const name = ev ? `"${ev.title}"` : 'bu günü';
+      if (!confirm(`${name} silinsin mi?`)) return;
+      events = events.filter(x => x.id !== editingId);
+      saveEvents();
+      const wasInDetail = detailId === editingId;
+      closeSheet();
+      if (wasInDetail) closeDetail();
+      render();
+    });
+
+    scrim.addEventListener('click', closeSheet);
+
+    document.addEventListener('keydown', e => {
+      if (e.key !== 'Escape') return;
+      if (sheet.classList.contains('open')) { closeSheet(); return; }
+      if (detail.classList.contains('open')) { closeDetail(); return; }
+    });
+
+    // ─── View switching (Günler / Premium) ───
+    const daysView = document.getElementById('daysView');
+    const premiumView = document.getElementById('premiumView');
+    const appHeader = document.getElementById('appHeader');
+    const addBtn = document.getElementById('addBtn');
+    const navItems = document.querySelectorAll('.nav-item');
+
+    function switchView(view) {
+      if (view === currentView) return;
+      currentView = view;
+      closeAllSwipes();
+
+      navItems.forEach(n => n.classList.toggle('active', n.dataset.view === view));
+
+      if (view === 'days') {
+        daysView.style.display = '';
+        premiumView.classList.remove('active');
+        addBtn.style.visibility = 'visible';
+      } else {
+        daysView.style.display = 'none';
+        premiumView.classList.add('active');
+        addBtn.style.visibility = 'hidden';
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    navItems.forEach(item => {
+      item.addEventListener('click', () => switchView(item.dataset.view));
+    });
+
+    let lastDay = todayDate().getTime();
+    setInterval(() => {
+      const now = todayDate().getTime();
+      if (now !== lastDay) { lastDay = now; render(); }
+    }, 60000);
+
+    render();
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./service-worker.js')
+          .catch(err => console.warn('SW kaydı başarısız:', err));
+      });
+    }
+  </script>
+</body>
+</html>
