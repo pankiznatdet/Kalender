@@ -62,7 +62,14 @@
       text-rendering: optimizeLegibility;
     }
 
-    body { background-attachment: fixed; }
+    body {
+      background-image:
+        radial-gradient(circle at 12% 6%, rgba(216, 232, 192, 0.32), transparent 32%),
+        radial-gradient(circle at 92% 14%, rgba(246, 191, 142, 0.22), transparent 32%);
+      background-attachment: fixed;
+      background-size: 100% 100%;
+      background-color: var(--bg);
+    }
     body.locked { overflow: hidden; }
 
     .app {
@@ -206,6 +213,13 @@
       display: flex;
       width: 168px;
       z-index: 0;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
+
+    .event-row.open .event-actions,
+    .event-row.dragging .event-actions {
+      opacity: 1;
     }
 
     .event-action {
@@ -238,9 +252,12 @@
       align-items: center;
       padding: 18px 18px 18px 16px;
       cursor: pointer;
-      background: var(--card);
-      border-radius: 22px;
-      box-shadow: var(--shadow-sm);
+      background: rgba(255, 253, 248, 0.92);
+      backdrop-filter: blur(28px) saturate(160%);
+      -webkit-backdrop-filter: blur(28px) saturate(160%);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      border-radius: 24px;
+      box-shadow: 0 1px 2px rgba(26, 22, 18, 0.04), 0 4px 16px rgba(26, 22, 18, 0.04);
       transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1);
       touch-action: pan-y;
       user-select: none;
@@ -249,27 +266,49 @@
 
     .event-row.open .event { transform: translateX(-168px); }
     .event.dragging { transition: none; }
-    .event.is-fav { background: var(--card-fav); }
+    .event.is-fav {
+      background: rgba(228, 240, 210, 0.92);
+    }
 
     .badge {
       width: 56px;
       height: 56px;
-      border-radius: 50%;
+      border-radius: 16px;
       display: grid;
       place-items: center;
       font-size: 1.5rem;
       flex-shrink: 0;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      box-shadow: inset 0 0 12px rgba(255, 255, 255, 0.4);
     }
 
-    .badge.cat-dugun     { background: var(--cat-dugun); }
-    .badge.cat-dogum     { background: var(--cat-dogum); }
-    .badge.cat-yildonumu { background: var(--cat-yildonumu); }
-    .badge.cat-kutlama   { background: var(--cat-kutlama); }
-    .badge.cat-seyahat   { background: var(--cat-seyahat); }
-    .badge.cat-mezuniyet { background: var(--cat-mezuniyet); }
-    .badge.cat-toplanti  { background: var(--cat-toplanti); }
-    .badge.cat-hediye    { background: var(--cat-hediye); }
-    .badge.cat-diger     { background: var(--cat-diger); }
+    .badge.cat-dugun {
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.75), transparent 65%), var(--cat-dugun);
+    }
+    .badge.cat-dogum {
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.75), transparent 65%), var(--cat-dogum);
+    }
+    .badge.cat-yildonumu {
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.75), transparent 65%), var(--cat-yildonumu);
+    }
+    .badge.cat-kutlama {
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.75), transparent 65%), var(--cat-kutlama);
+    }
+    .badge.cat-seyahat {
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.75), transparent 65%), var(--cat-seyahat);
+    }
+    .badge.cat-mezuniyet {
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.75), transparent 65%), var(--cat-mezuniyet);
+    }
+    .badge.cat-toplanti {
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.75), transparent 65%), var(--cat-toplanti);
+    }
+    .badge.cat-hediye {
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.75), transparent 65%), var(--cat-hediye);
+    }
+    .badge.cat-diger {
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.75), transparent 65%), var(--cat-diger);
+    }
 
     .event-body { min-width: 0; }
 
@@ -318,17 +357,16 @@
     .arrow-btn {
       width: 36px;
       height: 36px;
-      border-radius: 50%;
-      background: var(--ink);
-      color: var(--bg);
       display: grid;
       place-items: center;
-      font-size: 0.95rem;
+      color: var(--ink-mid);
+      font-size: 1.05rem;
+      font-family: var(--sans);
       flex-shrink: 0;
-      transition: transform 0.15s ease;
+      transition: transform 0.15s ease, color 0.2s ease;
     }
 
-    .event:active .arrow-btn { transform: translateX(2px); }
+    .event:active .arrow-btn { transform: translateX(2px); color: var(--ink); }
 
     /* Empty */
     .empty { text-align: center; padding: 70px 20px 40px; }
@@ -858,6 +896,224 @@
       cursor: pointer;
     }
 
+    /* ─── Profile view ─── */
+    .profile-view { display: none; position: relative; }
+    .profile-view.active {
+      display: block;
+      padding-top: 8px;
+    }
+
+    /* Profile background halo — applied to body when profile view is active */
+    body.profile-bg {
+      background-image:
+        radial-gradient(circle at 18% 14%, rgba(216, 232, 192, 0.85), transparent 38%),
+        radial-gradient(circle at 80% 28%, rgba(246, 191, 142, 0.75), transparent 38%),
+        radial-gradient(circle at 50% 70%, rgba(199, 190, 226, 0.55), transparent 38%),
+        radial-gradient(circle at 88% 88%, rgba(241, 209, 122, 0.65), transparent 36%);
+      background-attachment: fixed;
+      background-size: 100% 100%;
+      background-color: var(--bg);
+    }
+
+    .profile-card {
+      background: rgba(255, 255, 255, 0.55);
+      backdrop-filter: blur(28px) saturate(160%);
+      -webkit-backdrop-filter: blur(28px) saturate(160%);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      border-radius: 24px;
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 14px;
+      box-shadow: 0 1px 2px rgba(26, 22, 18, 0.04);
+    }
+
+    .profile-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--bg-warm);
+      display: grid;
+      place-items: center;
+      font-family: var(--display);
+      font-style: italic;
+      font-weight: 400;
+      font-size: 1.5rem;
+      color: var(--ink);
+      flex-shrink: 0;
+      border: 1.5px solid rgba(255, 255, 255, 0.7);
+    }
+
+    .profile-meta { flex: 1; min-width: 0; }
+
+    .profile-name {
+      font-family: var(--display);
+      font-style: italic;
+      font-weight: 400;
+      font-size: 1.2rem;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      line-height: 1.1;
+      margin-bottom: 4px;
+    }
+
+    .profile-status {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink-dim);
+    }
+
+    .profile-bell {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      display: grid;
+      place-items: center;
+      font-size: 1.05rem;
+      cursor: pointer;
+      transition: transform 0.15s ease;
+      flex-shrink: 0;
+    }
+
+    .profile-bell:active { transform: scale(0.92); }
+
+    /* Wrapped hero card */
+    .wrapped-card {
+      background: rgba(255, 255, 255, 0.55);
+      backdrop-filter: blur(28px) saturate(160%);
+      -webkit-backdrop-filter: blur(28px) saturate(160%);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      border-radius: 24px;
+      padding: 18px;
+      margin-bottom: 14px;
+      cursor: pointer;
+      transition: transform 0.15s ease;
+      display: grid;
+      grid-template-columns: 60px 1fr 36px;
+      gap: 14px;
+      align-items: center;
+      box-shadow: 0 1px 2px rgba(26, 22, 18, 0.04);
+    }
+
+    .wrapped-card:active { transform: scale(0.99); }
+
+    .wrapped-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 16px;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(241, 209, 122, 0.9), transparent 60%),
+        radial-gradient(circle at 70% 70%, rgba(216, 232, 192, 0.9), transparent 60%),
+        rgba(255, 255, 255, 0.7);
+      display: grid;
+      place-items: center;
+      font-size: 1.5rem;
+    }
+
+    .wrapped-body { min-width: 0; }
+
+    .wrapped-title {
+      font-family: var(--display);
+      font-style: italic;
+      font-weight: 400;
+      font-size: 1.15rem;
+      color: var(--ink);
+      line-height: 1.15;
+      margin-bottom: 4px;
+    }
+
+    .wrapped-desc {
+      font-family: var(--sans);
+      font-size: 0.85rem;
+      color: var(--ink-mid);
+      line-height: 1.45;
+    }
+
+    .wrapped-arrow {
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      color: var(--ink-mid);
+      font-size: 1rem;
+      font-family: var(--sans);
+    }
+
+    /* 2x2 dashboard grid */
+    .dash-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .dash-tile {
+      background: rgba(255, 255, 255, 0.55);
+      backdrop-filter: blur(28px) saturate(160%);
+      -webkit-backdrop-filter: blur(28px) saturate(160%);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      border-radius: 24px;
+      padding: 18px 18px 20px;
+      cursor: pointer;
+      transition: transform 0.15s ease;
+      position: relative;
+      min-height: 168px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 1px 2px rgba(26, 22, 18, 0.04);
+    }
+
+    .dash-tile:active { transform: scale(0.98); }
+
+    .dash-tile-arrow {
+      position: absolute;
+      top: 16px;
+      right: 18px;
+      color: var(--ink-mid);
+      font-size: 0.95rem;
+      font-family: var(--sans);
+    }
+
+    .dash-tile-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 14px;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.9), transparent 70%),
+        rgba(255, 255, 255, 0.5);
+      display: grid;
+      place-items: center;
+      font-size: 1.2rem;
+      margin-bottom: auto;
+      border: 1px solid rgba(255, 255, 255, 0.6);
+    }
+
+    .dash-tile-title {
+      font-family: var(--sans);
+      font-weight: 600;
+      font-size: 0.96rem;
+      color: var(--ink);
+      letter-spacing: -0.005em;
+      margin-top: 16px;
+      margin-bottom: 4px;
+      line-height: 1.2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .dash-tile-desc {
+      font-family: var(--sans);
+      font-size: 0.78rem;
+      color: var(--ink-dim);
+      line-height: 1.3;
+    }
+
     /* ─── Bottom nav ─── */
     .bottom-nav {
       position: fixed;
@@ -1135,6 +1391,56 @@
         <span class="premium-cta-soon">Yakında</span>
       </div>
     </section>
+
+    <section class="profile-view" id="profileView">
+      <div class="profile-card anim">
+        <div class="profile-avatar" id="profileAvatar">M</div>
+        <div class="profile-meta">
+          <div class="profile-name" id="profileName">Misafir</div>
+          <div class="profile-status">FREE HESAP</div>
+        </div>
+        <button class="profile-bell" type="button" aria-label="Bildirimler">🔔</button>
+      </div>
+
+      <div class="wrapped-card anim" style="animation-delay: 0.08s" id="wrappedCard">
+        <div class="wrapped-icon">✨</div>
+        <div class="wrapped-body">
+          <div class="wrapped-title">Yıllık Wrapped</div>
+          <div class="wrapped-desc" id="wrappedDesc">Yılın özetini gör.</div>
+        </div>
+        <div class="wrapped-arrow">↗</div>
+      </div>
+
+      <div class="dash-grid">
+        <div class="dash-tile anim" style="animation-delay: 0.16s" data-tile="family">
+          <div class="dash-tile-arrow">↗</div>
+          <div class="dash-tile-icon">👨‍👩‍👧</div>
+          <div class="dash-tile-title">Aile Üyelerim</div>
+          <div class="dash-tile-desc">Soyağacını yönet.</div>
+        </div>
+
+        <div class="dash-tile anim" style="animation-delay: 0.20s" data-tile="anniversaries">
+          <div class="dash-tile-arrow">↗</div>
+          <div class="dash-tile-icon">💝</div>
+          <div class="dash-tile-title">Yıl Dönümlerim</div>
+          <div class="dash-tile-desc">Tüm yıl dönümleri.</div>
+        </div>
+
+        <div class="dash-tile anim" style="animation-delay: 0.24s" data-tile="info">
+          <div class="dash-tile-arrow">↗</div>
+          <div class="dash-tile-icon">ℹ️</div>
+          <div class="dash-tile-title">Önemli Bilgiler</div>
+          <div class="dash-tile-desc">Notlar ve detaylar.</div>
+        </div>
+
+        <div class="dash-tile anim" style="animation-delay: 0.28s" data-tile="settings">
+          <div class="dash-tile-arrow">↗</div>
+          <div class="dash-tile-icon">⚙️</div>
+          <div class="dash-tile-title">Ayarlar</div>
+          <div class="dash-tile-desc">Tercihler ve yedekleme.</div>
+        </div>
+      </div>
+    </section>
   </div>
 
   <nav class="bottom-nav">
@@ -1142,6 +1448,10 @@
       <button class="nav-item active" data-view="days" type="button">
         <span class="icon">⌗</span>
         <span>Günler</span>
+      </button>
+      <button class="nav-item" data-view="profile" type="button">
+        <span class="icon">◐</span>
+        <span>Profilim</span>
       </button>
       <button class="nav-item" data-view="premium" type="button">
         <span class="icon icon-glow">✦</span>
@@ -1245,7 +1555,7 @@
     let detailId = null;
     let selectedCategory = 'diger';
     let activeTab = 'upcoming';
-    let currentView = 'days'; // 'days' | 'premium'
+    let currentView = 'days'; // 'days' | 'profile' | 'premium'
 
     function loadEvents() {
       try { const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : []; }
@@ -1452,7 +1762,7 @@
               <div class="event-date">${fmtDateMedium(occursAt)}</div>
               <div class="event-countdown ${cls}">${fmtRelative(days)}${ev.recurring ? ' · her yıl' : ''}</div>
             </div>
-            <div class="arrow-btn">›</div>
+            <div class="arrow-btn">↗</div>
           </div>
         </li>
       `;
@@ -1578,6 +1888,7 @@
         direction = null;
         baseOffset = row.classList.contains('open') ? SWIPE_OPEN_X : 0;
         card.classList.add('dragging');
+        row.classList.add('dragging');
       });
 
       card.addEventListener('pointermove', e => {
@@ -1602,6 +1913,7 @@
         if (!dragging) return;
         dragging = false;
         card.classList.remove('dragging');
+        row.classList.remove('dragging');
         if (direction !== 'h') return;
         const dx = currentX - startX;
         const wasOpen = baseOffset === SWIPE_OPEN_X;
@@ -1624,6 +1936,7 @@
         if (!dragging) return;
         dragging = false;
         card.classList.remove('dragging');
+        row.classList.remove('dragging');
         card.style.transform = row.classList.contains('open') ? `translateX(${SWIPE_OPEN_X}px)` : '';
       });
     }
@@ -1820,12 +2133,66 @@
       if (detail.classList.contains('open')) { closeDetail(); return; }
     });
 
-    // ─── View switching (Günler / Premium) ───
+    // ─── View switching (Günler / Profilim / Premium) ───
     const daysView = document.getElementById('daysView');
     const premiumView = document.getElementById('premiumView');
+    const profileView = document.getElementById('profileView');
     const appHeader = document.getElementById('appHeader');
     const addBtn = document.getElementById('addBtn');
     const navItems = document.querySelectorAll('.nav-item');
+    const wrappedDescEl = document.getElementById('wrappedDesc');
+
+    function computeWrappedStats() {
+      // Count past events (this calendar year)
+      const today = todayDate();
+      const yearStart = new Date(today.getFullYear(), 0, 1);
+      const yearEnd = new Date(today.getFullYear(), 11, 31);
+
+      const counts = { dugun: 0, dogum: 0, yildonumu: 0, kutlama: 0, seyahat: 0, mezuniyet: 0, toplanti: 0, hediye: 0, diger: 0 };
+      let total = 0;
+
+      events.forEach(ev => {
+        const d = parseDate(ev.date);
+        // Recurring events: count this year's occurrence if past
+        let occursAt;
+        if (ev.recurring) {
+          occursAt = new Date(today.getFullYear(), d.getMonth(), d.getDate());
+        } else {
+          occursAt = d;
+        }
+        if (occursAt >= yearStart && occursAt <= today) {
+          counts[ev.category] = (counts[ev.category] || 0) + 1;
+          total++;
+        }
+      });
+
+      if (total === 0) {
+        return 'Bu yıl henüz kayıtlı bir günün yok.';
+      }
+
+      const parts = [];
+      if (counts.dugun)     parts.push(`${counts.dugun} düğüne katıldın`);
+      if (counts.dogum)     parts.push(`${counts.dogum} doğum günü kutladın`);
+      if (counts.yildonumu) parts.push(`${counts.yildonumu} yıl dönümü yaşadın`);
+      if (counts.seyahat)   parts.push(`${counts.seyahat} seyahate çıktın`);
+      if (counts.kutlama)   parts.push(`${counts.kutlama} kutlama yaptın`);
+      if (counts.mezuniyet) parts.push(`${counts.mezuniyet} mezuniyet vardı`);
+
+      if (parts.length === 0) {
+        return `Bu yıl ${total} özel günün oldu.`;
+      }
+      if (parts.length === 1) {
+        return parts[0] + '.';
+      }
+      // Capitalize first
+      const first = parts[0].charAt(0).toUpperCase() + parts[0].slice(1);
+      const rest = parts.slice(1).join(', ');
+      return `${first}, ${rest}.`;
+    }
+
+    function refreshProfile() {
+      if (wrappedDescEl) wrappedDescEl.textContent = computeWrappedStats();
+    }
 
     function switchView(view) {
       if (view === currentView) return;
@@ -1834,14 +2201,21 @@
 
       navItems.forEach(n => n.classList.toggle('active', n.dataset.view === view));
 
-      if (view === 'days') {
-        daysView.style.display = '';
-        premiumView.classList.remove('active');
-        addBtn.style.visibility = 'visible';
+      daysView.style.display = view === 'days' ? '' : 'none';
+      premiumView.classList.toggle('active', view === 'premium');
+      profileView.classList.toggle('active', view === 'profile');
+
+      // Hide + button on non-days views
+      addBtn.style.visibility = view === 'days' ? 'visible' : 'hidden';
+
+      // Hide brand header on profile view (it has its own profile card)
+      if (view === 'profile') {
+        appHeader.style.display = 'none';
+        document.body.classList.add('profile-bg');
+        refreshProfile();
       } else {
-        daysView.style.display = 'none';
-        premiumView.classList.add('active');
-        addBtn.style.visibility = 'hidden';
+        appHeader.style.display = '';
+        document.body.classList.remove('profile-bg');
       }
 
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1849,6 +2223,18 @@
 
     navItems.forEach(item => {
       item.addEventListener('click', () => switchView(item.dataset.view));
+    });
+
+    // Profile dashboard tile clicks (placeholder for now)
+    profileView.addEventListener('click', e => {
+      const tile = e.target.closest('[data-tile]');
+      const wrapped = e.target.closest('#wrappedCard');
+      if (tile) {
+        // TODO: open dedicated views in future iterations
+        console.log('Tile clicked:', tile.dataset.tile);
+      } else if (wrapped) {
+        console.log('Wrapped clicked');
+      }
     });
 
     let lastDay = todayDate().getTime();
