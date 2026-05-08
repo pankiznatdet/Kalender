@@ -45,6 +45,8 @@
       --cat-seyahat: #A7C9D6;
       --cat-mezuniyet: #B5CC9C;
       --cat-toplanti: #C7BEE2;
+      --cat-doktor: #9FCFC9;
+      --cat-veteriner: #D6B894;
       --cat-hediye: #F0AFA0;
       --cat-diger: #DDD2BE;
 
@@ -78,7 +80,7 @@
     .app {
       max-width: 580px;
       margin: 0 auto;
-      padding: max(20px, env(safe-area-inset-top)) 22px 140px;
+      padding: max(20px, env(safe-area-inset-top)) 22px calc(170px + env(safe-area-inset-bottom, 0px));
     }
 
     /* Header */
@@ -98,30 +100,50 @@
       color: var(--ink-mid);
     }
 
-    .brand .glyph { color: var(--gold); margin-right: 4px; }
+    .brand .glyph { color: var(--ink); margin-right: 4px; }
 
     .add-btn {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      border: none;
+      position: fixed;
+      bottom: calc(82px + env(safe-area-inset-bottom, 0px));
+      left: 50%;
+      transform: translateX(-50%);
       background: var(--ink);
       color: var(--bg);
-      font-size: 1.5rem;
-      font-weight: 300;
-      display: grid;
-      place-items: center;
-      cursor: pointer;
-      transition: transform 0.15s ease, background 0.2s ease;
-      flex-shrink: 0;
+      padding: 12px 22px;
+      border-radius: 999px;
+      border: none;
       font-family: var(--sans);
+      font-weight: 500;
+      font-size: 0.92rem;
+      letter-spacing: -0.005em;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 8px 24px rgba(26, 22, 18, 0.28), 0 0 0 4px rgba(241, 233, 217, 0.55);
+      z-index: 50;
+      transition: transform 0.15s ease, background 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .add-btn .plus {
+      font-size: 1.2rem;
+      font-weight: 300;
       line-height: 1;
-      padding-bottom: 3px;
-      box-shadow: var(--shadow-sm);
     }
 
     .add-btn:hover { background: #2B241D; }
-    .add-btn:active { transform: scale(0.94); }
+    .add-btn:active { transform: translateX(-50%) scale(0.96); }
+
+    /* Kalender mark — brand sparkle SVG, scales with font-size */
+    .km {
+      width: 1em;
+      height: 1em;
+      fill: currentColor;
+      display: inline-block;
+      vertical-align: -0.12em;
+      flex-shrink: 0;
+    }
 
     /* Display headline */
     .display { padding: 22px 0 26px; }
@@ -391,6 +413,12 @@
     .badge.cat-toplanti {
       background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.75), transparent 65%), var(--cat-toplanti);
     }
+    .badge.cat-doktor {
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.75), transparent 65%), var(--cat-doktor);
+    }
+    .badge.cat-veteriner {
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.75), transparent 65%), var(--cat-veteriner);
+    }
     .badge.cat-hediye {
       background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.75), transparent 65%), var(--cat-hediye);
     }
@@ -463,8 +491,7 @@
       font-family: var(--display);
       font-style: italic;
       font-size: 4rem;
-      color: var(--gold);
-      opacity: 0.85;
+      color: var(--ink);
       margin-bottom: 18px;
       line-height: 1;
     }
@@ -1102,7 +1129,8 @@
         rgba(255, 255, 255, 0.7);
       display: grid;
       place-items: center;
-      font-size: 1.5rem;
+      font-size: 1.85rem;
+      color: var(--gold);
     }
 
     .wrapped-body { min-width: 0; }
@@ -1425,10 +1453,17 @@
   </style>
 </head>
 <body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="km" viewBox="0 0 100 100">
+        <path d="M50 14L56 44L86 50L56 56L50 86L44 56L14 50L44 44Z"/>
+      </symbol>
+    </defs>
+  </svg>
   <div class="app">
     <header id="appHeader">
-      <span class="brand"><span class="glyph">✦</span>Kalender</span>
-      <button class="add-btn" id="addBtn" aria-label="Yeni gün ekle">+</button>
+      <span class="brand"><span class="glyph"><svg class="km"><use href="#km"/></svg></span>Kalender</span>
+      <button class="add-btn" id="addBtn" aria-label="Yeni gün ekle"><span class="plus">+</span> Yeni Gün</button>
     </header>
 
     <div class="days-view" id="daysView">
@@ -1492,7 +1527,7 @@
       </div>
 
       <div class="wrapped-card anim" style="animation-delay: 0.08s" id="wrappedCard">
-        <div class="wrapped-icon">✨</div>
+        <div class="wrapped-icon"><svg class="km"><use href="#km"/></svg></div>
         <div class="wrapped-body">
           <div class="wrapped-title">Yıllık Wrapped</div>
           <div class="wrapped-desc" id="wrappedDesc">Yılın özetini gör.</div>
@@ -1535,15 +1570,15 @@
   <nav class="bottom-nav">
     <div class="bottom-nav-inner">
       <button class="nav-item active" data-view="days" type="button">
-        <span class="icon">⌗</span>
+        <span class="icon"><svg class="km"><use href="#km"/></svg></span>
         <span>Günler</span>
       </button>
       <button class="nav-item" data-view="profile" type="button">
-        <span class="icon">◐</span>
+        <span class="icon"><svg class="km"><use href="#km"/></svg></span>
         <span>Profilim</span>
       </button>
       <button class="nav-item" data-view="premium" type="button">
-        <span class="icon icon-glow">✦</span>
+        <span class="icon icon-glow"><svg class="km"><use href="#km"/></svg></span>
         <span>Premium</span>
       </button>
     </div>
@@ -1633,6 +1668,8 @@
       seyahat:   { label: 'Seyahat',    icon: '✈️', cls: 'cat-seyahat' },
       mezuniyet: { label: 'Mezuniyet',  icon: '🎓', cls: 'cat-mezuniyet' },
       toplanti:  { label: 'Toplantı',   icon: '📅', cls: 'cat-toplanti' },
+      doktor:    { label: 'Doktor',     icon: '🩺', cls: 'cat-doktor' },
+      veteriner: { label: 'Veteriner',  icon: '🐾', cls: 'cat-veteriner' },
       hediye:    { label: 'Hediye',     icon: '🎁', cls: 'cat-hediye' },
       diger:     { label: 'Diğer',      icon: '✦',  cls: 'cat-diger' }
     };
@@ -1751,7 +1788,7 @@
       if (events.length === 0) {
         content.innerHTML = `
           <div class="empty anim">
-            <div class="empty-glyph">✦</div>
+            <div class="empty-glyph"><svg class="km"><use href="#km"/></svg></div>
             <h2>Henüz bir gün eklemediniz</h2>
             <p>Düğünler, doğum günleri, yıldönümleri — unutulmayacak tarihleri buraya ekleyin.</p>
             <button class="cta" id="emptyAdd">İlk gününüzü ekleyin</button>
