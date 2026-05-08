@@ -1,6 +1,6 @@
 // Kalender — Service Worker
 // Cache version'ı değiştirmek tüm asset cache'ini yenileyip taze deploy çeker.
-const CACHE = 'kalender-v11';
+const CACHE = 'kalender-v15';
 
 const ASSETS = [
   './',
