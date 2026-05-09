@@ -1515,6 +1515,306 @@
     .asistan-send-btn:disabled { opacity: 0.35; cursor: default; }
     .asistan-send-btn:active:not(:disabled) { transform: scale(0.94); }
 
+    /* ─── Family (Aile Ağacı) view ─── */
+    .family-view { display: none; }
+    .family-view.active { display: block; padding-top: 8px; }
+
+    .fm-section-label {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.18em;
+      color: var(--ink-faint);
+      text-transform: uppercase;
+      margin: 22px 0 10px;
+      padding-left: 4px;
+    }
+    .fm-section-label:first-of-type { margin-top: 8px; }
+
+    .fm-card {
+      display: grid;
+      grid-template-columns: 48px 1fr 28px;
+      gap: 14px;
+      align-items: center;
+      padding: 14px 16px;
+      background: rgba(255, 253, 248, 0.92);
+      backdrop-filter: blur(28px) saturate(160%);
+      -webkit-backdrop-filter: blur(28px) saturate(160%);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      border-radius: 18px;
+      margin-bottom: 8px;
+      box-shadow: 0 1px 2px rgba(26, 22, 18, 0.04), 0 4px 14px rgba(26, 22, 18, 0.04);
+      cursor: pointer;
+      width: 100%;
+      text-align: left;
+      font-family: inherit;
+      transition: transform 0.15s ease, opacity 0.2s ease;
+    }
+    .fm-card:active { transform: scale(0.99); opacity: 0.92; }
+
+    .fm-av {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-family: var(--display);
+      font-style: italic;
+      font-size: 1.25rem;
+      color: var(--ink);
+      border: 1px solid rgba(255,255,255,0.5);
+      box-shadow: inset 0 0 12px rgba(255,255,255,0.4), 0 1px 3px rgba(26,22,18,0.06);
+      flex-shrink: 0;
+      background-size: cover;
+      background-position: center;
+    }
+    .fm-av.rel-anne { background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.7), transparent 65%), var(--cat-dugun); }
+    .fm-av.rel-baba { background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.7), transparent 65%), var(--cat-seyahat); }
+    .fm-av.rel-kardes { background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.7), transparent 65%), var(--cat-mezuniyet); }
+    .fm-av.rel-cocuk { background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.7), transparent 65%), var(--cat-kutlama); }
+
+    .fm-name {
+      font-family: var(--display);
+      font-style: italic;
+      font-size: 1rem;
+      line-height: 1.2;
+      color: var(--ink);
+    }
+    .fm-meta {
+      font-family: var(--sans);
+      font-size: 0.78rem;
+      color: var(--ink-mid);
+      margin-top: 2px;
+    }
+    .fm-meta .blood {
+      display: inline-block;
+      margin-left: 6px;
+      padding: 1px 7px;
+      background: rgba(241, 233, 217, 0.7);
+      border: 1px solid rgba(255,255,255,0.5);
+      border-radius: 999px;
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--ink);
+    }
+    .fm-arrow { color: var(--ink-mid); font-size: 0.95rem; }
+
+    .fm-add-card {
+      width: 100%;
+      padding: 12px 16px;
+      background: transparent;
+      border: 1.5px dashed rgba(184, 132, 47, 0.45);
+      border-radius: 18px;
+      text-align: left;
+      display: grid;
+      grid-template-columns: 48px 1fr;
+      gap: 14px;
+      align-items: center;
+      margin-bottom: 8px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: transform 0.15s ease, background 0.2s ease;
+    }
+    .fm-add-card:active { transform: scale(0.99); }
+    .fm-add-card:hover { background: rgba(184, 132, 47, 0.06); }
+    .fm-add-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 1.4rem;
+      font-weight: 300;
+      color: var(--gold);
+      background: rgba(184, 132, 47, 0.1);
+    }
+    .fm-add-text {
+      font-family: var(--display);
+      font-style: italic;
+      color: var(--gold);
+      font-size: 0.96rem;
+    }
+
+    /* Empty state */
+    .fm-empty {
+      text-align: center;
+      padding: 80px 24px 40px;
+    }
+    .fm-empty-glyph {
+      font-size: 3.4rem;
+      color: var(--ink);
+      line-height: 1;
+      margin-bottom: 20px;
+      display: inline-block;
+    }
+    .fm-empty-glyph svg { width: 1em; height: 1em; fill: currentColor; }
+    .fm-empty-title {
+      font-family: var(--display);
+      font-style: italic;
+      font-weight: 400;
+      font-size: 1.5rem;
+      color: var(--ink);
+      margin-bottom: 12px;
+    }
+    .fm-empty-desc {
+      font-family: var(--sans);
+      font-size: 0.95rem;
+      color: var(--ink-mid);
+      line-height: 1.45;
+      max-width: 280px;
+      margin: 0 auto 28px;
+    }
+
+    .add-pill-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--ink);
+      color: var(--bg);
+      border: none;
+      padding: 12px 22px;
+      border-radius: 999px;
+      font-family: var(--sans);
+      font-weight: 500;
+      font-size: 0.92rem;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(26, 22, 18, 0.18);
+      transition: transform 0.15s ease;
+    }
+    .add-pill-btn:active { transform: scale(0.96); }
+    .add-pill-btn .plus { font-size: 1.15rem; font-weight: 300; line-height: 1; }
+
+    /* Family form sheet — chips, photo area, blood types */
+    .fm-photo-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 6px;
+    }
+    .fm-photo-area {
+      width: 92px;
+      height: 92px;
+      border-radius: 50%;
+      background: rgba(255, 253, 248, 0.7);
+      border: 1.5px dashed rgba(184, 132, 47, 0.5);
+      display: grid;
+      place-items: center;
+      color: var(--gold);
+      font-size: 1.6rem;
+      font-family: var(--sans);
+      font-weight: 300;
+      cursor: pointer;
+      flex-shrink: 0;
+      background-size: cover;
+      background-position: center;
+      overflow: hidden;
+    }
+    .fm-photo-area.has-image {
+      border: 1px solid rgba(255,255,255,0.6);
+      box-shadow: inset 0 0 0 2px rgba(184, 132, 47, 0.3);
+    }
+    .fm-photo-hint {
+      font-family: var(--sans);
+      font-size: 0.85rem;
+      color: var(--ink-mid);
+      line-height: 1.35;
+    }
+
+    .fm-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .fm-chip {
+      padding: 8px 14px;
+      background: rgba(255, 253, 248, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      border-radius: 999px;
+      font-family: var(--sans);
+      font-size: 0.86rem;
+      color: var(--ink);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .fm-chip.active {
+      background: var(--ink);
+      color: var(--bg);
+      border-color: var(--ink);
+    }
+
+    /* Profile Premium button */
+    .profile-premium-btn {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      width: 100%;
+      padding: 16px 18px;
+      margin-top: 22px;
+      background: rgba(255, 253, 248, 0.92);
+      backdrop-filter: blur(28px) saturate(160%);
+      -webkit-backdrop-filter: blur(28px) saturate(160%);
+      border: 1px solid rgba(184, 132, 47, 0.35);
+      border-radius: 22px;
+      cursor: pointer;
+      box-shadow: 0 1px 2px rgba(26, 22, 18, 0.04), 0 6px 20px rgba(184, 132, 47, 0.12);
+      font-family: inherit;
+      text-align: left;
+      transition: transform 0.15s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .profile-premium-btn:active { transform: scale(0.99); }
+    .profile-premium-btn::before {
+      content: '';
+      position: absolute;
+      top: -40%;
+      right: -10%;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(241, 209, 122, 0.4), transparent 70%);
+      filter: blur(16px);
+      pointer-events: none;
+    }
+    .profile-premium-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: var(--ink);
+      color: var(--gold);
+      flex-shrink: 0;
+      font-size: 1.25rem;
+      box-shadow: 0 1px 3px rgba(26, 22, 18, 0.15);
+      position: relative;
+      z-index: 1;
+    }
+    .profile-premium-icon svg { filter: drop-shadow(0 0 4px rgba(241, 209, 122, 0.6)); }
+    .profile-premium-body { flex: 1; min-width: 0; position: relative; z-index: 1; }
+    .profile-premium-title {
+      font-family: var(--display);
+      font-style: italic;
+      font-weight: 400;
+      font-size: 1.05rem;
+      color: var(--ink);
+      margin-bottom: 2px;
+    }
+    .profile-premium-desc {
+      font-family: var(--sans);
+      font-size: 0.82rem;
+      color: var(--ink-mid);
+      line-height: 1.35;
+    }
+    .profile-premium-arrow {
+      color: var(--ink-mid);
+      font-size: 1rem;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+    }
+
     /* ─── Bottom nav ─── */
     .bottom-nav {
       position: fixed;
@@ -1755,6 +2055,12 @@
       <symbol id="ic-chat" viewBox="0 0 100 100">
         <path d="M18 22 H82 Q90 22 90 30 V60 Q90 68 82 68 H50 L32 84 L36 68 H18 Q10 68 10 60 V30 Q10 22 18 22 Z"/>
       </symbol>
+      <symbol id="ic-tree" viewBox="0 0 100 100">
+        <circle cx="50" cy="28" r="18"/>
+        <circle cx="30" cy="44" r="16"/>
+        <circle cx="70" cy="44" r="16"/>
+        <rect x="44" y="58" width="12" height="28" rx="2"/>
+      </symbol>
     </defs>
   </svg>
   <div class="app">
@@ -1869,6 +2175,15 @@
           <div class="dash-tile-desc">Tercihler ve yedekleme.</div>
         </div>
       </div>
+
+      <button class="profile-premium-btn anim" style="animation-delay: 0.36s" type="button" data-view="premium">
+        <span class="profile-premium-icon"><svg class="km"><use href="#km"/></svg></span>
+        <div class="profile-premium-body">
+          <div class="profile-premium-title">Premium'a geç</div>
+          <div class="profile-premium-desc">Aile ağacı, AI Asistan, masraf raporu ve daha fazlası.</div>
+        </div>
+        <span class="profile-premium-arrow">↗</span>
+      </button>
     </section>
     <section class="asistan-view" id="asistanView">
       <div class="asistan-conv-bar">
@@ -1929,6 +2244,17 @@
         <button class="asistan-send-btn" id="asistanSend" type="button" aria-label="Gönder" disabled>↑</button>
       </div>
     </section>
+
+    <section class="family-view" id="familyView">
+      <div class="display">
+        <h1 class="anim">Aile <span class="it">Üyelerin</span></h1>
+        <div class="meta anim" id="familyMeta" style="animation-delay: 0.08s">0 ÜYE · ÇEKİRDEK AİLE</div>
+      </div>
+
+      <div id="familyBody">
+        <!-- Populated by JS — either empty state or sectioned cards -->
+      </div>
+    </section>
   </div>
 
   <nav class="bottom-nav">
@@ -1941,9 +2267,9 @@
         <span class="icon"><svg class="km"><use href="#ic-chat"/></svg></span>
         <span>Asistan</span>
       </button>
-      <button class="nav-item" data-view="premium" type="button">
-        <span class="icon icon-glow"><svg class="km"><use href="#km"/></svg></span>
-        <span>Premium</span>
+      <button class="nav-item" data-view="family" type="button">
+        <span class="icon"><svg class="km"><use href="#ic-tree"/></svg></span>
+        <span>Aile Ağacı</span>
       </button>
       <button class="nav-item" data-view="profile" type="button">
         <span class="icon"><svg class="km"><use href="#ic-user"/></svg></span>
@@ -2022,6 +2348,68 @@
     </div>
   </div>
 
+  <div class="sheet-wrap">
+    <div class="sheet" id="familySheet" role="dialog" aria-modal="true">
+      <div class="sheet-handle"></div>
+      <h2 id="familySheetTitle">Üye Ekle</h2>
+
+      <form id="familyForm">
+        <div class="field">
+          <div class="fm-photo-row">
+            <div class="fm-photo-area" id="familyPhotoArea">+</div>
+            <div class="fm-photo-hint">
+              <label style="margin:0">Fotoğraf</label>
+              <div style="font-family:var(--sans);font-size:0.85rem;color:var(--ink-mid);margin-top:4px">İsteğe bağlı — galeriyi aç ya da kameradan çek.</div>
+            </div>
+            <input type="file" id="familyPhotoInput" accept="image/*" style="display:none" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Yakınlık</label>
+          <div class="fm-chips" id="familyRelationChips">
+            <button type="button" class="fm-chip" data-rel="anne">👩 Anne</button>
+            <button type="button" class="fm-chip" data-rel="baba">👨 Baba</button>
+            <button type="button" class="fm-chip" data-rel="kardes">👫 Kardeş</button>
+            <button type="button" class="fm-chip" data-rel="cocuk">👶 Çocuk</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="familyNameInput">İsim</label>
+          <input type="text" id="familyNameInput" placeholder="ör. Ayşe Yılmaz" required maxlength="60" />
+        </div>
+
+        <div class="field">
+          <label for="familyBirthInput">Doğum Günü</label>
+          <input type="date" id="familyBirthInput" />
+        </div>
+
+        <div class="field">
+          <label>Kan Grubu</label>
+          <div class="fm-chips" id="familyBloodChips">
+            <button type="button" class="fm-chip" data-blood="A+">A+</button>
+            <button type="button" class="fm-chip" data-blood="A-">A−</button>
+            <button type="button" class="fm-chip" data-blood="B+">B+</button>
+            <button type="button" class="fm-chip" data-blood="B-">B−</button>
+            <button type="button" class="fm-chip" data-blood="0+">0+</button>
+            <button type="button" class="fm-chip" data-blood="0-">0−</button>
+            <button type="button" class="fm-chip" data-blood="AB+">AB+</button>
+            <button type="button" class="fm-chip" data-blood="AB-">AB−</button>
+            <button type="button" class="fm-chip" data-blood="?">Bilmiyorum</button>
+          </div>
+        </div>
+
+        <div class="sheet-actions">
+          <button type="button" class="btn btn-secondary" id="familyCancelBtn">İptal</button>
+          <button type="submit" class="btn btn-primary" id="familySaveBtn">Kaydet</button>
+        </div>
+
+        <button type="button" class="btn-danger" id="familyDeleteBtn" style="display:none">Bu Üyeyi Sil</button>
+      </form>
+    </div>
+  </div>
+
   <script>
     const STORAGE_KEY = 'onemliGunler.v1';
 
@@ -2055,7 +2443,7 @@
     let detailId = null;
     let selectedCategory = 'diger';
     let activeTab = 'upcoming';
-    let currentView = 'days'; // 'days' | 'asistan' | 'profile' | 'premium'
+    let currentView = 'days'; // 'days' | 'asistan' | 'family' | 'profile' | 'premium'
 
     function loadEvents() {
       try { const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : []; }
@@ -2554,11 +2942,12 @@
       if (detail.classList.contains('open')) { closeDetail(); return; }
     });
 
-    // ─── View switching (Günler / Asistan / Profilim / Premium) ───
+    // ─── View switching (Ana Sayfa / Asistan / Aile Ağacı / Profilim / Premium) ───
     const daysView = document.getElementById('daysView');
     const premiumView = document.getElementById('premiumView');
     const profileView = document.getElementById('profileView');
     const asistanView = document.getElementById('asistanView');
+    const familyView = document.getElementById('familyView');
     const appHeader = document.getElementById('appHeader');
     const addBtn = document.getElementById('addBtn');
     const navItems = document.querySelectorAll('.nav-item');
@@ -2641,6 +3030,7 @@
       premiumView.classList.toggle('active', view === 'premium');
       profileView.classList.toggle('active', view === 'profile');
       asistanView.classList.toggle('active', view === 'asistan');
+      familyView.classList.toggle('active', view === 'family');
 
       // + Yeni Gün pill only on days view
       addBtn.style.visibility = view === 'days' ? 'visible' : 'hidden';
@@ -2658,6 +3048,10 @@
       // Refresh asistan history when entering asistan
       if (view === 'asistan') {
         asistanRenderHistory();
+      }
+      // Refresh family render when entering
+      if (view === 'family') {
+        renderFamily();
       }
 
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -2860,9 +3254,300 @@
       }
     });
 
-    // Init
+    // ─── Family (Aile Ağacı) ───
+    const FAMILY_KEY = 'kalender.aile.v1';
+    const familyBody = document.getElementById('familyBody');
+    const familyMeta = document.getElementById('familyMeta');
+    const familySheet = document.getElementById('familySheet');
+    const familyForm = document.getElementById('familyForm');
+    const familySheetTitle = document.getElementById('familySheetTitle');
+    const familyNameInput = document.getElementById('familyNameInput');
+    const familyBirthInput = document.getElementById('familyBirthInput');
+    const familyRelationChips = document.getElementById('familyRelationChips');
+    const familyBloodChips = document.getElementById('familyBloodChips');
+    const familyPhotoArea = document.getElementById('familyPhotoArea');
+    const familyPhotoInput = document.getElementById('familyPhotoInput');
+    const familyCancelBtn = document.getElementById('familyCancelBtn');
+    const familyDeleteBtn = document.getElementById('familyDeleteBtn');
+
+    let familyMembers = [];
+    let familyEditingId = null;
+    let familyPhotoData = null;
+
+    const REL_LABEL = {
+      anne: 'Anne', baba: 'Baba',
+      kardes: 'Kardeş', cocuk: 'Çocuk'
+    };
+
+    const TR_MONTHS_SHORT = ['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];
+    function familyFormatBirth(dateStr) {
+      if (!dateStr) return '';
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return '';
+      return `${d.getDate()} ${TR_MONTHS_SHORT[d.getMonth()]}`;
+    }
+
+    function familyLoad() {
+      try {
+        const raw = localStorage.getItem(FAMILY_KEY);
+        familyMembers = raw ? JSON.parse(raw) : [];
+      } catch { familyMembers = []; }
+    }
+
+    function familySave() {
+      try { localStorage.setItem(FAMILY_KEY, JSON.stringify(familyMembers)); } catch {}
+    }
+
+    function familyInitial(name) {
+      return (name || '?').trim().charAt(0).toUpperCase();
+    }
+
+    function familyAvatarHtml(m) {
+      if (m.photo) {
+        return `<div class="fm-av rel-${m.relation}" style="background-image:url('${m.photo}');background-size:cover;background-position:center"></div>`;
+      }
+      return `<div class="fm-av rel-${m.relation}">${familyInitial(m.name)}</div>`;
+    }
+
+    function familyMetaHtml(m) {
+      const parts = [];
+      const birth = familyFormatBirth(m.birthday);
+      if (birth) parts.push(birth);
+      parts.push(REL_LABEL[m.relation] || '');
+      const meta = parts.filter(Boolean).join(' · ');
+      const blood = (m.blood && m.blood !== '?') ? `<span class="blood">${m.blood}</span>` : '';
+      return `${meta}${blood}`;
+    }
+
+    function familySection(label, members, addRel, addLabel) {
+      let html = `<div class="fm-section-label">${label}${members.length ? ' (' + members.length + ')' : ''}</div>`;
+      members.forEach(m => {
+        html += `<button class="fm-card" data-fm-id="${m.id}" type="button">
+          ${familyAvatarHtml(m)}
+          <div>
+            <div class="fm-name">${escapeHtml(m.name)}</div>
+            <div class="fm-meta">${familyMetaHtml(m)}</div>
+          </div>
+          <div class="fm-arrow">↗</div>
+        </button>`;
+      });
+      html += `<button class="fm-add-card" data-fm-add="${addRel}" type="button">
+        <div class="fm-add-icon">+</div>
+        <div class="fm-add-text">${addLabel}</div>
+      </button>`;
+      return html;
+    }
+
+    function renderFamily() {
+      const total = familyMembers.length;
+      familyMeta.textContent = total === 0
+        ? 'HENÜZ ÜYE YOK'
+        : `${total} ÜYE · ÇEKİRDEK AİLE`;
+
+      if (total === 0) {
+        familyBody.innerHTML = `
+          <div class="fm-empty">
+            <div class="fm-empty-glyph"><svg viewBox="0 0 100 100"><path d="M50 14L56 44L86 50L56 56L50 86L44 56L14 50L44 44Z"/></svg></div>
+            <div class="fm-empty-title">Aile ağacın bekliyor</div>
+            <div class="fm-empty-desc">Anne, baba, kardeşler ve çocuklarını ekle. Doğum günleri Kalender'de hatırlatılsın.</div>
+            <button class="add-pill-btn" data-fm-add="" type="button"><span class="plus">+</span><span>İlk Üyeyi Ekle</span></button>
+          </div>
+        `;
+        return;
+      }
+
+      const ebeveynler = familyMembers.filter(m => m.relation === 'anne' || m.relation === 'baba')
+        .sort((a, b) => a.relation === 'anne' ? -1 : 1);
+      const kardesler = familyMembers.filter(m => m.relation === 'kardes');
+      const cocuklar  = familyMembers.filter(m => m.relation === 'cocuk');
+
+      let html = '';
+      // Ebeveynler always shown — with appropriate add prompts
+      const hasAnne = ebeveynler.some(m => m.relation === 'anne');
+      const hasBaba = ebeveynler.some(m => m.relation === 'baba');
+
+      html += `<div class="fm-section-label">EBEVEYNLER</div>`;
+      ebeveynler.forEach(m => {
+        html += `<button class="fm-card" data-fm-id="${m.id}" type="button">
+          ${familyAvatarHtml(m)}
+          <div>
+            <div class="fm-name">${escapeHtml(m.name)}</div>
+            <div class="fm-meta">${familyMetaHtml(m)}</div>
+          </div>
+          <div class="fm-arrow">↗</div>
+        </button>`;
+      });
+      if (!hasAnne) {
+        html += `<button class="fm-add-card" data-fm-add="anne" type="button">
+          <div class="fm-add-icon">+</div>
+          <div class="fm-add-text">Anne ekle</div>
+        </button>`;
+      }
+      if (!hasBaba) {
+        html += `<button class="fm-add-card" data-fm-add="baba" type="button">
+          <div class="fm-add-icon">+</div>
+          <div class="fm-add-text">Baba ekle</div>
+        </button>`;
+      }
+
+      html += familySection('KARDEŞLER', kardesler, 'kardes', 'Kardeş ekle');
+      html += familySection('ÇOCUKLAR', cocuklar, 'cocuk', 'Çocuk ekle');
+
+      familyBody.innerHTML = html;
+    }
+
+    // Form sheet open/close
+    function openFamilySheet(memberOrRel) {
+      familyForm.reset();
+      familyPhotoArea.style.backgroundImage = '';
+      familyPhotoArea.classList.remove('has-image');
+      familyPhotoArea.textContent = '+';
+      familyPhotoData = null;
+      familyEditingId = null;
+      familyDeleteBtn.style.display = 'none';
+      // Clear all chip selections
+      familyRelationChips.querySelectorAll('.fm-chip').forEach(c => c.classList.remove('active'));
+      familyBloodChips.querySelectorAll('.fm-chip').forEach(c => c.classList.remove('active'));
+
+      if (memberOrRel && typeof memberOrRel === 'object') {
+        // Editing existing
+        const m = memberOrRel;
+        familyEditingId = m.id;
+        familySheetTitle.textContent = 'Üyeyi Düzenle';
+        familyNameInput.value = m.name || '';
+        familyBirthInput.value = m.birthday || '';
+        if (m.relation) {
+          const rc = familyRelationChips.querySelector(`[data-rel="${m.relation}"]`);
+          if (rc) rc.classList.add('active');
+        }
+        if (m.blood) {
+          const bc = familyBloodChips.querySelector(`[data-blood="${m.blood}"]`);
+          if (bc) bc.classList.add('active');
+        }
+        if (m.photo) {
+          familyPhotoArea.style.backgroundImage = `url('${m.photo}')`;
+          familyPhotoArea.classList.add('has-image');
+          familyPhotoArea.textContent = '';
+          familyPhotoData = m.photo;
+        }
+        familyDeleteBtn.style.display = '';
+      } else {
+        familySheetTitle.textContent = 'Üye Ekle';
+        if (typeof memberOrRel === 'string' && memberOrRel) {
+          const rc = familyRelationChips.querySelector(`[data-rel="${memberOrRel}"]`);
+          if (rc) rc.classList.add('active');
+        }
+      }
+
+      requestAnimationFrame(() => {
+        familySheet.classList.add('open');
+        document.body.classList.add('locked');
+      });
+    }
+
+    function closeFamilySheet() {
+      familySheet.classList.remove('open');
+      if (!sheet.classList.contains('open')) document.body.classList.remove('locked');
+    }
+
+    // Single-select chip groups
+    familyRelationChips.addEventListener('click', e => {
+      const chip = e.target.closest('.fm-chip');
+      if (!chip) return;
+      familyRelationChips.querySelectorAll('.fm-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+    });
+
+    familyBloodChips.addEventListener('click', e => {
+      const chip = e.target.closest('.fm-chip');
+      if (!chip) return;
+      familyBloodChips.querySelectorAll('.fm-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+    });
+
+    // Photo upload
+    familyPhotoArea.addEventListener('click', () => familyPhotoInput.click());
+    familyPhotoInput.addEventListener('change', e => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = ev => {
+        familyPhotoData = ev.target.result;
+        familyPhotoArea.style.backgroundImage = `url('${familyPhotoData}')`;
+        familyPhotoArea.classList.add('has-image');
+        familyPhotoArea.textContent = '';
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // Form submit
+    familyForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const name = familyNameInput.value.trim();
+      const relChip = familyRelationChips.querySelector('.fm-chip.active');
+      const bloodChip = familyBloodChips.querySelector('.fm-chip.active');
+      if (!name) { familyNameInput.focus(); return; }
+      if (!relChip) { alert('Lütfen yakınlık seç.'); return; }
+
+      const payload = {
+        id: familyEditingId || ('fm-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8)),
+        name,
+        relation: relChip.dataset.rel,
+        birthday: familyBirthInput.value || null,
+        blood: bloodChip ? bloodChip.dataset.blood : null,
+        photo: familyPhotoData || null,
+        createdAt: familyEditingId ? (familyMembers.find(m => m.id === familyEditingId)?.createdAt || Date.now()) : Date.now()
+      };
+
+      if (familyEditingId) {
+        familyMembers = familyMembers.map(m => m.id === familyEditingId ? payload : m);
+      } else {
+        familyMembers.push(payload);
+      }
+      familySave();
+      renderFamily();
+      closeFamilySheet();
+    });
+
+    familyCancelBtn.addEventListener('click', closeFamilySheet);
+
+    familyDeleteBtn.addEventListener('click', () => {
+      if (!familyEditingId) return;
+      const m = familyMembers.find(x => x.id === familyEditingId);
+      if (!m) return;
+      if (!confirm(`${m.name} ailenden silinsin mi?`)) return;
+      familyMembers = familyMembers.filter(x => x.id !== familyEditingId);
+      familySave();
+      renderFamily();
+      closeFamilySheet();
+    });
+
+    // Family view click delegation
+    familyView.addEventListener('click', e => {
+      const addBtnEl = e.target.closest('[data-fm-add]');
+      const card = e.target.closest('[data-fm-id]');
+      if (addBtnEl) {
+        const rel = addBtnEl.dataset.fmAdd;
+        openFamilySheet(rel || null);
+        return;
+      }
+      if (card) {
+        const m = familyMembers.find(x => x.id === card.dataset.fmId);
+        if (m) openFamilySheet(m);
+      }
+    });
+
+    // Profile → Premium button
+    document.querySelector('.profile-premium-btn')?.addEventListener('click', () => {
+      switchView('premium');
+    });
+
+    // Init asistan
     asistanLoad();
     asistanRenderHistory();
+
+    // Init family
+    familyLoad();
 
     let lastDay = todayDate().getTime();
     setInterval(() => {
