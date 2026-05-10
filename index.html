@@ -39,16 +39,25 @@
       --cat-dogum: #F6BF8E;
       --cat-yildonumu: #EDA0A0;
       --cat-kutlama: #F1D17A;
-      --cat-kandiller: #E5C796;
       --cat-bayram: #B5BCD8;
+      --cat-meditasyon: #BBA9DD;
       --cat-konser: #BFA1E5;
       --cat-standup: #F4B576;
       --cat-tiyatro: #B596A8;
+      --cat-sinema: #A98BB8;
+      --cat-mac: #A8D5A2;
       --cat-seyahat: #A7C9D6;
       --cat-egitim: #95B0D0;
       --cat-mezuniyet: #B5CC9C;
       --cat-toplanti: #C7BEE2;
       --cat-doktor: #9FCFC9;
+      --cat-saglik: #BFD9E6;
+      --cat-fizik: #ABDBC8;
+      --cat-masaj: #E2C7D6;
+      --cat-spor: #E68F89;
+      --cat-evde-spor: #EDB29A;
+      --cat-kosu: #C2DCA0;
+      --cat-alisveris: #F4BFB8;
       --cat-veteriner: #D6B894;
       --cat-hediye: #F0AFA0;
       --cat-diger: #DDD2BE;
@@ -398,11 +407,38 @@
     .badge.cat-kutlama {
       background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.75), transparent 65%), var(--cat-kutlama);
     }
-    .badge.cat-kandiller {
-      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.75), transparent 65%), var(--cat-kandiller);
-    }
     .badge.cat-bayram {
       background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.75), transparent 65%), var(--cat-bayram);
+    }
+    .badge.cat-meditasyon {
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.75), transparent 65%), var(--cat-meditasyon);
+    }
+    .badge.cat-sinema {
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.75), transparent 65%), var(--cat-sinema);
+    }
+    .badge.cat-mac {
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.75), transparent 65%), var(--cat-mac);
+    }
+    .badge.cat-saglik {
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.75), transparent 65%), var(--cat-saglik);
+    }
+    .badge.cat-fizik {
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.75), transparent 65%), var(--cat-fizik);
+    }
+    .badge.cat-masaj {
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.75), transparent 65%), var(--cat-masaj);
+    }
+    .badge.cat-spor {
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.75), transparent 65%), var(--cat-spor);
+    }
+    .badge.cat-evde-spor {
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.75), transparent 65%), var(--cat-evde-spor);
+    }
+    .badge.cat-kosu {
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.75), transparent 65%), var(--cat-kosu);
+    }
+    .badge.cat-alisveris {
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.75), transparent 65%), var(--cat-alisveris);
     }
     .badge.cat-konser {
       background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.75), transparent 65%), var(--cat-konser);
@@ -2566,23 +2602,28 @@
     const STORAGE_KEY = 'onemliGunler.v1';
 
     const CATEGORIES = {
-      dugun:     { label: 'Düğün',      icon: '💍', cls: 'cat-dugun' },
-      dogum:     { label: 'Doğum Günü', icon: '🎂', cls: 'cat-dogum' },
-      yildonumu: { label: 'Yıldönümü',  icon: '💝', cls: 'cat-yildonumu' },
-      kutlama:   { label: 'Kutlama',    icon: '🎉', cls: 'cat-kutlama' },
-      kandiller: { label: 'Kandiller',  icon: '🕯️', cls: 'cat-kandiller' },
-      bayram:    { label: 'Bayram',     icon: '🌙', cls: 'cat-bayram' },
-      konser:    { label: 'Konser',     icon: '🎵', cls: 'cat-konser' },
-      standup:   { label: 'Stand Up',   icon: '😜', cls: 'cat-standup' },
-      tiyatro:   { label: 'Tiyatro',    icon: '🎭', cls: 'cat-tiyatro' },
-      seyahat:   { label: 'Seyahat',    icon: '✈️', cls: 'cat-seyahat' },
-      egitim:    { label: 'Eğitim',     icon: '📚', cls: 'cat-egitim' },
-      mezuniyet: { label: 'Mezuniyet',  icon: '🎓', cls: 'cat-mezuniyet' },
-      toplanti:  { label: 'Toplantı',   icon: '📅', cls: 'cat-toplanti' },
-      doktor:    { label: 'Doktor',     icon: '🩺', cls: 'cat-doktor' },
-      veteriner: { label: 'Veteriner',  icon: '🐾', cls: 'cat-veteriner' },
-      hediye:    { label: 'Hediye',     icon: '🎁', cls: 'cat-hediye' },
-      diger:     { label: 'Diğer',      icon: '✦',  cls: 'cat-diger' }
+      dugun:       { label: 'Düğün',         icon: '💍', cls: 'cat-dugun' },
+      dogum:       { label: 'Doğum Günü',    icon: '🎂', cls: 'cat-dogum' },
+      konser:      { label: 'Konser',        icon: '🎵', cls: 'cat-konser' },
+      seyahat:     { label: 'Seyahat',       icon: '✈️', cls: 'cat-seyahat' },
+      kutlama:     { label: 'Kutlama',       icon: '🎉', cls: 'cat-kutlama' },
+      yildonumu:   { label: 'Yıldönümü',     icon: '💝', cls: 'cat-yildonumu' },
+      saglik:      { label: 'Sağlık',        icon: '🏥', cls: 'cat-saglik' },
+      spor:        { label: 'Spor',          icon: '💪', cls: 'cat-spor' },
+      alisveris:   { label: 'Alışveriş',     icon: '🛍️', cls: 'cat-alisveris' },
+      sinema:      { label: 'Sinema',        icon: '🎬', cls: 'cat-sinema' },
+      standup:     { label: 'Stand Up',      icon: '😜', cls: 'cat-standup' },
+      tiyatro:     { label: 'Tiyatro',       icon: '🎭', cls: 'cat-tiyatro' },
+      mac:         { label: 'Maç İzleme',    icon: '⚽', cls: 'cat-mac' },
+      bayram:      { label: 'Bayram',        icon: '🌙', cls: 'cat-bayram' },
+      meditasyon:  { label: 'Meditasyon',    icon: '🧘', cls: 'cat-meditasyon' },
+      egitim:      { label: 'Eğitim',        icon: '📚', cls: 'cat-egitim' },
+      toplanti:    { label: 'Toplantı',      icon: '📅', cls: 'cat-toplanti' },
+      doktor:      { label: 'Muayene',       icon: '🩺', cls: 'cat-doktor' },
+      fizik:       { label: 'Fizik Tedavi',  icon: '🦵', cls: 'cat-fizik' },
+      veteriner:   { label: 'Veteriner',     icon: '🐾', cls: 'cat-veteriner' },
+      hediye:      { label: 'Hediye',        icon: '🎁', cls: 'cat-hediye' },
+      diger:       { label: 'Diğer',         icon: '✦',  cls: 'cat-diger' }
     };
 
     const TR_MONTHS_FULL       = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
@@ -3132,22 +3173,27 @@
       }
 
       const parts = [];
-      if (counts.dugun)     parts.push(`${counts.dugun} düğüne katıldın`);
-      if (counts.dogum)     parts.push(`${counts.dogum} doğum günü kutladın`);
-      if (counts.yildonumu) parts.push(`${counts.yildonumu} yıl dönümü yaşadın`);
-      if (counts.kutlama)   parts.push(`${counts.kutlama} kutlama yaptın`);
-      if (counts.kandiller) parts.push(`${counts.kandiller} kandil idrak ettin`);
-      if (counts.bayram)    parts.push(`${counts.bayram} bayram geçirdin`);
-      if (counts.konser)    parts.push(`${counts.konser} konsere gittin`);
-      if (counts.standup)   parts.push(`${counts.standup} stand up izledin`);
-      if (counts.tiyatro)   parts.push(`${counts.tiyatro} tiyatroya gittin`);
-      if (counts.seyahat)   parts.push(`${counts.seyahat} seyahate çıktın`);
-      if (counts.egitim)    parts.push(`${counts.egitim} eğitim etkinliğine katıldın`);
-      if (counts.mezuniyet) parts.push(`${counts.mezuniyet} mezuniyet vardı`);
-      if (counts.toplanti)  parts.push(`${counts.toplanti} toplantın oldu`);
-      if (counts.doktor)    parts.push(`${counts.doktor} doktor randevun vardı`);
-      if (counts.veteriner) parts.push(`${counts.veteriner} veteriner ziyaretin oldu`);
-      if (counts.hediye)    parts.push(`${counts.hediye} hediye verdin/aldın`);
+      if (counts.dugun)        parts.push(`${counts.dugun} düğüne katıldın`);
+      if (counts.dogum)        parts.push(`${counts.dogum} doğum günü kutladın`);
+      if (counts.yildonumu)    parts.push(`${counts.yildonumu} yıl dönümü yaşadın`);
+      if (counts.kutlama)      parts.push(`${counts.kutlama} kutlama yaptın`);
+      if (counts.bayram)       parts.push(`${counts.bayram} bayram geçirdin`);
+      if (counts.meditasyon)   parts.push(`${counts.meditasyon} kez meditasyon yaptın`);
+      if (counts.konser)       parts.push(`${counts.konser} konsere gittin`);
+      if (counts.standup)      parts.push(`${counts.standup} stand up izledin`);
+      if (counts.tiyatro)      parts.push(`${counts.tiyatro} tiyatroya gittin`);
+      if (counts.sinema)       parts.push(`${counts.sinema} kez sinemaya gittin`);
+      if (counts.mac)          parts.push(`${counts.mac} maç izledin`);
+      if (counts.seyahat)      parts.push(`${counts.seyahat} seyahate çıktın`);
+      if (counts.egitim)       parts.push(`${counts.egitim} eğitim etkinliğine katıldın`);
+      if (counts.toplanti)     parts.push(`${counts.toplanti} toplantın oldu`);
+      if (counts.doktor)       parts.push(`${counts.doktor} muayenen vardı`);
+      if (counts.saglik)       parts.push(`${counts.saglik} sağlık ziyaretin oldu`);
+      if (counts.fizik)        parts.push(`${counts.fizik} fizik tedavi seansın oldu`);
+      if (counts.spor)         parts.push(`${counts.spor} kez spor yaptın`);
+      if (counts.alisveris)    parts.push(`${counts.alisveris} alışverişe çıktın`);
+      if (counts.veteriner)    parts.push(`${counts.veteriner} veteriner ziyaretin oldu`);
+      if (counts.hediye)       parts.push(`${counts.hediye} hediye verdin/aldın`);
 
       if (parts.length === 0) {
         return `Bu yıl ${total} özel günün oldu.`;
