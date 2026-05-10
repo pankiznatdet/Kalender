@@ -53,6 +53,7 @@
       --cat-doktor: #9FCFC9;
       --cat-saglik: #BFD9E6;
       --cat-fizik: #ABDBC8;
+      --cat-ilac: #CADCC0;
       --cat-masaj: #E2C7D6;
       --cat-spor: #E68F89;
       --cat-evde-spor: #EDB29A;
@@ -61,6 +62,7 @@
       --cat-veteriner: #D6B894;
       --cat-hediye: #F0AFA0;
       --cat-diger: #DDD2BE;
+      --cat-flag: #DC8B82;
 
       --display: 'Fraunces', Georgia, serif;
       --sans: 'DM Sans', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
@@ -187,20 +189,21 @@
     /* Tabs */
     .tabs {
       display: flex;
-      gap: 6px;
+      gap: 4px;
       padding: 4px;
       background: var(--bg-warm);
       border-radius: 999px;
       margin-bottom: 22px;
-      width: fit-content;
+      width: 100%;
     }
 
     .tab {
+      flex: 1;
       background: none;
       border: none;
-      padding: 10px 18px;
+      padding: 9px 8px;
       font-family: var(--sans);
-      font-size: 0.84rem;
+      font-size: 0.82rem;
       font-weight: 500;
       color: var(--ink-dim);
       cursor: pointer;
@@ -208,7 +211,9 @@
       transition: all 0.2s ease;
       display: flex;
       align-items: center;
-      gap: 8px;
+      justify-content: center;
+      gap: 6px;
+      white-space: nowrap;
     }
 
     .tab:hover { color: var(--ink); }
@@ -218,19 +223,6 @@
       color: var(--ink);
       box-shadow: var(--shadow-sm);
     }
-
-    .tab .count {
-      display: inline-block;
-      padding: 1px 7px;
-      border-radius: 999px;
-      background: var(--rule);
-      font-size: 0.68rem;
-      color: var(--ink-dim);
-      font-weight: 600;
-      font-family: var(--mono);
-    }
-
-    .tab.active .count { background: var(--gold); color: #FFF; }
 
     /* Card list */
     .events { list-style: none; display: flex; flex-direction: column; gap: 12px; }
@@ -425,6 +417,9 @@
     .badge.cat-fizik {
       background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.75), transparent 65%), var(--cat-fizik);
     }
+    .badge.cat-ilac {
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.75), transparent 65%), var(--cat-ilac);
+    }
     .badge.cat-masaj {
       background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.75), transparent 65%), var(--cat-masaj);
     }
@@ -472,6 +467,9 @@
     }
     .badge.cat-diger {
       background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.75), transparent 65%), var(--cat-diger);
+    }
+    .badge.cat-flag {
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.75), transparent 65%), var(--cat-flag);
     }
 
     .event-body { min-width: 0; }
@@ -614,6 +612,105 @@
     }
     .past-events.open { max-height: 8000px; padding-top: 4px; }
     .past-events .event { opacity: 0.62; }
+
+    /* ─── Holidays + Special Days tabs ─── */
+    .holiday-card {
+      display: grid;
+      grid-template-columns: 56px 1fr 24px;
+      gap: 14px;
+      align-items: center;
+      padding: 14px 16px;
+      background: var(--card);
+      backdrop-filter: blur(28px) saturate(160%);
+      -webkit-backdrop-filter: blur(28px) saturate(160%);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      border-radius: 22px;
+      margin-bottom: 10px;
+      box-shadow: var(--shadow-sm);
+      cursor: default;
+    }
+    .holiday-card.past { opacity: 0.55; }
+    .holiday-card.today {
+      border-color: rgba(184, 132, 47, 0.35);
+      box-shadow: 0 1px 2px rgba(184, 132, 47, 0.18), 0 8px 26px rgba(184, 132, 47, 0.22);
+      background: linear-gradient(180deg, rgba(255,253,248,0.95), rgba(252,244,226,0.85));
+    }
+    .holiday-card .badge {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+    }
+    .holiday-card .body { min-width: 0; }
+    .holiday-card .title {
+      font-family: var(--display);
+      font-style: italic;
+      font-weight: 400;
+      font-size: 1rem;
+      color: var(--ink);
+      line-height: 1.2;
+      margin-bottom: 3px;
+    }
+    .holiday-card .meta-row {
+      font-family: var(--sans);
+      font-size: 0.82rem;
+      color: var(--ink-mid);
+    }
+    .holiday-card .countdown {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.14em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+    .holiday-card .countdown.past { color: var(--ink-faint); }
+    .holiday-card .countdown.today-pill {
+      color: var(--bg);
+      background: var(--gold);
+      padding: 2px 8px;
+      border-radius: 999px;
+      display: inline-block;
+      font-weight: 500;
+    }
+    .holiday-card .arrow {
+      color: var(--ink-mid);
+      font-size: 0.95rem;
+      text-align: right;
+    }
+
+    /* Geçti dropdown */
+    .gecti-wrap { margin-top: 14px; }
+    .gecti-toggle {
+      width: 100%;
+      background: transparent;
+      border: none;
+      padding: 14px 4px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.22em;
+      color: var(--ink-faint);
+      text-transform: uppercase;
+      border-top: 1px solid rgba(26,22,18,0.08);
+      transition: color 0.2s ease;
+    }
+    .gecti-toggle:hover, .gecti-toggle:active { color: var(--ink-mid); }
+    .gecti-toggle .chevron {
+      transition: transform 0.25s ease;
+      font-size: 0.9rem;
+      color: var(--ink-faint);
+    }
+    .gecti-wrap.open .gecti-toggle .chevron { transform: rotate(180deg); }
+    .gecti-list {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease;
+    }
+    .gecti-wrap.open .gecti-list { max-height: 2400px; }
+    .gecti-inner { padding-top: 6px; }
 
     /* Detail view */
     .detail {
@@ -2236,9 +2333,10 @@
     <div class="days-view" id="daysView">
       <section class="display" id="display"></section>
 
-      <nav class="tabs" id="tabs" hidden>
+      <nav class="tabs" id="tabs">
         <button class="tab active" data-tab="upcoming" type="button">Yaklaşan</button>
-        <button class="tab" data-tab="favorites" type="button">Favoriler<span class="count" id="favCount">0</span></button>
+        <button class="tab" data-tab="holidays" type="button">Resmi Tatiller</button>
+        <button class="tab" data-tab="special" type="button">Önemli Günler</button>
       </nav>
 
       <main id="content"></main>
@@ -2621,6 +2719,7 @@
       toplanti:    { label: 'Toplantı',      icon: '📅', cls: 'cat-toplanti' },
       doktor:      { label: 'Muayene',       icon: '🩺', cls: 'cat-doktor' },
       fizik:       { label: 'Fizik Tedavi',  icon: '🦵', cls: 'cat-fizik' },
+      ilac:        { label: 'İlaç & Vitamin',icon: '💊', cls: 'cat-ilac' },
       veteriner:   { label: 'Veteriner',     icon: '🐾', cls: 'cat-veteriner' },
       hediye:      { label: 'Hediye',        icon: '🎁', cls: 'cat-hediye' },
       diger:       { label: 'Diğer',         icon: '✦',  cls: 'cat-diger' }
@@ -2669,6 +2768,32 @@
       }
     };
 
+    // ─── Resmi Tatiller (2026) ───
+    const HOLIDAYS_2026 = [
+      { date: '2026-01-01', title: 'Yılbaşı', emoji: '🎊', cls: 'cat-kutlama' },
+      { date: '2026-03-20', endDate: '2026-03-22', title: 'Ramazan Bayramı', emoji: '🌙', cls: 'cat-bayram', durationLabel: '3 gün' },
+      { date: '2026-04-23', title: 'Ulusal Egemenlik ve Çocuk Bayramı', emoji: '🇹🇷', cls: 'cat-flag' },
+      { date: '2026-05-01', title: 'Emek ve Dayanışma Günü', emoji: '🌹', cls: 'cat-yildonumu' },
+      { date: '2026-05-19', title: 'Atatürk\'ü Anma, Gençlik ve Spor Bayramı', emoji: '🇹🇷', cls: 'cat-flag' },
+      { date: '2026-05-26', endDate: '2026-05-29', title: 'Kurban Bayramı', emoji: '🌙', cls: 'cat-bayram', durationLabel: '4 gün' },
+      { date: '2026-07-15', title: 'Demokrasi ve Milli Birlik Günü', emoji: '🇹🇷', cls: 'cat-flag' },
+      { date: '2026-08-30', title: 'Zafer Bayramı', emoji: '🇹🇷', cls: 'cat-flag' },
+      { date: '2026-10-29', title: 'Cumhuriyet Bayramı', emoji: '🇹🇷', cls: 'cat-flag' }
+    ];
+
+    // ─── Önemli Günler (2026) ───
+    const SPECIAL_DAYS_2026 = [
+      { date: '2026-02-14', title: 'Sevgililer Günü', emoji: '💌', cls: 'cat-yildonumu' },
+      { date: '2026-03-08', title: 'Dünya Kadınlar Günü', emoji: '💜', cls: 'cat-konser' },
+      { date: '2026-03-18', title: 'Çanakkale Şehitler Günü', emoji: '🌹', cls: 'cat-tiyatro' },
+      { date: '2026-05-10', title: 'Anneler Günü', emoji: '🌸', cls: 'cat-dugun' },
+      { date: '2026-06-14', title: 'Türkiye - ABD · Dünya Kupası', subtitle: 'Grup Aşaması', emoji: '⚽', cls: 'cat-mac' },
+      { date: '2026-06-19', title: 'Türkiye - Brezilya · Dünya Kupası', subtitle: 'Grup Aşaması', emoji: '⚽', cls: 'cat-mac' },
+      { date: '2026-06-21', title: 'Babalar Günü', emoji: '👔', cls: 'cat-seyahat' },
+      { date: '2026-06-24', title: 'Türkiye - Japonya · Dünya Kupası', subtitle: 'Grup Aşaması', emoji: '⚽', cls: 'cat-mac' },
+      { date: '2026-11-24', title: 'Öğretmenler Günü', emoji: '📚', cls: 'cat-egitim' }
+    ];
+
     function todayDate() { const d = new Date(); d.setHours(0, 0, 0, 0); return d; }
     function parseDate(s) { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); }
 
@@ -2712,28 +2837,23 @@
     const content = document.getElementById('content');
     const display = document.getElementById('display');
     const tabsNav = document.getElementById('tabs');
-    const favCountEl = document.getElementById('favCount');
 
     function render() {
+      // Resmi Tatiller / Önemli Günler tabs route to dedicated view
+      if (activeTab === 'holidays' || activeTab === 'special') {
+        renderHolidaysView();
+        return;
+      }
+
       const today = todayDate();
       const decorated = events.map(ev => ({ ev, occursAt: nextOccurrence(ev) }));
 
-      const favTotal = events.filter(e => e.favorite).length;
-      favCountEl.textContent = favTotal;
-      tabsNav.hidden = events.length === 0;
-
-      const sourceList = activeTab === 'favorites'
-        ? decorated.filter(x => x.ev.favorite)
-        : decorated;
-
-      const upcoming = sourceList
+      const upcoming = decorated
         .filter(x => x.occursAt >= today || x.ev.recurring)
         .sort((a, b) => a.occursAt - b.occursAt);
 
-      const past = activeTab === 'upcoming'
-        ? sourceList.filter(x => !x.ev.recurring && x.occursAt < today)
-                    .sort((a, b) => b.occursAt - a.occursAt)
-        : [];
+      const past = decorated.filter(x => !x.ev.recurring && x.occursAt < today)
+        .sort((a, b) => b.occursAt - a.occursAt);
 
       renderDisplay(upcoming, past);
 
@@ -2746,16 +2866,6 @@
             <button class="cta" id="emptyAdd">İlk gününüzü ekleyin</button>
           </div>`;
         document.getElementById('emptyAdd').addEventListener('click', () => openSheet());
-        return;
-      }
-
-      if (activeTab === 'favorites' && upcoming.length === 0) {
-        content.innerHTML = `
-          <div class="empty anim" style="padding-top:50px">
-            <div class="empty-glyph">★</div>
-            <h2>Henüz favori yok</h2>
-            <p>Bir günün üstüne sola çekin ya da düzenlerken favoriye ekleyin.</p>
-          </div>`;
         return;
       }
 
@@ -2787,16 +2897,119 @@
       });
     }
 
+    // ─── Holidays + Special Days renderer ───
+    function renderHolidaysView() {
+      const items = activeTab === 'holidays' ? HOLIDAYS_2026 : SPECIAL_DAYS_2026;
+      const listTitle = activeTab === 'holidays' ? 'Resmi tatiller' : 'Önemli günler';
+      const itemNoun = activeTab === 'holidays' ? 'tatil' : 'gün';
+      const today = todayDate();
+
+      const past = [], todayItems = [], upcoming = [];
+
+      items.forEach(h => {
+        const start = parseDate(h.date);
+        const end = h.endDate ? parseDate(h.endDate) : start;
+        if (today >= start && today <= end) {
+          todayItems.push({ ...h, _bucket: 'today', _days: 0 });
+        } else if (today > end) {
+          past.push({ ...h, _bucket: 'past', _days: -daysUntil(end) });
+        } else {
+          upcoming.push({ ...h, _bucket: 'upcoming', _days: daysUntil(start) });
+        }
+      });
+
+      upcoming.sort((a, b) => a._days - b._days);
+      past.sort((a, b) => a._days - b._days);
+
+      // Display title + meta
+      let title = `${listTitle}, <span class="it">2026.</span>`;
+      let meta;
+      if (todayItems.length) {
+        meta = `BUGÜN ${todayItems[0].title.toLocaleUpperCase('tr-TR')}`;
+      } else if (activeTab === 'holidays') {
+        const bayramCount = HOLIDAYS_2026.filter(h => h.title.includes('Bayram') && h.endDate).length;
+        meta = `${items.length} TATİL · ${bayramCount} BAYRAM · TÜRKİYE`;
+      } else {
+        meta = `${items.length} ÖZEL GÜN · 2026`;
+      }
+      display.innerHTML = `
+        <h1 class="anim">${title}</h1>
+        <div class="meta anim" style="animation-delay: 0.08s">${meta}</div>
+      `;
+
+      // Build content
+      let html = '';
+      todayItems.forEach(h => { html += renderHolidayCard(h); });
+      upcoming.forEach(h => { html += renderHolidayCard(h); });
+
+      if (past.length > 0) {
+        html += `
+          <div class="gecti-wrap" id="gectiWrap">
+            <button class="gecti-toggle" id="gectiToggle" type="button">
+              <span>Geçti · ${past.length} ${itemNoun}</span>
+              <span class="chevron">▾</span>
+            </button>
+            <div class="gecti-list">
+              <div class="gecti-inner">
+                ${past.map(h => renderHolidayCard(h)).join('')}
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      content.innerHTML = html;
+
+      const toggle = document.getElementById('gectiToggle');
+      if (toggle) {
+        toggle.addEventListener('click', () => {
+          document.getElementById('gectiWrap').classList.toggle('open');
+        });
+      }
+    }
+
+    function renderHolidayCard(h) {
+      const start = parseDate(h.date);
+      const isMultiDay = !!h.endDate;
+      let dateText;
+      if (isMultiDay) {
+        const end = parseDate(h.endDate);
+        dateText = `${start.getDate()}–${end.getDate()} ${TR_MONTHS_FULL[start.getMonth()]} · ${h.durationLabel || ''}`;
+      } else {
+        dateText = `${start.getDate()} ${TR_MONTHS_FULL[start.getMonth()]} · ${TR_DAYS[start.getDay()]}`;
+      }
+      if (h.subtitle) dateText += ` · ${h.subtitle}`;
+
+      let countdownHtml = '', cardClass = 'holiday-card';
+      if (h._bucket === 'today') {
+        countdownHtml = `<div class="countdown today-pill">BUGÜN</div>`;
+        cardClass += ' today';
+      } else if (h._bucket === 'past') {
+        countdownHtml = `<div class="countdown past">${h._days} GÜN ÖNCE</div>`;
+        cardClass += ' past';
+      } else {
+        countdownHtml = `<div class="countdown">${h._days} GÜN KALDI</div>`;
+      }
+
+      return `
+        <div class="${cardClass}">
+          <div class="badge ${h.cls}">${h.emoji}</div>
+          <div class="body">
+            <div class="title">${escapeHtml(h.title)}</div>
+            <div class="meta-row">${dateText}</div>
+            ${countdownHtml}
+          </div>
+          <div class="arrow">↗</div>
+        </div>
+      `;
+    }
+
     function renderDisplay(upcoming, past) {
       let title, meta;
 
       if (events.length === 0) {
         title = `<span class="it">Önemli günler</span> bekliyor.`;
         meta = '';
-      } else if (activeTab === 'favorites') {
-        const n = events.filter(e => e.favorite).length;
-        title = n > 0 ? `<span class="it">Favori</span> günleriniz` : `Henüz <span class="it">favori</span> yok`;
-        meta = n > 0 ? `${n} GÜN · KAYITLI` : '';
       } else if (upcoming.length > 0) {
         const next = upcoming[0];
         const d = daysUntil(next.occursAt);
@@ -3190,6 +3403,7 @@
       if (counts.doktor)       parts.push(`${counts.doktor} muayenen vardı`);
       if (counts.saglik)       parts.push(`${counts.saglik} sağlık ziyaretin oldu`);
       if (counts.fizik)        parts.push(`${counts.fizik} fizik tedavi seansın oldu`);
+      if (counts.ilac)         parts.push(`${counts.ilac} ilaç/vitamin hatırlatması yaptın`);
       if (counts.spor)         parts.push(`${counts.spor} kez spor yaptın`);
       if (counts.alisveris)    parts.push(`${counts.alisveris} alışverişe çıktın`);
       if (counts.veteriner)    parts.push(`${counts.veteriner} veteriner ziyaretin oldu`);
