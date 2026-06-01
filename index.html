@@ -106,15 +106,24 @@
     }
 
     .brand {
-      font-family: var(--display);
-      font-style: italic;
-      font-weight: 400;
-      font-size: 1.05rem;
-      letter-spacing: -0.01em;
-      color: var(--ink-mid);
+      font-family: var(--sans);
+      font-style: normal;
+      font-weight: 600;
+      font-size: 1.4rem;
+      letter-spacing: -0.025em;
+      color: var(--ink);
     }
 
-    .brand .glyph { color: var(--ink); margin-right: 4px; }
+    .brand .glyph {
+      color: var(--ink);
+      margin-right: 6px;
+      display: inline-flex;
+      align-items: center;
+    }
+    .brand .glyph .km {
+      width: 1.15em;
+      height: 1.15em;
+    }
 
     .add-btn {
       position: fixed;
@@ -172,7 +181,7 @@
     }
 
     .display h1 .it {
-      font-style: italic;
+      font-style: normal;
       font-weight: 350;
       display: block;
     }
@@ -286,7 +295,7 @@
 
     .hero-num {
       font-family: var(--display);
-      font-style: italic;
+      font-style: normal;
       font-weight: 350;
       font-size: 4.5rem;
       line-height: 0.85;
@@ -328,7 +337,7 @@
 
     .hero-info-title {
       font-family: var(--display);
-      font-style: italic;
+      font-style: normal;
       font-weight: 400;
       font-size: 1.05rem;
       line-height: 1.2;
@@ -483,7 +492,7 @@
 
     .event-title {
       font-family: var(--display);
-      font-style: italic;
+      font-style: normal;
       font-weight: 400;
       font-size: 1.08rem;
       line-height: 1.2;
@@ -535,7 +544,7 @@
 
     .empty-glyph {
       font-family: var(--display);
-      font-style: italic;
+      font-style: normal;
       font-size: 4rem;
       color: var(--ink);
       margin-bottom: 18px;
@@ -545,7 +554,7 @@
     .empty h2 {
       font-family: var(--display);
       font-weight: 400;
-      font-style: italic;
+      font-style: normal;
       font-size: 1.45rem;
       margin-bottom: 12px;
       letter-spacing: -0.01em;
@@ -643,7 +652,7 @@
     .holiday-card .body { min-width: 0; }
     .holiday-card .title {
       font-family: var(--display);
-      font-style: italic;
+      font-style: normal;
       font-weight: 400;
       font-size: 1rem;
       color: var(--ink);
@@ -831,7 +840,7 @@
 
     .detail-number {
       font-family: var(--display);
-      font-style: italic;
+      font-style: normal;
       font-weight: 350;
       font-size: clamp(6rem, 28vw, 9rem);
       line-height: 0.85;
@@ -874,7 +883,7 @@
 
     .detail-title {
       font-family: var(--display);
-      font-style: italic;
+      font-style: normal;
       font-weight: 400;
       font-size: clamp(1.55rem, 6vw, 1.95rem);
       letter-spacing: -0.01em;
@@ -991,7 +1000,7 @@
     .sheet h2 {
       font-family: var(--display);
       font-weight: 400;
-      font-style: italic;
+      font-style: normal;
       font-size: 1.6rem;
       margin-bottom: 26px;
       letter-spacing: -0.01em;
@@ -1198,7 +1207,7 @@
       display: grid;
       place-items: center;
       font-family: var(--display);
-      font-style: italic;
+      font-style: normal;
       font-weight: 400;
       font-size: 1.5rem;
       color: var(--ink);
@@ -1210,7 +1219,7 @@
 
     .profile-name {
       font-family: var(--display);
-      font-style: italic;
+      font-style: normal;
       font-weight: 400;
       font-size: 1.2rem;
       letter-spacing: -0.01em;
@@ -1282,7 +1291,7 @@
 
     .wrapped-title {
       font-family: var(--display);
-      font-style: italic;
+      font-style: normal;
       font-weight: 400;
       font-size: 1.15rem;
       color: var(--ink);
@@ -1415,7 +1424,7 @@
 
     .asistan-conv-title {
       font-family: var(--display);
-      font-style: italic;
+      font-style: normal;
       font-weight: 400;
       font-size: 1.05rem;
       color: var(--ink-mid);
@@ -1494,7 +1503,7 @@
     .asistan-chip-text {
       flex: 1;
       font-family: var(--display);
-      font-style: italic;
+      font-style: normal;
       font-weight: 400;
       font-size: 0.98rem;
       color: var(--ink);
@@ -1531,7 +1540,7 @@
     .asistan-history-body { flex: 1; min-width: 0; }
     .asistan-history-title {
       font-family: var(--display);
-      font-style: italic;
+      font-style: normal;
       font-weight: 400;
       font-size: 0.98rem;
       color: var(--ink);
@@ -1691,7 +1700,7 @@
       display: grid;
       place-items: center;
       font-family: var(--display);
-      font-style: italic;
+      font-style: normal;
       font-size: 1.25rem;
       color: var(--ink);
       border: 1px solid rgba(255,255,255,0.5);
@@ -1713,7 +1722,7 @@
 
     .fm-name {
       font-family: var(--display);
-      font-style: italic;
+      font-style: normal;
       font-size: 1rem;
       line-height: 1.2;
       color: var(--ink);
@@ -1768,7 +1777,7 @@
     }
     .fm-add-text {
       font-family: var(--display);
-      font-style: italic;
+      font-style: normal;
       color: var(--gold);
       font-size: 0.96rem;
     }
@@ -1788,7 +1797,7 @@
     .fm-empty-glyph svg { width: 1em; height: 1em; fill: currentColor; }
     .fm-empty-title {
       font-family: var(--display);
-      font-style: italic;
+      font-style: normal;
       font-weight: 400;
       font-size: 1.5rem;
       color: var(--ink);
@@ -1934,7 +1943,7 @@
     .profile-premium-body { flex: 1; min-width: 0; position: relative; z-index: 1; }
     .profile-premium-title {
       font-family: var(--display);
-      font-style: italic;
+      font-style: normal;
       font-weight: 400;
       font-size: 1.05rem;
       color: var(--ink);
@@ -2193,7 +2202,7 @@
     }
     .pr-divider-label {
       font-family: var(--display);
-      font-style: italic;
+      font-style: normal;
       font-weight: 400;
       font-size: 0.92rem;
       color: var(--ink-mid);
@@ -2275,7 +2284,7 @@
 
     .spend-amount {
       font-family: var(--display);
-      font-style: italic;
+      font-style: normal;
       font-weight: 400;
       font-size: 1.85rem;
       letter-spacing: -0.01em;
@@ -2787,10 +2796,10 @@
       { date: '2026-03-08', title: 'Dünya Kadınlar Günü', emoji: '💜', cls: 'cat-konser' },
       { date: '2026-03-18', title: 'Çanakkale Şehitler Günü', emoji: '🌹', cls: 'cat-tiyatro' },
       { date: '2026-05-10', title: 'Anneler Günü', emoji: '🌸', cls: 'cat-dugun' },
-      { date: '2026-06-14', title: 'Türkiye - ABD · Dünya Kupası', subtitle: 'Grup Aşaması', emoji: '⚽', cls: 'cat-mac' },
-      { date: '2026-06-19', title: 'Türkiye - Brezilya · Dünya Kupası', subtitle: 'Grup Aşaması', emoji: '⚽', cls: 'cat-mac' },
+      { date: '2026-06-14', title: 'Avustralya - Türkiye', subtitle: '07.00 TSİ · D Grubu', emoji: '⚽', cls: 'cat-mac' },
+      { date: '2026-06-19', title: 'Türkiye - Paraguay', subtitle: '06.00 TSİ · D Grubu', emoji: '⚽', cls: 'cat-mac' },
       { date: '2026-06-21', title: 'Babalar Günü', emoji: '👔', cls: 'cat-seyahat' },
-      { date: '2026-06-24', title: 'Türkiye - Japonya · Dünya Kupası', subtitle: 'Grup Aşaması', emoji: '⚽', cls: 'cat-mac' },
+      { date: '2026-06-25', title: 'Türkiye - ABD', subtitle: '05.00 TSİ · D Grubu', emoji: '⚽', cls: 'cat-mac' },
       { date: '2026-11-24', title: 'Öğretmenler Günü', emoji: '📚', cls: 'cat-egitim' }
     ];
 
@@ -3008,8 +3017,9 @@
       let title, meta;
 
       if (events.length === 0) {
-        title = `<span class="it">Önemli günler</span> bekliyor.`;
-        meta = '';
+        // Empty state — display title gizli; content alanındaki empty state yeterli
+        display.innerHTML = '';
+        return;
       } else if (upcoming.length > 0) {
         const next = upcoming[0];
         const d = daysUntil(next.occursAt);
