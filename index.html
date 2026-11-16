@@ -309,6 +309,7 @@ var ICON={
   edu:svg('<path d="M2.500 9.500 12 5l9.500 4.500L12 14z"/><path d="M6.500 11.500V16c1.500 1.400 3.300 2 5.500 2s4-.6 5.500-2v-4.500"/>'),
   move:svg('<path d="M4 8l8-4 8 4v8l-8 4-8-4z"/><path d="M4 8l8 4 8-4M12 12v8"/>'),
   task:svg('<circle cx="12" cy="12" r="8.500"/><path d="M8.300 12.300l2.600 2.600 4.800-5.200"/>'),
+  diger:svg('<circle cx="6" cy="12" r="1.600"/><circle cx="12" cy="12" r="1.600"/><circle cx="18" cy="12" r="1.600"/>'),
   check:svg('<path d="M5 12.500l4.500 4.500L19 7.500"/>'),
   plus:svg('<path d="M12 5v14M5 12h14"/>'),
   search:svg('<circle cx="11" cy="11" r="6.500"/><path d="M16 16l4 4"/>'),
@@ -327,9 +328,10 @@ var CATS={
   edu:{l:'Eğitim',g:'event',p:'#ECE6D8',ink:'#3D3524',c:'#E8DCC0'},
   move:{l:'Taşınma',g:'event',p:'#FFDFCB',ink:'#74300D',c:'#FF9E6B'},
   doctor:{l:'Dr. randevusu',g:'task',p:'#CDF2E0',ink:'#0C4A32',c:'#5FE0A8'},
-  task:{l:'Görev',g:'task',p:'#E1E5EA',ink:'#28313D',c:'#A9B4C2'}
+  task:{l:'Görev',g:'task',p:'#E1E5EA',ink:'#28313D',c:'#A9B4C2'},
+  diger:{l:'Diğer',g:'other',p:'#F3E9D2',ink:'#4A3B1A',c:'#D9C08A'}
 };
-var ACT={bday:['Mesaj hazırla','Hediye notu'],anniv:['Rezervasyon','Hediye notu'],wedding:['Hediye notu','Yol tarifi'],concert:['Bileti göster','Yol tarifi'],edu:['Takvime ekle','Not ekle'],move:['Yapılacaklar','Not ekle'],doctor:['Takvime ekle','Soru notu'],task:['Takvime ekle','Not ekle']};
+var ACT={bday:['Mesaj hazırla','Hediye notu'],anniv:['Rezervasyon','Hediye notu'],wedding:['Hediye notu','Yol tarifi'],concert:['Bileti göster','Yol tarifi'],edu:['Takvime ekle','Not ekle'],move:['Yapılacaklar','Not ekle'],doctor:['Takvime ekle','Soru notu'],task:['Takvime ekle','Not ekle'],diger:['Takvime ekle','Not ekle']};
 var FILTERS=[['all','Tümü'],['special','Özel günler'],['event','Etkinlik'],['task','Randevu']];
 
 function at(off,h,m){var d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()+off);d.setHours(h,m,0,0);return d;}
