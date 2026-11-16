@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#F5F3EF">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F5F1FF">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Kalender">
 <link rel="manifest" href="manifest.json">
@@ -12,2461 +13,598 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <title>Kalender</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap">
 <style>
-  :root {
-    --app-bg: #F5F3EF;
-    --card: #FFFFFF;
-    --ink: #0F0F0F;
-    --ink-mid: rgba(15,15,15,0.6);
-    --ink-dim: rgba(15,15,15,0.42);
-    --ink-faint: rgba(15,15,15,0.22);
-    --rule: rgba(15,15,15,0.08);
-    --accent-amber: #F5B547;
-    --gold: #B8842F;
-    --sans: 'DM Sans', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-    --mono: 'JetBrains Mono', monospace;
-    --cat-dugun: #FFE5EE;
-    --cat-dogum: #FFF0D4;
-    --cat-konser: #EFE4FA;
-    --cat-seyahat: #E5F0FF;
-    --cat-kutlama: #FFF4D4;
-    --cat-yildonumu: #FFDEE0;
-    --cat-saglik: #E0F0FF;
-    --cat-spor: #FFDAD4;
-    --cat-alisveris: #FFE0DC;
-    --cat-sinema: #E8D4F0;
-    --cat-standup: #FFE5D4;
-    --cat-tiyatro: #ECD9E8;
-    --cat-mac: #DFF0DC;
-    --cat-bayram: #DFE4F0;
-    --cat-meditasyon: #E4DAF4;
-    --cat-egitim: #D9E5F2;
-    --cat-toplanti: #E0DAF0;
-    --cat-doktor: #D4ECE8;
-    --cat-fizik: #D8EDE2;
-    --cat-ilac: #E0ECDC;
-    --cat-veteriner: #ECDCCC;
-    --cat-hediye: #FFDED4;
-    --cat-diger: #ECE4D4;
-    --cat-flag: #FFD4CC;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    overscroll-behavior: none;
-  }
-  body {
-    background: var(--app-bg);
-    font-family: var(--sans);
-    color: var(--ink);
-    -webkit-font-smoothing: antialiased;
-    -webkit-text-size-adjust: 100%;
-  }
+:root{
+  /* layout: variant switcher on top, one live phone screen below; each variant is its own single-theme world */
+  --page:#131316; --page-fg:#F2F1EE; --page-mut:#A3A19A; --page-line:#2B2B30; --page-on:#F2F1EE; --page-on-ink:#131316;
+  --f-ui:'DM Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+  color-scheme:light;
+}
+html,body{height:100%;margin:0}
+body{background:var(--page);color:var(--page-fg);font-family:var(--f-ui);display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+button:focus-visible,input:focus-visible{outline:2px solid currentColor;outline-offset:2px}
 
-  button { font-family: inherit; cursor: pointer; }
-  input, textarea { font-family: inherit; }
+.stage{flex:1;min-height:0;display:flex;justify-content:center;align-items:center}
 
-  /* ──── APP SHELL ──── */
-  #app {
-    width: 100%;
-    height: 100vh;
-    height: 100dvh;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    overflow: hidden;
-    padding-top: env(safe-area-inset-top, 0px);
-  }
+/* ---------- phone shell (shared) ---------- */
+.phone{position:relative;width:100%;max-width:430px;height:100%;overflow:hidden;background:var(--bg);color:var(--fg);font-family:var(--font);transition:background .3s}
+@media (min-width:600px) and (min-height:720px){
+  .stage{padding:8px 16px 20px}
+  .phone{height:min(860px,100%);border-radius:46px;border:1px solid var(--page-line);box-shadow:0 30px 80px rgba(0,0,0,.5)}
+}
+.phone *{box-sizing:border-box}
+.scroll{position:absolute;inset:0;overflow-y:auto;padding:26px 20px 128px;display:flex;flex-direction:column;gap:18px;scrollbar-width:none}
+.scroll>*{flex:none}
+.scroll::-webkit-scrollbar,.x::-webkit-scrollbar{display:none}
+.hd{display:flex;justify-content:space-between;align-items:flex-end;gap:12px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--mut);display:flex;align-items:center;gap:8px}
+.phone h1{margin:4px 0 0;font-size:30px;line-height:1.08;letter-spacing:-.02em;font-weight:700;text-wrap:balance}
+.phone h2{margin:0;font-size:19px;font-weight:700;letter-spacing:-.01em}
+svg.i{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;display:block}
+.rbs{display:flex;gap:10px}
+.rb{width:46px;height:46px;border-radius:50%;background:var(--card);border:1px solid var(--line);display:grid;place-items:center;position:relative;flex:none}
+.rb .dot{position:absolute;top:10px;right:11px;width:8px;height:8px;border-radius:50%;background:#FF6B5E;border:2px solid var(--bg)}
+.pulse{width:8px;height:8px;border-radius:50%;background:var(--acc);box-shadow:0 0 0 0 var(--acc);animation:pulse 1.8s infinite;flex:none}
+.x{overflow-x:auto;scrollbar-width:none}
 
-  .view {
-    display: none;
-    flex: 1;
-    overflow-y: auto;
-    overflow-x: hidden;
-    -webkit-overflow-scrolling: touch;
-    padding-bottom: 120px;
-  }
-  .view.active { display: block; }
+.fl{display:flex;gap:6px}
+.fl button{height:44px;padding:0 15px;border-radius:999px;font-size:14px;font-weight:500;color:var(--mut);white-space:nowrap;border:1px solid var(--line);flex:none}
+.fl button.on{background:var(--fg);color:var(--bg);border-color:var(--fg);font-weight:600}
 
-  /* ──── HEADER ──── */
-  .header {
-    padding: 10px 20px 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .greet-sub {
-    font-family: var(--mono);
-    font-size: 0.62rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--ink-dim);
-  }
-  .greet-main {
-    font-size: 1.3rem;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    margin-top: 2px;
-    color: var(--ink);
-  }
-  .head-right { display: flex; gap: 8px; }
-  .head-btn {
-    width: 40px; height: 40px;
-    border-radius: 50%;
-    background: var(--card);
-    border: 1px solid var(--rule);
-    display: grid;
-    place-items: center;
-    position: relative;
-  }
-  .head-btn svg { width: 18px; height: 18px; stroke: var(--ink); stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
-  .head-btn .dot {
-    position: absolute;
-    top: 8px; right: 10px;
-    width: 7px; height: 7px;
-    border-radius: 50%;
-    background: #E34848;
-  }
+.list{display:flex;flex-direction:column;gap:10px}
+.empty{margin:0;padding:22px;border:1px dashed var(--line);border-radius:22px;color:var(--mut);font-size:14px;text-align:center}
+.ev{background:var(--card);border:1px solid var(--line);border-radius:24px;transition:transform .25s,box-shadow .25s,margin .25s}
+.ev-h{width:100%;display:flex;align-items:center;gap:14px;padding:14px 16px;text-align:left;position:relative;border-radius:inherit}
+.ev-ic{flex:none;width:48px;height:48px;border-radius:16px;display:grid;place-items:center;background:var(--p);color:var(--ink);grid-area:ic}
+.ev-t{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;grid-area:t}
+.ev-t small{display:none;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+.ev-t b{font-size:16px;font-weight:600;line-height:1.25}
+.ev-t i{font-style:normal;font-size:13px;color:var(--mut);line-height:1.35}
+.ev-d{flex:none;display:flex;flex-direction:column;align-items:flex-end;line-height:1;grid-area:d}
+.ev-d b{font-size:25px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.ev-d b.txt{font-size:15px;letter-spacing:0}
+.ev-d i{font-style:normal;font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--mut);margin-top:5px}
+.ev-d i:empty{display:none}
+.stk{display:none}
+.ev:active{transform:scale(.985)}
+.det{padding:2px 16px 16px;display:flex;flex-direction:column;gap:10px;animation:rise .28s ease}
+.det-l{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--mut)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{height:42px;padding:0 13px;border-radius:999px;border:1px solid var(--line);font-size:13px;font-weight:500;color:var(--mut)}
+.chip.on{border-color:var(--fg);color:var(--fg);font-weight:600}
+.det-a{display:flex;gap:8px;margin-top:4px}
+.btn{flex:1;height:46px;padding:0 12px;border-radius:999px;border:1px solid var(--line);font-size:14px;font-weight:600;white-space:nowrap}
+.btn.pri{background:var(--acc);color:var(--acc-ink);border-color:transparent}
+.btn.ok{flex:none;width:46px;padding:0;display:grid;place-items:center}
 
-  /* ──── HERO CARD ──── */
-  .hero-card {
-    margin: 20px 20px 20px;
-    background: var(--ink);
-    color: #fff;
-    border-radius: 24px;
-    padding: 20px 22px;
-    position: relative;
-    overflow: hidden;
-    display: grid;
-    grid-template-columns: 1fr auto;
-    grid-template-rows: auto auto;
-    gap: 6px 14px;
-    align-items: center;
-  }
-  .hero-card::before {
-    content: '';
-    position: absolute;
-    top: -60%;
-    right: -25%;
-    width: 260px; height: 260px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(255,210,130,0.28), transparent 65%);
-    filter: blur(20px);
-    pointer-events: none;
-  }
-  .hero-card > * { position: relative; }
-  .hero-cat {
-    font-family: var(--mono);
-    font-size: 0.62rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.55);
-  }
-  .hero-date {
-    text-align: right;
-    font-family: var(--mono);
-    font-size: 0.62rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.55);
-  }
-  .hero-date strong { color: #fff; font-weight: 600; letter-spacing: 0.08em; }
-  .hero-event-title {
-    font-size: 1.75rem;
-    font-weight: 700;
-    line-height: 1.05;
-    letter-spacing: -0.03em;
-    color: #fff;
-    padding-top: 6px;
-    word-break: break-word;
-  }
-  .hero-right { text-align: right; padding-top: 6px; }
-  .hero-count-big {
-    font-size: 2.5rem;
-    font-weight: 700;
-    letter-spacing: -0.045em;
-    line-height: 0.9;
-  }
-  .hero-count-lbl {
-    font-family: var(--mono);
-    font-size: 0.58rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.55);
-    margin-top: 4px;
-  }
-  .hero-today { background: linear-gradient(180deg, #1A1A1A, #0F0F0F); }
-  .hero-today .pill-today {
-    display: inline-block;
-    background: var(--accent-amber);
-    color: var(--ink);
-    padding: 3px 10px;
-    border-radius: 999px;
-    font-size: 0.6rem;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-  }
+.nav{position:absolute;left:14px;right:14px;bottom:14px;height:76px;border-radius:38px;background:var(--nav);border:1px solid var(--line);display:flex;align-items:center;padding:0 6px;box-shadow:0 18px 40px rgba(0,0,0,.14);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
+.nav button{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:52px;font-size:11px;font-weight:500;color:var(--mut)}
+.nav button.on{color:var(--fg);font-weight:600}
+.nav .fab{flex:none;width:62px;height:62px;min-height:0;border-radius:50%;background:var(--acc);color:var(--acc-ink);margin:-22px 6px 0;box-shadow:0 12px 26px rgba(0,0,0,.28);transition:transform .2s}
+.nav .fab:active{transform:scale(.92) rotate(90deg)}
+.nav .fab svg{width:26px;height:26px;stroke-width:2.2}
 
-  /* ──── CONTENT TABS ──── */
-  .ctabs {
-    display: flex;
-    gap: 4px;
-    padding: 4px;
-    background: rgba(15,15,15,0.06);
-    border-radius: 999px;
-    margin: 0 20px 14px;
-  }
-  .ctab {
-    flex: 1;
-    padding: 9px 8px;
-    border: none;
-    background: transparent;
-    color: var(--ink-dim);
-    font-size: 0.78rem;
-    font-weight: 500;
-    border-radius: 999px;
-    white-space: nowrap;
-    text-align: center;
-  }
-  .ctab.active {
-    background: var(--card);
-    color: var(--ink);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-  }
+.sheet-bg{position:absolute;inset:0;background:rgba(0,0,0,.5);animation:fade .2s}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:var(--sheet);border-radius:30px 30px 0 0;padding:12px 20px 22px;display:flex;flex-direction:column;gap:14px;animation:up .32s cubic-bezier(.2,.9,.3,1);max-height:92%;overflow-y:auto}
+.sheet .grab{width:40px;height:4px;border-radius:2px;background:var(--line);align-self:center}
+.sheet-h{display:flex;justify-content:space-between;align-items:center}
+.sheet label{display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:600;color:var(--mut)}
+.sheet input{height:50px;border-radius:16px;border:1px solid var(--line);background:var(--card);color:var(--fg);padding:0 14px;font:inherit;font-size:16px;font-weight:500;width:100%}
+.sheet .chip.on{background:var(--fg);color:var(--bg)}
+.sheet .btn{flex:none;height:52px;font-size:15px}
+.toast{position:absolute;left:50%;bottom:104px;transform:translate(-50%,12px);background:var(--fg);color:var(--bg);font-size:13px;font-weight:600;padding:10px 16px;border-radius:999px;opacity:0;pointer-events:none;transition:.25s;white-space:nowrap}
+.toast.show{opacity:1;transform:translate(-50%,0)}
 
-  /* ──── SECTION HEAD ──── */
-  .section-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    padding: 4px 20px 12px;
-  }
-  .section-head h3 {
-    font-size: 1rem;
-    font-weight: 700;
-    letter-spacing: -0.015em;
-    color: var(--ink);
-  }
-  .section-head .link {
-    font-size: 0.78rem;
-    color: var(--ink-mid);
-    font-weight: 500;
-  }
+/* ---------- 03 Pastel: stacked sticker cards ---------- */
+.v-c{--bg:#F5F1FF;--fg:#1D1836;--mut:#5C5778;--card:#FFFFFF;--line:rgba(29,24,54,.14);--acc:#1D1836;--acc-ink:#FFFFFF;--nav:#FFFFFF;--sheet:#FFFFFF;--font:'DM Sans',system-ui,sans-serif;--mono:'DM Sans',system-ui,sans-serif;--disp:'Bricolage Grotesque','DM Sans',system-ui,sans-serif}
+.v-c h1{font-family:var(--disp);font-weight:800;font-size:30px;line-height:1.05;white-space:nowrap}
+.v-c .sub{margin:8px 0 0;font-size:14px;color:var(--mut)}
+.v-c .rb{background:#FFD46B;border:0;font-family:var(--disp);font-weight:800;font-size:18px}
+.v-c .list{gap:0;padding-top:4px}
+.v-c .ev{background:var(--p);border:0;border-radius:32px;color:var(--ink);margin-top:-14px;box-shadow:0 -8px 20px rgba(29,24,54,.08)}
+.v-c .ev:first-child{margin-top:0}
+.v-c .ev:nth-child(odd){transform:rotate(-1.4deg)}
+.v-c .ev:nth-child(even){transform:rotate(1.2deg)}
+.v-c .ev.open{transform:none;z-index:2;margin-bottom:26px;box-shadow:0 18px 40px rgba(29,24,54,.2)}
+.v-c .ev:last-child.open{margin-bottom:0}
+.v-c .ev-h{display:grid;grid-template-columns:auto 1fr auto;grid-template-areas:"ic s d" "t t d";column-gap:10px;row-gap:14px;padding:18px 20px 32px;align-items:center}
+.v-c .ev.open .ev-h{padding-bottom:16px}
+.v-c .ev-ic{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.75);color:var(--ink)}
+.v-c .ev-t small{display:block;opacity:.8}
+.v-c .ev-t b{font-family:var(--disp);font-weight:800;font-size:23px;line-height:1.1;letter-spacing:-.01em}
+.v-c .ev-t i{color:inherit;opacity:.8;font-size:14px}
+.v-c .ev-d{align-self:center}
+.v-c .ev-d b{font-family:var(--disp);font-weight:800;font-size:56px;letter-spacing:-.04em}
+.v-c .ev-d b.txt{font-size:24px}
+.v-c .ev-d i{font-family:var(--font);font-size:12px;letter-spacing:.04em;text-transform:none;color:inherit;opacity:.8;font-weight:600}
+.v-c .ev.soon .stk{display:inline-flex;grid-area:s;justify-self:start;background:var(--ink);color:var(--p);font-style:normal;font-size:11px;font-weight:700;padding:6px 11px;border-radius:999px;animation:wig 2.4s ease-in-out infinite}
+.v-c .ev.cat-concert .ev-h::before,.v-c .ev.cat-concert .ev-h::after{content:"";position:absolute;top:66px;width:24px;height:24px;border-radius:50%;background:var(--bg)}
+.v-c .ev.cat-concert .ev-h::before{left:-12px}
+.v-c .ev.cat-concert .ev-h::after{right:-12px}
+.v-c .det-l,.v-c .chip{color:var(--ink)}
+.v-c .det-l{opacity:.75;font-weight:700;letter-spacing:.08em}
+.v-c .chip{border-color:color-mix(in srgb,var(--ink) 30%,transparent)}
+.v-c .ev .chip.on{background:var(--ink);color:var(--p);border-color:var(--ink)}
+.v-c .ev .btn{border-color:color-mix(in srgb,var(--ink) 35%,transparent)}
+.v-c .ev .btn.pri{background:var(--ink);color:var(--p)}
+.v-c .fl button{background:#fff;border:0;color:var(--fg);font-weight:600}
+.v-c .fl button.on{background:var(--fg);color:#fff}
+.v-c .nav{box-shadow:0 18px 40px rgba(29,24,54,.18);border:0}
 
-  /* ──── MINI CARD ──── */
-  .list { padding: 0 20px; }
-  .mini-card {
-    background: var(--card);
-    border-radius: 20px;
-    padding: 14px 16px;
-    margin-bottom: 8px;
-    display: grid;
-    grid-template-columns: 44px 1fr auto;
-    gap: 12px;
-    align-items: center;
-    border: 1px solid var(--rule);
-  }
-  .mini-emoji {
-    width: 44px; height: 44px;
-    border-radius: 12px;
-    display: grid;
-    place-items: center;
-    font-size: 1.3rem;
-  }
-  .mini-emoji.cat-dugun { background: var(--cat-dugun); }
-  .mini-emoji.cat-dogum { background: var(--cat-dogum); }
-  .mini-emoji.cat-konser { background: var(--cat-konser); }
-  .mini-emoji.cat-seyahat { background: var(--cat-seyahat); }
-  .mini-emoji.cat-kutlama { background: var(--cat-kutlama); }
-  .mini-emoji.cat-yildonumu { background: var(--cat-yildonumu); }
-  .mini-emoji.cat-saglik { background: var(--cat-saglik); }
-  .mini-emoji.cat-spor { background: var(--cat-spor); }
-  .mini-emoji.cat-alisveris { background: var(--cat-alisveris); }
-  .mini-emoji.cat-sinema { background: var(--cat-sinema); }
-  .mini-emoji.cat-standup { background: var(--cat-standup); }
-  .mini-emoji.cat-tiyatro { background: var(--cat-tiyatro); }
-  .mini-emoji.cat-mac { background: var(--cat-mac); }
-  .mini-emoji.cat-bayram { background: var(--cat-bayram); }
-  .mini-emoji.cat-meditasyon { background: var(--cat-meditasyon); }
-  .mini-emoji.cat-egitim { background: var(--cat-egitim); }
-  .mini-emoji.cat-toplanti { background: var(--cat-toplanti); }
-  .mini-emoji.cat-doktor { background: var(--cat-doktor); }
-  .mini-emoji.cat-fizik { background: var(--cat-fizik); }
-  .mini-emoji.cat-ilac { background: var(--cat-ilac); }
-  .mini-emoji.cat-veteriner { background: var(--cat-veteriner); }
-  .mini-emoji.cat-hediye { background: var(--cat-hediye); }
-  .mini-emoji.cat-diger { background: var(--cat-diger); }
-  .mini-emoji.cat-flag { background: var(--cat-flag); }
-  .mini-emoji.ink { background: var(--ink); color: #fff; }
-  .mini-title {
-    font-size: 0.95rem;
-    font-weight: 600;
-    letter-spacing: -0.015em;
-    color: var(--ink);
-    line-height: 1.2;
-  }
-  .mini-sub {
-    font-size: 0.76rem;
-    color: var(--ink-mid);
-    margin-top: 2px;
-  }
-  .mini-days { text-align: right; }
-  .mini-days .num {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--ink);
-    letter-spacing: -0.02em;
-    line-height: 1;
-  }
-  .mini-days .lbl {
-    font-size: 0.58rem;
-    color: var(--ink-dim);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    font-family: var(--mono);
-    margin-top: 2px;
-  }
-  .mini-card.past { opacity: 0.5; }
-  .mini-card.today {
-    border-color: rgba(184,132,47,0.3);
-    box-shadow: 0 1px 2px rgba(184,132,47,0.18), 0 8px 20px rgba(184,132,47,0.14);
-  }
+/* ---------- sub pages: Kişiler, Takvim, Profil (shared by 05 and 03) ---------- */
+.sub{margin:6px 0 0;font-size:14px;line-height:1.4;color:var(--mut)}
+.act2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.act2 button{min-height:88px;display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;padding:14px 16px;border-radius:24px;background:var(--card);border:1px solid var(--line);font-size:15px;font-weight:600;text-align:left}
+.act2 button.pri{background:var(--acc);color:var(--acc-ink);border-color:transparent}
+.srch{position:relative}
+.srch svg{position:absolute;left:15px;top:13px;color:var(--mut);pointer-events:none}
+.srch input{width:100%;height:48px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--fg);padding:0 16px 0 46px;font:inherit;font-size:16px;-webkit-appearance:none;appearance:none}
+.pr,.crow{width:100%;display:flex;align-items:center;gap:12px;padding:12px 14px;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:22px}
+.pr>svg{color:var(--mut);flex:none}
+.av{flex:none;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:17px;background:var(--p);color:var(--ink)}
+.av.big{width:76px;height:76px;font-size:30px}
+.pr-t{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.pr-t b{font-size:16px;font-weight:600}
+.pr-t i{font-style:normal;font-size:13px;color:var(--mut)}
+.tag{flex:none;font-size:12px;font-weight:600;padding:5px 10px;border-radius:999px;background:var(--fg);color:var(--bg)}
+.pd{display:flex;align-items:center;gap:16px}
+.btn.sm{flex:none;height:46px;padding:0 18px;background:var(--card)}
+.btn.wide{flex:none;width:100%;height:52px;font-size:15px}
+.note{display:inline-flex;align-items:center;height:38px;padding:0 14px;border-radius:999px;background:var(--card);border:1px solid var(--line);font-size:14px}
+.noteadd{display:flex;gap:8px}
+.noteadd input{flex:1;min-width:0;height:48px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--fg);padding:0 16px;font:inherit;font-size:16px}
+.noteadd .btn{flex:none;height:48px;padding:0 18px}
+.cal{background:var(--card);border:1px solid var(--line);border-radius:28px;padding:12px 10px 10px}
+.cal-h{display:flex;justify-content:space-between;align-items:center;padding:0 2px 10px}
+.cal-h b{font-size:18px;font-weight:700}
+.cal-h .rb{background:transparent}
+.cal-w,.cal-g{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
+.cal-w span{text-align:center;font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);padding-bottom:4px}
+.cday{height:46px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.cday b{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:14px;font-weight:500}
+.cday.hol b{color:#B5281E;font-weight:700}
+.cday.today b{box-shadow:inset 0 0 0 1.5px var(--fg)}
+.cday.sel b{background:var(--acc);color:var(--acc-ink);font-weight:700;box-shadow:none}
+.cday i{display:flex;gap:2px;height:5px}
+.cday i u{width:5px;height:5px;border-radius:50%;background:color-mix(in srgb,var(--c) 55%,var(--ink))}
+.holrow{display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:18px;background:#FBE3DF;color:#7A1A12;font-size:14px}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.stats div{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:14px;display:flex;flex-direction:column;gap:4px}
+.stats b{font-size:28px;line-height:1;font-weight:700;letter-spacing:-.02em}
+.stats span{font-size:12px;color:var(--mut)}
+.set-l{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--mut);margin-bottom:-8px;padding-left:4px}
+.set{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:2px 16px}
+.set-r{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:58px;padding:8px 0;border-bottom:1px solid var(--line);font-size:15px;font-weight:500;text-align:left}
+.set-r:last-child{border-bottom:0}
+.set-r.col{flex-direction:column;align-items:stretch;gap:10px;padding:14px 0}
+.set-t{display:flex;flex-direction:column;gap:2px}
+.set-t small{font-size:12px;font-weight:400;color:var(--mut)}
+.set-r .v,.set-r>svg{color:var(--mut);font-size:14px;flex:none}
+.tg{flex:none;width:50px;height:30px;border-radius:15px;background:color-mix(in srgb,var(--fg) 22%,transparent);position:relative;transition:.2s}
+.tg::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:.2s}
+.set-r[aria-checked="true"] .tg{background:var(--acc)}
+.set-r[aria-checked="true"] .tg::after{transform:translateX(20px)}
+.set .chip.on{background:var(--fg);color:var(--bg)}
+.seg2{display:flex;background:color-mix(in srgb,var(--fg) 8%,transparent);border-radius:999px;padding:4px}
+.seg2 button{flex:1;height:44px;border-radius:999px;font-size:14px;font-weight:600;color:var(--mut)}
+.seg2 button.on{background:var(--card);color:var(--fg);box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.pro{background:var(--fg);color:var(--bg);border-radius:28px;padding:20px;display:flex;flex-direction:column;gap:8px}
+.pro b{font-size:22px;font-weight:700}
+.pro p{margin:0;font-size:14px;line-height:1.45;opacity:.85}
+.pro .btn{flex:none;align-self:flex-start;margin-top:6px;background:var(--bg);color:var(--fg);border:0;padding:0 20px}
+.sheet.tall{height:88%}
+.clist{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:8px;scrollbar-width:none}
+.crow{flex:none;padding:10px 12px}
+.crow:disabled{opacity:.5;cursor:default}
+.ck{flex:none;width:28px;height:28px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;color:transparent}
+.ck svg{width:16px;height:16px;stroke-width:3}
+.crow[aria-pressed="true"]{border-color:var(--fg)}
+.crow[aria-pressed="true"] .ck{background:var(--acc);border-color:var(--acc);color:var(--acc-ink)}
+.sheet>.btn{flex:none;height:52px;font-size:15px}
+.v-c .list.plain{gap:10px}
+.v-c .pr,.v-c .crow,.v-c .set,.v-c .cal,.v-c .stats div,.v-c .srch input,.v-c .note,.v-c .noteadd input{border-color:transparent}
+.v-c .sheet .crow,.v-c .sheet .srch input,.v-c .sheet input{background:#F5F1FF}
+.v-c .pr-t b,.v-c .cal-h b,.v-c .stats b,.v-c .pro b{font-family:var(--disp);font-weight:800}
+.v-c .pr-t b{font-size:18px}
+.v-c .act2 button{border:0}
+.v-c .act2 button:not(.pri){background:#FFD46B}
+.v-c .cday.sel b{background:#FFD46B;color:var(--fg)}
+.v-c .set-l{font-weight:700;letter-spacing:.08em}
+.v-c .tag{background:#FFD46B;color:var(--fg)}
+.v-c .hd .rb[data-act]{font-size:0}
 
-  /* ──── PAST DROPDOWN ──── */
-  .past-wrap { margin: 10px 20px 0; }
-  .past-toggle {
-    width: 100%;
-    background: transparent;
-    border: none;
-    padding: 14px 4px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-family: var(--mono);
-    font-size: 0.64rem;
-    letter-spacing: 0.2em;
-    color: var(--ink-dim);
-    text-transform: uppercase;
-    border-top: 1px solid var(--rule);
-  }
-  .past-toggle .chev { transition: transform 0.25s ease; font-size: 0.85rem; }
-  .past-wrap.open .past-toggle .chev { transform: rotate(180deg); }
-  .past-list { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; }
-  .past-wrap.open .past-list { max-height: 3000px; padding-top: 6px; }
 
-  /* ──── EMPTY STATE ──── */
-  .empty {
-    text-align: center;
-    padding: 50px 30px;
-    color: var(--ink-mid);
-  }
-  .empty .glyph {
-    font-size: 2.5rem;
-    margin-bottom: 16px;
-    color: var(--ink-faint);
-  }
-  .empty h3 {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--ink);
-    letter-spacing: -0.015em;
-    margin-bottom: 8px;
-  }
-  .empty p {
-    font-size: 0.9rem;
-    line-height: 1.5;
-    margin-bottom: 20px;
-    max-width: 300px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  .empty .cta {
-    background: var(--ink);
-    color: #fff;
-    border: none;
-    padding: 14px 28px;
-    border-radius: 999px;
-    font-weight: 500;
-    font-size: 0.9rem;
-  }
+/* ---------- Liste görünümü (opsiyonel, Profil > Görünüm) ---------- */
+.v-c.lv .list{gap:10px}
+.v-c.lv .ev{margin-top:0;transform:none!important;background:var(--card);color:var(--fg);border-radius:24px;box-shadow:0 1px 2px rgba(29,24,54,.05)}
+.v-c.lv .ev.open{margin-bottom:0;box-shadow:0 10px 26px rgba(29,24,54,.12)}
+.v-c.lv .ev-h{grid-template-columns:auto 1fr auto;grid-template-areas:"ic t d";padding:14px 16px;row-gap:0;column-gap:14px}
+.v-c.lv .ev.open .ev-h{padding-bottom:14px}
+.v-c.lv .ev-ic{width:48px;height:48px;border-radius:16px;background:var(--p);color:var(--ink)}
+.v-c.lv .ev-t small{display:none}
+.v-c.lv .ev-t b{font-size:17px}
+.v-c.lv .ev-t i{font-size:13px;color:var(--mut);opacity:1}
+.v-c.lv .ev-d b{font-size:30px}
+.v-c.lv .ev-d b.txt{font-size:16px}
+.v-c.lv .ev-d i{color:var(--mut);opacity:1}
+.v-c.lv .ev.soon .stk{display:none}
+.v-c.lv .ev.cat-concert .ev-h::before,.v-c.lv .ev.cat-concert .ev-h::after{display:none}
+.v-c.lv .ev.soon .ev-d b{color:var(--ink)}
+.set .seg2{margin-top:2px}
 
-  /* ══════════ AİLE AĞACI ══════════ */
-  .section-label {
-    font-family: var(--mono);
-    font-size: 0.62rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--ink-dim);
-    margin: 18px 20px 10px;
-  }
-  .section-label:first-child { margin-top: 4px; }
-  .fm-card {
-    background: var(--card);
-    border-radius: 20px;
-    padding: 14px 16px;
-    margin: 0 20px 8px;
-    display: grid;
-    grid-template-columns: 48px 1fr auto;
-    gap: 12px;
-    align-items: center;
-    border: 1px solid var(--rule);
-  }
-  .fm-avatar {
-    width: 48px; height: 48px;
-    border-radius: 50%;
-    display: grid; place-items: center;
-    font-size: 1.05rem;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    background-size: cover;
-    background-position: center;
-    overflow: hidden;
-    flex-shrink: 0;
-  }
-  .fm-avatar.rel-kendi { background: var(--ink); color: #fff; }
-  .fm-avatar.rel-partner { background: #FFE5EE; color: var(--ink); }
-  .fm-avatar.rel-anne { background: #FFD7E2; color: var(--ink); }
-  .fm-avatar.rel-baba { background: #D7E5FF; color: var(--ink); }
-  .fm-avatar.rel-kardes { background: #E0F2E5; color: var(--ink); }
-  .fm-avatar.rel-cocuk { background: #FFF0D4; color: var(--ink); }
-  .fm-name {
-    font-size: 0.95rem;
-    font-weight: 600;
-    letter-spacing: -0.015em;
-    color: var(--ink);
-  }
-  .fm-meta {
-    font-size: 0.76rem;
-    color: var(--ink-mid);
-    margin-top: 2px;
-  }
-  .fm-arrow {
-    color: var(--ink-mid);
-    font-size: 0.9rem;
-  }
-  .fm-add-card {
-    background: transparent;
-    border: 1.5px dashed rgba(15,15,15,0.18);
-    border-radius: 20px;
-    padding: 14px 16px;
-    margin: 0 20px 8px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    width: calc(100% - 40px);
-    text-align: left;
-  }
-  .fm-add-icon {
-    width: 48px; height: 48px;
-    border-radius: 50%;
-    background: rgba(15,15,15,0.05);
-    display: grid; place-items: center;
-    font-size: 1.3rem;
-    color: var(--ink-mid);
-    font-weight: 300;
-    flex-shrink: 0;
-  }
-  .fm-add-text {
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: var(--ink-mid);
-  }
 
-  /* ══════════ ASİSTAN ══════════ */
-  .asis-chip-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    padding: 16px 20px 0;
-    margin-bottom: 10px;
-  }
-  .asis-chip {
-    background: var(--card);
-    border: 1px solid var(--rule);
-    border-radius: 16px;
-    padding: 14px;
-    text-align: left;
-    font-family: var(--sans);
-  }
-  .asis-chip .emoji { font-size: 1.3rem; display: block; margin-bottom: 6px; }
-  .asis-chip .txt {
-    font-size: 0.78rem;
-    font-weight: 500;
-    color: var(--ink);
-    line-height: 1.25;
-    letter-spacing: -0.01em;
-  }
-  .asis-input-wrap {
-    position: absolute;
-    bottom: 100px;
-    left: 20px; right: 20px;
-    display: flex;
-    gap: 8px;
-    background: var(--card);
-    border: 1px solid var(--rule);
-    border-radius: 999px;
-    padding: 6px 6px 6px 20px;
-    align-items: center;
-    z-index: 50;
-  }
-  .asis-input {
-    flex: 1;
-    border: none;
-    background: transparent;
-    font-size: 0.92rem;
-    color: var(--ink);
-    padding: 10px 0;
-    outline: none;
-  }
-  .asis-send {
-    width: 40px; height: 40px;
-    border-radius: 50%;
-    background: var(--ink);
-    border: none;
-    display: grid; place-items: center;
-  }
-  .asis-send svg { width: 16px; height: 16px; stroke: #fff; stroke-width: 2.2; fill: none; stroke-linecap: round; }
+/* Liste görünümünde en yakın gün hero */
+.lv-sep{display:none}
+.v-c.lv .lv-sep{display:block;margin:10px 0 0 4px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
+.v-c.lv .ev.hero{background:var(--p);color:var(--ink);border-radius:32px;box-shadow:0 14px 34px rgba(29,24,54,.16)}
+.v-c.lv .ev.hero .ev-h{grid-template-areas:"ic s d" "t t d";row-gap:14px;column-gap:10px;padding:20px 22px 22px}
+.v-c.lv .ev.hero .ev-ic{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.75)}
+.v-c.lv .ev.hero .ev-t small{display:block;opacity:.8}
+.v-c.lv .ev.hero .ev-t b{font-family:var(--disp);font-weight:800;font-size:24px;line-height:1.1}
+.v-c.lv .ev.hero .ev-t i{color:inherit;opacity:.8;font-size:14px}
+.v-c.lv .ev.hero .ev-d b{font-family:var(--disp);font-weight:800;font-size:56px;letter-spacing:-.04em}
+.v-c.lv .ev.hero .ev-d b.txt{font-size:24px}
+.v-c.lv .ev.hero .ev-d i{color:inherit;opacity:.8}
+.v-c.lv .ev.hero.soon .stk{display:inline-flex}
+.v-c.lv .ev.hero.cat-concert .ev-h::before,.v-c.lv .ev.hero.cat-concert .ev-h::after{display:block}
 
-  /* Conversation detail */
-  .conv-detail {
-    display: none;
-    flex: 1;
-    overflow-y: auto;
-    padding: 20px 20px 180px;
-  }
-  .conv-detail.active { display: block; }
-  .conv-bar {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 20px 14px;
-  }
-  .conv-back {
-    width: 36px; height: 36px;
-    border-radius: 50%;
-    background: var(--card);
-    border: 1px solid var(--rule);
-    display: grid; place-items: center;
-    font-size: 1.3rem;
-  }
-  .conv-title {
-    flex: 1;
-    font-size: 0.95rem;
-    font-weight: 600;
-    letter-spacing: -0.01em;
-  }
-  .conv-del {
-    width: 36px; height: 36px;
-    border-radius: 50%;
-    background: var(--ink);
-    color: #fff;
-    border: none;
-    display: grid; place-items: center;
-    font-size: 0.95rem;
-  }
-  .conv-del svg { width: 16px; height: 16px; stroke: #fff; stroke-width: 1.8; fill: none; }
-  .msg {
-    max-width: 85%;
-    padding: 12px 16px;
-    border-radius: 20px;
-    margin-bottom: 10px;
-    font-size: 0.9rem;
-    line-height: 1.4;
-  }
-  .msg.user {
-    background: var(--ink);
-    color: #fff;
-    border-bottom-right-radius: 4px;
-    margin-left: auto;
-  }
-  .msg.ai {
-    background: var(--card);
-    color: var(--ink);
-    border: 1px solid var(--rule);
-    border-bottom-left-radius: 4px;
-  }
 
-  /* ══════════ PROFİLİM ══════════ */
-  .profile-top {
-    margin: 20px 20px 14px;
-    background: var(--card);
-    border: 1px solid var(--rule);
-    border-radius: 24px;
-    padding: 20px 22px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-  }
-  .prof-ava {
-    width: 56px; height: 56px;
-    border-radius: 50%;
-    background: var(--ink);
-    color: #fff;
-    display: grid; place-items: center;
-    font-size: 1.3rem;
-    font-weight: 700;
-  }
-  .prof-name {
-    font-size: 1.1rem;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-  }
-  .prof-sub {
-    font-family: var(--mono);
-    font-size: 0.6rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--ink-dim);
-    margin-top: 3px;
-  }
+/* Tamamlananlar: en altta kapalı açılır liste */
+.donew{margin-top:6px}
+.done-t{width:100%;display:flex;justify-content:space-between;align-items:center;min-height:48px;padding:12px 4px;border-top:1px solid var(--line);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
+.done-t svg{transition:transform .25s;transform:rotate(90deg)}
+.donew.open .done-t svg{transform:rotate(-90deg)}
+.v-c .list.done-l{gap:10px;padding-top:6px}
+.v-c .done-l .ev{margin-top:0;transform:none!important;background:var(--card);color:var(--fg);border-radius:24px;box-shadow:none;opacity:.62}
+.v-c .done-l .ev.open{opacity:1;margin-bottom:0;box-shadow:0 10px 26px rgba(29,24,54,.12)}
+.v-c .done-l .ev-h{grid-template-columns:auto 1fr auto;grid-template-areas:"ic t d";padding:12px 16px;row-gap:0;column-gap:14px}
+.v-c .done-l .ev-ic{width:42px;height:42px;border-radius:14px;background:var(--p);color:var(--ink)}
+.v-c .done-l .ev-t small,.v-c .done-l .stk{display:none!important}
+.v-c .done-l .ev-t b{font-family:var(--font);font-weight:600;font-size:16px;text-decoration:line-through;text-decoration-thickness:1.5px}
+.v-c .done-l .ev-t i{font-size:13px;color:var(--mut);opacity:1}
+.v-c .done-l .ev-d b,.v-c .done-l .ev-d b.txt{font-family:var(--font);font-size:15px;font-weight:600;color:var(--mut);letter-spacing:0}
+.v-c .done-l .ev.cat-concert .ev-h::before,.v-c .done-l .ev.cat-concert .ev-h::after{display:none}
+.v-c .done-l .det-l,.v-c .done-l .chip{color:var(--fg)}
 
-  .score-card {
-    margin: 0 20px 14px;
-    background: var(--ink);
-    color: #fff;
-    border-radius: 24px;
-    padding: 22px;
-    position: relative;
-    overflow: hidden;
-    min-height: 140px;
-  }
-  .score-card::before {
-    content: '';
-    position: absolute;
-    top: -40%; right: -20%;
-    width: 280px; height: 280px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(255,210,130,0.28), transparent 65%);
-    filter: blur(20px);
-  }
-  .score-card > * { position: relative; }
-  .score-lbl {
-    font-family: var(--mono);
-    font-size: 0.64rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.55);
-    margin-bottom: 8px;
-  }
-  .score-head {
-    font-size: 1.35rem;
-    font-weight: 700;
-    line-height: 1.15;
-    letter-spacing: -0.025em;
-    padding-right: 100px;
-  }
-  .score-sub {
-    font-size: 0.82rem;
-    color: rgba(255,255,255,0.6);
-    margin-top: 8px;
-    padding-right: 100px;
-  }
-  .score-ring {
-    position: absolute;
-    top: 50%; right: 20px;
-    transform: translateY(-50%);
-    width: 88px; height: 88px;
-  }
-  .score-ring svg { width: 88px; height: 88px; transform: rotate(-90deg); }
-  .score-ring svg circle { fill: none; stroke-width: 7; stroke-linecap: round; }
-  .score-ring .track { stroke: rgba(255,255,255,0.14); }
-  .score-ring .fill { stroke: var(--accent-amber); }
-  .score-ring-num {
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 1rem;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    text-align: center;
-  }
-  .score-ring-num small {
-    display: block;
-    font-size: 0.5rem;
-    letter-spacing: 0.14em;
-    opacity: 0.6;
-    text-transform: uppercase;
-    margin-top: -1px;
-  }
 
-  .prof-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin: 0 20px 14px;
-  }
-  .prof-tile {
-    background: var(--card);
-    border: 1px solid var(--rule);
-    border-radius: 20px;
-    padding: 16px;
-    text-align: left;
-  }
-  .prof-tile-emoji {
-    width: 40px; height: 40px;
-    border-radius: 12px;
-    background: rgba(15,15,15,0.06);
-    display: grid; place-items: center;
-    font-size: 1.1rem;
-    margin-bottom: 14px;
-  }
-  .prof-tile-title {
-    font-size: 0.92rem;
-    font-weight: 600;
-    letter-spacing: -0.015em;
-    color: var(--ink);
-  }
-  .prof-tile-sub {
-    font-size: 0.72rem;
-    color: var(--ink-mid);
-    margin-top: 2px;
-  }
-  .prof-premium {
-    margin: 4px 20px 20px;
-    background: linear-gradient(135deg, #FFE4A8, #FFC988);
-    border: none;
-    border-radius: 20px;
-    padding: 18px 20px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    width: calc(100% - 40px);
-    text-align: left;
-  }
-  .prof-premium-icon {
-    width: 44px; height: 44px;
-    border-radius: 50%;
-    background: var(--ink);
-    display: grid; place-items: center;
-    color: #fff;
-    font-size: 1.3rem;
-    flex-shrink: 0;
-  }
-  .prof-premium-text { flex: 1; }
-  .prof-premium-title {
-    font-size: 0.95rem;
-    font-weight: 700;
-    letter-spacing: -0.015em;
-    color: var(--ink);
-  }
-  .prof-premium-sub {
-    font-size: 0.76rem;
-    color: rgba(15,15,15,0.65);
-    margin-top: 2px;
-  }
+/* PWA: telefonda tam ekran + çentik/home bar boşlukları */
+@media (max-width:599px){html,body{background:#F5F1FF}}
+.scroll{padding-top:calc(26px + env(safe-area-inset-top,0px));padding-bottom:calc(128px + env(safe-area-inset-bottom,0px))}
+.nav{bottom:calc(14px + env(safe-area-inset-bottom,0px))}
+.sheet{padding-bottom:calc(22px + env(safe-area-inset-bottom,0px))}
+.toast{bottom:calc(104px + env(safe-area-inset-bottom,0px))}
+html,body{overscroll-behavior:none}
 
-  /* ══════════ PREMIUM ══════════ */
-  .pr-topbar {
-    display: grid;
-    grid-template-columns: 36px 1fr 36px;
-    align-items: center;
-    padding: 10px 20px 0;
-    gap: 10px;
-  }
-  .pr-topbar .back-btn {
-    width: 36px; height: 36px;
-    border-radius: 50%;
-    background: var(--card);
-    border: 1px solid var(--rule);
-    display: grid; place-items: center;
-    font-size: 1.2rem;
-    line-height: 1;
-    padding: 0 0 2px 0;
-  }
-  .pr-topbar .ttl {
-    text-align: center;
-    font-size: 0.9rem;
-    font-weight: 600;
-  }
-  .pr-hero {
-    text-align: center;
-    padding: 22px 20px 14px;
-  }
-  .pr-hero h1 {
-    font-size: 1.9rem;
-    font-weight: 700;
-    letter-spacing: -0.03em;
-    line-height: 1.05;
-  }
-  .pr-hero h1 .brand {
-    background: linear-gradient(135deg, #B8842F, #E5BC68 50%, #B8842F);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-  .pr-hero .sub {
-    font-size: 0.85rem;
-    color: var(--ink-mid);
-    margin-top: 10px;
-    line-height: 1.4;
-    padding: 0 20px;
-  }
-  .pr-tabs {
-    margin: 16px auto;
-    width: 220px;
-    display: flex;
-    gap: 4px;
-    padding: 4px;
-    background: rgba(15,15,15,0.06);
-    border-radius: 999px;
-  }
-  .pr-tab {
-    flex: 1;
-    padding: 9px 12px;
-    font-size: 0.82rem;
-    font-weight: 500;
-    border-radius: 999px;
-    border: none;
-    background: transparent;
-    color: var(--ink-dim);
-  }
-  .pr-tab.active {
-    background: var(--card);
-    color: var(--ink);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-  }
-  .pr-card {
-    margin: 0 20px 20px;
-    background: linear-gradient(180deg, #FFFFFF, #FEF8E8);
-    border: 1.5px solid rgba(184,132,47,0.3);
-    border-radius: 24px;
-    padding: 22px 20px;
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 10px 30px rgba(184,132,47,0.14);
-  }
-  .pr-card::before {
-    content: '';
-    position: absolute;
-    top: -40%; right: -25%;
-    width: 220px; height: 220px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(241,209,122,0.45), transparent 70%);
-    filter: blur(18px);
-  }
-  .pr-card > * { position: relative; }
-  .pr-price {
-    display: flex;
-    align-items: baseline;
-    gap: 4px;
-    margin-bottom: 8px;
-  }
-  .pr-price-num { font-size: 2rem; font-weight: 700; letter-spacing: -0.02em; }
-  .pr-price-cur { font-size: 1.3rem; font-weight: 700; }
-  .pr-price-per { font-size: 0.9rem; color: var(--ink-mid); margin-left: 4px; }
-  .pr-desc {
-    font-size: 0.84rem;
-    color: var(--ink-mid);
-    line-height: 1.4;
-    margin-bottom: 14px;
-  }
-  .pr-desc strong { color: var(--gold); font-weight: 600; }
-  .pr-show-yearly, .pr-show-monthly { display: inline; }
-  .pr-card-desc.pr-show-yearly, .pr-card-desc.pr-show-monthly { display: block; }
-  #premiumView[data-billing="yearly"] .pr-show-monthly { display: none !important; }
-  #premiumView[data-billing="monthly"] .pr-show-yearly { display: none !important; }
-  .pr-feat {
-    list-style: none;
-    padding: 14px 0 0;
-    border-top: 1px solid rgba(15,15,15,0.08);
-    margin: 0;
-  }
-  .pr-feat li {
-    display: grid;
-    grid-template-columns: 20px 1fr;
-    gap: 12px;
-    align-items: center;
-    padding: 7px 0;
-    font-size: 0.88rem;
-    color: var(--ink);
-  }
-  .pr-feat li svg {
-    width: 16px; height: 16px;
-    stroke: var(--ink-mid);
-    stroke-width: 1.8;
-    fill: none;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-  }
-  .pr-cta {
-    margin-top: 18px;
-    width: 100%;
-    padding: 16px;
-    background: var(--ink);
-    color: #fff;
-    border: none;
-    border-radius: 999px;
-    font-weight: 500;
-    font-size: 0.95rem;
-  }
-
-  /* ══════════ BOTTOM NAV ══════════ */
-  .bnav {
-    position: fixed;
-    bottom: calc(14px + env(safe-area-inset-bottom, 0px));
-    left: 14px;
-    right: 14px;
-    background: rgba(255, 253, 248, 0.97);
-    backdrop-filter: blur(28px) saturate(160%);
-    -webkit-backdrop-filter: blur(28px) saturate(160%);
-    border: 1px solid rgba(255,255,255,0.7);
-    border-radius: 999px;
-    padding: 8px 12px;
-    display: grid;
-    grid-template-columns: 1fr 1fr 60px 1fr 1fr;
-    gap: 4px;
-    align-items: center;
-    box-shadow: 0 1px 2px rgba(26,22,18,0.06), 0 14px 36px rgba(26,22,18,0.14);
-    z-index: 100;
-  }
-  .bnav .tab {
-    background: transparent; border: none;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 2px; padding: 6px 2px;
-    color: var(--ink-dim); font-size: 0.68rem; font-weight: 500;
-    border-radius: 999px;
-  }
-  .bnav .tab svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 1.6; fill: none; stroke-linecap: round; stroke-linejoin: round; }
-  .bnav .tab .icon-wrap {
-    width: 34px; height: 34px; border-radius: 50%;
-    display: grid; place-items: center;
-    transition: background 0.2s ease;
-  }
-  .bnav .tab.active { color: var(--ink); font-weight: 600; }
-  .bnav .tab.active .icon-wrap { background: rgba(15,15,15,0.07); }
-  .bnav .fab {
-    width: 54px; height: 54px;
-    background: var(--ink); border: none; border-radius: 50%;
-    display: grid; place-items: center;
-    color: #fff;
-    box-shadow: 0 6px 18px rgba(26,22,18,0.35);
-    margin: 0 auto;
-    transition: transform 0.15s ease;
-  }
-  .bnav .fab:active { transform: scale(0.95); }
-  .bnav .fab svg { width: 22px; height: 22px; stroke: #fff; stroke-width: 2; fill: none; stroke-linecap: round; }
-
-  /* ══════════ SHEET (Yeni Gün + Üye) ══════════ */
-  .sheet-backdrop {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.5);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-    z-index: 200;
-  }
-  .sheet-backdrop.open { opacity: 1; pointer-events: auto; }
-  .sheet {
-    position: fixed;
-    bottom: 0;
-    left: 0; right: 0;
-    background: var(--app-bg);
-    border-radius: 28px 28px 0 0;
-    padding: 10px 20px 24px;
-    padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
-    transform: translateY(100%);
-    transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
-    z-index: 201;
-    max-height: 92vh;
-    overflow-y: auto;
-  }
-  .sheet.open { transform: translateY(0); }
-  .sheet-handle {
-    width: 40px; height: 4px;
-    background: rgba(15,15,15,0.15);
-    border-radius: 999px;
-    margin: 6px auto 14px;
-  }
-  .sheet-title {
-    font-size: 1.3rem;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    margin-bottom: 20px;
-  }
-  .field { margin-bottom: 16px; }
-  .field label {
-    display: block;
-    font-family: var(--mono);
-    font-size: 0.62rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--ink-dim);
-    margin-bottom: 8px;
-  }
-  .field input, .field textarea {
-    width: 100%;
-    background: var(--card);
-    border: 1px solid var(--rule);
-    border-radius: 14px;
-    padding: 14px 16px;
-    font-size: 0.95rem;
-    color: var(--ink);
-    outline: none;
-    font-family: var(--sans);
-  }
-  .field input:focus, .field textarea:focus { border-color: var(--ink); }
-  .field textarea { resize: none; min-height: 80px; }
-  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
-  .chip {
-    padding: 10px 14px;
-    background: var(--card);
-    border: 1px solid var(--rule);
-    border-radius: 999px;
-    font-size: 0.82rem;
-    font-weight: 500;
-    color: var(--ink-mid);
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-  }
-  .chip.active {
-    background: var(--ink);
-    color: #fff;
-    border-color: var(--ink);
-  }
-  .checkbox-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 14px 16px;
-    background: var(--card);
-    border: 1px solid var(--rule);
-    border-radius: 14px;
-    cursor: pointer;
-  }
-  .checkbox-row input { width: 20px; height: 20px; accent-color: var(--ink); }
-  .checkbox-row label {
-    font-family: var(--sans);
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: var(--ink);
-    text-transform: none;
-    letter-spacing: 0;
-    margin: 0;
-  }
-  .sheet-save {
-    width: 100%;
-    background: var(--ink);
-    color: #fff;
-    border: none;
-    padding: 16px;
-    border-radius: 999px;
-    font-weight: 500;
-    font-size: 0.95rem;
-    margin-top: 8px;
-  }
-  .sheet-cancel {
-    width: 100%;
-    background: transparent;
-    color: var(--ink-mid);
-    border: none;
-    padding: 14px;
-    font-weight: 500;
-    font-size: 0.85rem;
-  }
-  .photo-upload {
-    width: 72px; height: 72px;
-    border-radius: 50%;
-    background: var(--card);
-    border: 2px dashed rgba(15,15,15,0.2);
-    display: grid; place-items: center;
-    cursor: pointer;
-    background-size: cover;
-    background-position: center;
-    margin-bottom: 12px;
-    font-size: 1.4rem;
-    color: var(--ink-dim);
-  }
-
-  /* ══════════ DETAIL VIEW ══════════ */
-  .detail-view {
-    position: fixed;
-    inset: 0;
-    background: var(--app-bg);
-    z-index: 150;
-    transform: translateX(100%);
-    transition: transform 0.3s ease;
-    display: flex;
-    flex-direction: column;
-    padding-top: env(safe-area-inset-top, 0px);
-  }
-  .detail-view.open { transform: translateX(0); }
-  .detail-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 20px;
-  }
-  .detail-back {
-    width: 36px; height: 36px;
-    border-radius: 50%;
-    background: var(--card);
-    border: 1px solid var(--rule);
-    display: grid; place-items: center;
-    font-size: 1.2rem;
-  }
-  .detail-actions { display: flex; gap: 8px; }
-  .detail-act-btn {
-    width: 36px; height: 36px;
-    border-radius: 50%;
-    background: var(--card);
-    border: 1px solid var(--rule);
-    display: grid; place-items: center;
-    font-size: 1rem;
-  }
-  .detail-body { flex: 1; overflow-y: auto; padding: 20px; }
-  .detail-emoji-big {
-    width: 80px; height: 80px;
-    border-radius: 24px;
-    display: grid; place-items: center;
-    font-size: 2.4rem;
-    margin-bottom: 16px;
-  }
-  .detail-title {
-    font-size: 2rem;
-    font-weight: 700;
-    letter-spacing: -0.03em;
-    line-height: 1.05;
-    margin-bottom: 6px;
-  }
-  .detail-meta {
-    font-size: 0.95rem;
-    color: var(--ink-mid);
-    margin-bottom: 20px;
-  }
-  .detail-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 14px 0;
-    border-bottom: 1px solid var(--rule);
-  }
-  .detail-row-lbl {
-    font-family: var(--mono);
-    font-size: 0.62rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--ink-dim);
-  }
-  .detail-row-val {
-    font-size: 0.95rem;
-    font-weight: 600;
-    letter-spacing: -0.01em;
-  }
-
+@keyframes pulse{70%{box-shadow:0 0 0 9px transparent}100%{box-shadow:0 0 0 0 transparent}}
+@keyframes drift{to{transform:translate(-26px,22px) scale(1.15)}}
+@keyframes bob{50%{transform:translateY(-4px) rotate(-5deg)}}
+@keyframes wig{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(4deg)}}
+@keyframes rise{from{opacity:0;transform:translateY(-6px)}}
+@keyframes up{from{transform:translateY(100%)}}
+@keyframes fade{from{opacity:0}}
+@keyframes ring{from{stroke-dashoffset:289}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
-
-<div id="app">
-
-  <!-- ══════════ ANA SAYFA ══════════ -->
-  <section class="view active" id="daysView">
-    <div class="header">
-      <div>
-        <div class="greet-sub" id="greetSub">Hoşgeldin</div>
-        <div class="greet-main">Önemli günler</div>
-      </div>
-      <div class="head-right">
-        <button class="head-btn" type="button" aria-label="Ara">
-          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-        </button>
-        <button class="head-btn" type="button" aria-label="Bildirim">
-          <svg viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10 21a2 2 0 0 0 4 0"/></svg>
-        </button>
-      </div>
-    </div>
-
-    <div id="heroSlot"></div>
-
-    <div class="ctabs" id="daysTabs">
-      <button class="ctab active" data-tab="upcoming">Yaklaşan</button>
-      <button class="ctab" data-tab="holidays">Resmi Tatiller</button>
-      <button class="ctab" data-tab="special">Önemli Günler</button>
-    </div>
-
-    <div id="daysContent"></div>
-  </section>
-
-  <!-- ══════════ AİLE AĞACI ══════════ -->
-  <section class="view" id="familyView">
-    <div class="header">
-      <div>
-        <div class="greet-sub" id="familyMeta">HENÜZ ÜYE YOK</div>
-        <div class="greet-main">Aile Ağacın</div>
-      </div>
-      <div class="head-right">
-        <button class="head-btn" type="button" id="familyAddBtn" aria-label="Üye Ekle">
-          <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        </button>
-      </div>
-    </div>
-    <div id="familyContent"></div>
-  </section>
-
-  <!-- ══════════ ASİSTAN ══════════ -->
-  <section class="view" id="asistanView">
-    <div class="header">
-      <div>
-        <div class="greet-sub">AI YARDIMCISI · ÖNİZLEME</div>
-        <div class="greet-main">Asistan</div>
-      </div>
-    </div>
-
-    <div id="asistanList">
-      <div class="asis-chip-row">
-        <button class="asis-chip" data-prompt="Sevgililer günü için anlamlı hediye önerileri verir misin?">
-          <span class="emoji">🌹</span>
-          <span class="txt">Sevgililer günü hediye önerileri</span>
-        </button>
-        <button class="asis-chip" data-prompt="Düğün için duygusal ve anlamlı bir mesaj yazar mısın?">
-          <span class="emoji">💝</span>
-          <span class="txt">Düğün için anlamlı mesaj yaz</span>
-        </button>
-        <button class="asis-chip" data-prompt="Doğum günü kutlama mesajı yazar mısın?">
-          <span class="emoji">🎂</span>
-          <span class="txt">Doğum günü kutlama mesajı</span>
-        </button>
-        <button class="asis-chip" data-prompt="Yaklaşan günlerimi özetler misin?">
-          <span class="emoji">📅</span>
-          <span class="txt">Yaklaşan günlerimi özetle</span>
-        </button>
-      </div>
-      <div id="convHistory"></div>
-    </div>
-
-    <div class="conv-detail" id="convDetail">
-      <div class="conv-bar">
-        <button class="conv-back" id="convBack" type="button">‹</button>
-        <div class="conv-title" id="convTitle">Sohbet</div>
-        <button class="conv-del" id="convDel" type="button" aria-label="Sil">
-          <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
-        </button>
-      </div>
-      <div id="convMsgs"></div>
-    </div>
-
-    <div class="asis-input-wrap" id="asisInputWrap">
-      <input class="asis-input" id="asisInput" placeholder="Sor bana..." type="text">
-      <button class="asis-send" id="asisSend" type="button" aria-label="Gönder">
-        <svg viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
-      </button>
-    </div>
-  </section>
-
-  <!-- ══════════ PROFİLİM ══════════ -->
-  <section class="view" id="profileView">
-    <div class="profile-top">
-      <div class="prof-ava">M</div>
-      <div>
-        <div class="prof-name">Misafir</div>
-        <div class="prof-sub">Free Hesap</div>
-      </div>
-    </div>
-
-    <div class="score-card">
-      <div class="score-lbl">Yıl Boyunca</div>
-      <div class="score-head" id="scoreHead">Bu yıl 0 önemli<br>gün yaşadın</div>
-      <div class="score-sub" id="scoreSub">Yılın %0'ı tamamlandı</div>
-      <div class="score-ring">
-        <svg viewBox="0 0 88 88">
-          <circle class="track" cx="44" cy="44" r="36"/>
-          <circle class="fill" id="scoreRingFill" cx="44" cy="44" r="36" stroke-dasharray="226.19" stroke-dashoffset="226.19"/>
-        </svg>
-        <div class="score-ring-num" id="scoreRingNum">0<small>Yıl</small></div>
-      </div>
-    </div>
-
-    <div class="prof-grid">
-      <button class="prof-tile" id="tileFamily" type="button">
-        <div class="prof-tile-emoji">👨‍👩‍👧</div>
-        <div class="prof-tile-title">Aile Üyelerim</div>
-        <div class="prof-tile-sub" id="tileFamilyCount">0 üye</div>
-      </button>
-      <button class="prof-tile" type="button">
-        <div class="prof-tile-emoji">💝</div>
-        <div class="prof-tile-title">Yıl Dönümlerim</div>
-        <div class="prof-tile-sub" id="tileAnnivCount">0 kayıtlı</div>
-      </button>
-      <button class="prof-tile" type="button">
-        <div class="prof-tile-emoji">📋</div>
-        <div class="prof-tile-title">Önemli Bilgiler</div>
-        <div class="prof-tile-sub">Kan grubu, alerji</div>
-      </button>
-      <button class="prof-tile" type="button">
-        <div class="prof-tile-emoji">⚙️</div>
-        <div class="prof-tile-title">Ayarlar</div>
-        <div class="prof-tile-sub">Bildirim, tema</div>
-      </button>
-    </div>
-
-    <button class="prof-premium" id="profPremiumBtn" type="button">
-      <div class="prof-premium-icon">✦</div>
-      <div class="prof-premium-text">
-        <div class="prof-premium-title">Premium'a Geç</div>
-        <div class="prof-premium-sub">AI asistan, akıllı bildirim</div>
-      </div>
-      <div style="color:var(--ink)">↗</div>
-    </button>
-  </section>
-
-  <!-- ══════════ PREMIUM ══════════ -->
-  <section class="view" id="premiumView" data-billing="yearly">
-    <div class="pr-topbar">
-      <button class="back-btn" id="premiumBack" type="button" aria-label="Geri">‹</button>
-      <div class="ttl">Premium Planlar</div>
-      <button class="back-btn" type="button" aria-label="Menü">⋮</button>
-    </div>
-
-    <div class="pr-hero">
-      <h1><span class="brand">Premium'a</span> Geç</h1>
-      <div class="sub">Akıllı AI hatırlatmalar, sınırsız aile ağacı ve daha bağlı bir Kalender.</div>
-    </div>
-
-    <div class="pr-tabs">
-      <button class="pr-tab" data-billing-tab="monthly" type="button">Aylık</button>
-      <button class="pr-tab active" data-billing-tab="yearly" type="button">Yıllık</button>
-    </div>
-
-    <div class="pr-card">
-      <div class="pr-price">
-        <span class="pr-price-num"><span class="pr-show-yearly">599</span><span class="pr-show-monthly">89</span></span>
-        <span class="pr-price-cur">₺</span>
-        <span class="pr-price-per"><span class="pr-show-yearly">/yıl</span><span class="pr-show-monthly">/ay</span></span>
-      </div>
-      <div class="pr-card-desc pr-show-yearly pr-desc">AI destekli hatırlatmalar ve aile takvimi. <strong>2 ay bedava</strong> · Ayda yaklaşık 50 ₺.</div>
-      <div class="pr-card-desc pr-show-monthly pr-desc">Esnek başlayın, istediğiniz zaman iptal edin.</div>
-
-      <ul class="pr-feat">
-        <li>
-          <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-          AI Asistan
-        </li>
-        <li>
-          <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-          Akıllı bildirimler
-        </li>
-        <li>
-          <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-          Aylık masraf raporu
-        </li>
-        <li>
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="6" r="4"/><circle cx="6" cy="12" r="3.5"/><circle cx="18" cy="12" r="3.5"/><line x1="12" y1="10" x2="12" y2="22"/></svg>
-          Sınırsız aile ağacı
-        </li>
-        <li>
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
-          Reklamsız deneyim
-        </li>
-      </ul>
-
-      <button class="pr-cta" type="button">Premium Üye Ol</button>
-    </div>
-  </section>
-
-  <!-- ══════════ BOTTOM NAV ══════════ -->
-  <nav class="bnav">
-    <button class="tab active" data-view="days" type="button">
-      <span class="icon-wrap"><svg viewBox="0 0 24 24"><path d="M12 2.5 13.6 10 21 11.5 13.6 13 12 20.5 10.4 13 3 11.5 10.4 10 Z"/></svg></span>
-      Ana Sayfa
-    </button>
-    <button class="tab" data-view="family" type="button">
-      <span class="icon-wrap"><svg viewBox="0 0 24 24"><circle cx="12" cy="6" r="3"/><circle cx="6" cy="13" r="2.5"/><circle cx="18" cy="13" r="2.5"/><path d="M12 9v12"/></svg></span>
-      Aile
-    </button>
-    <button class="fab" id="addBtn" type="button" aria-label="Yeni Gün">
-      <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-    </button>
-    <button class="tab" data-view="asistan" type="button">
-      <span class="icon-wrap"><svg viewBox="0 0 24 24"><path d="M4 5h16q2 0 2 2v8q0 2-2 2H12l-4 4 1-4H4q-2 0-2-2V7q0-2 2-2z"/></svg></span>
-      Asistan
-    </button>
-    <button class="tab" data-view="profile" type="button">
-      <span class="icon-wrap"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21q0-7 8-7t8 7"/></svg></span>
-      Profilim
-    </button>
-  </nav>
-
-  <!-- ══════════ EVENT SHEET ══════════ -->
-  <div class="sheet-backdrop" id="sheetBackdrop"></div>
-  <div class="sheet" id="eventSheet">
-    <div class="sheet-handle"></div>
-    <div class="sheet-title" id="eventSheetTitle">Yeni Gün</div>
-    <form id="eventForm">
-      <div class="field">
-        <label>Başlık</label>
-        <input id="evTitle" type="text" placeholder="ör. Melodi Doğum Günü" required>
-      </div>
-      <div class="field">
-        <label>Tarih</label>
-        <input id="evDate" type="date" required>
-      </div>
-      <div class="field">
-        <label>Kategori</label>
-        <div class="chips" id="evCategoryChips"></div>
-      </div>
-      <div class="field">
-        <label>Not</label>
-        <textarea id="evNote" placeholder="Opsiyonel"></textarea>
-      </div>
-      <div class="field spending" id="spendingField" style="display:none">
-        <label id="spendingLbl">Harcama</label>
-        <input id="evSpending" type="text" placeholder="">
-      </div>
-      <div class="field">
-        <div class="checkbox-row">
-          <input id="evRecurring" type="checkbox">
-          <label for="evRecurring">Her yıl tekrarlasın</label>
-        </div>
-      </div>
-      <div class="field">
-        <div class="checkbox-row">
-          <input id="evFavorite" type="checkbox">
-          <label for="evFavorite">Favori olarak işaretle</label>
-        </div>
-      </div>
-      <button class="sheet-save" type="submit">Kaydet</button>
-      <button class="sheet-cancel" type="button" id="eventSheetCancel">Vazgeç</button>
-    </form>
-  </div>
-
-  <!-- ══════════ FAMILY SHEET ══════════ -->
-  <div class="sheet" id="familySheet">
-    <div class="sheet-handle"></div>
-    <div class="sheet-title" id="familySheetTitle">Üye Ekle</div>
-    <form id="familyForm">
-      <div class="photo-upload" id="familyPhotoBtn">+</div>
-      <input id="familyPhotoInput" type="file" accept="image/*" style="display:none">
-      <div class="field">
-        <label>İsim</label>
-        <input id="familyNameInput" type="text" placeholder="ör. Melodi" required>
-      </div>
-      <div class="field">
-        <label>Yakınlık</label>
-        <div class="chips" id="familyRelationChips">
-          <button type="button" class="chip" data-rel="kendi">Ben</button>
-          <button type="button" class="chip" data-rel="anne">👩 Anne</button>
-          <button type="button" class="chip" data-rel="baba">👨 Baba</button>
-          <button type="button" class="chip" data-rel="es">💍 Eş</button>
-          <button type="button" class="chip" data-rel="nisanli">💎 Nişanlı</button>
-          <button type="button" class="chip" data-rel="kiz-arkadas">🌷 Kız Arkadaş</button>
-          <button type="button" class="chip" data-rel="erkek-arkadas">🌷 Erkek Arkadaş</button>
-          <button type="button" class="chip" data-rel="sevgili">❤️ Sevgili</button>
-          <button type="button" class="chip" data-rel="kardes">👫 Kardeş</button>
-          <button type="button" class="chip" data-rel="cocuk">👶 Çocuk</button>
-        </div>
-      </div>
-      <div class="field">
-        <label>Doğum Günü</label>
-        <input id="familyBirthInput" type="date">
-      </div>
-      <div class="field">
-        <label>Kan Grubu</label>
-        <div class="chips" id="familyBloodChips">
-          <button type="button" class="chip" data-blood="A+">A+</button>
-          <button type="button" class="chip" data-blood="A-">A-</button>
-          <button type="button" class="chip" data-blood="B+">B+</button>
-          <button type="button" class="chip" data-blood="B-">B-</button>
-          <button type="button" class="chip" data-blood="AB+">AB+</button>
-          <button type="button" class="chip" data-blood="AB-">AB-</button>
-          <button type="button" class="chip" data-blood="0+">0+</button>
-          <button type="button" class="chip" data-blood="0-">0-</button>
-        </div>
-      </div>
-      <button class="sheet-save" type="submit" id="familySaveBtn">Kaydet</button>
-      <button class="sheet-cancel" type="button" id="familySheetCancel">Vazgeç</button>
-    </form>
-  </div>
-
-  <!-- ══════════ DETAIL VIEW ══════════ -->
-  <div class="detail-view" id="detailView">
-    <div class="detail-bar">
-      <button class="detail-back" id="detailBack" type="button">‹</button>
-      <div class="detail-actions">
-        <button class="detail-act-btn" id="detailEditBtn" type="button" aria-label="Düzenle">✎</button>
-        <button class="detail-act-btn" id="detailFavBtn" type="button" aria-label="Favori">☆</button>
-        <button class="detail-act-btn" id="detailDelBtn" type="button" aria-label="Sil">🗑</button>
-      </div>
-    </div>
-    <div class="detail-body" id="detailBody"></div>
-  </div>
-
-</div>
+<div class="stage"><main class="phone v-c" id="phone"></main></div>
 
 <script>
-  // ─────────── DATA CONSTANTS ───────────
-  const TR_MONTHS_FULL = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
-  const TR_MONTHS_SHORT = ['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];
-  const TR_DAYS = ['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'];
-  const TR_DAYS_SHORT = ['Paz','Pzt','Sal','Çar','Per','Cum','Cmt'];
+(function(){
+var DAY=864e5;
+var MON=['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+var MONS=['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];
+var WD=['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'];
+var WDS=['Paz','Pzt','Sal','Çar','Per','Cum','Cmt'];
+function svg(d){return '<svg class="i" viewBox="0 0 24 24" aria-hidden="true">'+d+'</svg>';}
+var ICON={
+  bday:svg('<path d="M4 20h16v-6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2z"/><path d="M4 16.5c1.3 1 2.7 1 4 0s2.7-1 4 0 2.7 1 4 0 2.7-1 4 0"/><path d="M12 12V8.5M12 5.5v.01"/>'),
+  anniv:svg('<path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 7.5 2.6C19.500 15.4 12 20 12 20z"/>'),
+  wedding:svg('<circle cx="9" cy="14.5" r="5"/><circle cx="15" cy="14.5" r="5"/><path d="M9 6.500 7.500 4h3z"/>'),
+  concert:svg('<path d="M9 17.500V6l10-2v11.5"/><circle cx="6.500" cy="17.500" r="2.500"/><circle cx="16.500" cy="15.500" r="2.500"/>'),
+  doctor:svg('<rect x="4" y="4" width="16" height="16" rx="5"/><path d="M12 8.500v7M8.500 12h7"/>'),
+  edu:svg('<path d="M2.500 9.500 12 5l9.500 4.500L12 14z"/><path d="M6.500 11.500V16c1.500 1.400 3.300 2 5.500 2s4-.6 5.500-2v-4.500"/>'),
+  move:svg('<path d="M4 8l8-4 8 4v8l-8 4-8-4z"/><path d="M4 8l8 4 8-4M12 12v8"/>'),
+  task:svg('<circle cx="12" cy="12" r="8.500"/><path d="M8.300 12.300l2.600 2.600 4.800-5.200"/>'),
+  check:svg('<path d="M5 12.500l4.500 4.500L19 7.500"/>'),
+  plus:svg('<path d="M12 5v14M5 12h14"/>'),
+  search:svg('<circle cx="11" cy="11" r="6.500"/><path d="M16 16l4 4"/>'),
+  bell:svg('<path d="M6 16v-5a6 6 0 0 1 12 0v5l1.500 2h-15z"/><path d="M10 20.500h4"/>'),
+  home:svg('<path d="M12 3c.6 4.800 3.200 7.400 8 8-4.800.6-7.400 3.200-8 8-.6-4.800-3.200-7.400-8-8 4.800-.6 7.400-3.200 8-8z"/>'),
+  fam:svg('<circle cx="12" cy="6" r="2.500"/><circle cx="6" cy="12" r="2"/><circle cx="18" cy="12" r="2"/><path d="M12 8.500V20M8 12h8"/>'),
+  chat:svg('<path d="M5 6h14a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1h-6l-4 3v-3H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1z"/>'),
+  user:svg('<circle cx="12" cy="8.500" r="3.500"/><path d="M5 20c.8-3.600 3.400-5.500 7-5.500s6.200 1.900 7 5.500"/>'),
+  x:svg('<path d="M6 6l12 12M18 6 6 18"/>')
+};
+var CATS={
+  bday:{l:'Doğum günü',g:'special',p:'#FFE1B0',ink:'#5E3A00',c:'#FFC24B'},
+  anniv:{l:'Yıldönümü',g:'special',p:'#FFD3D8',ink:'#73182D',c:'#FF8FA3'},
+  wedding:{l:'Düğün',g:'special',p:'#E5D9FF',ink:'#3F2275',c:'#B79CFF'},
+  concert:{l:'Konser',g:'event',p:'#CCE4FF',ink:'#0E3B6E',c:'#6FB6FF'},
+  edu:{l:'Eğitim',g:'event',p:'#ECE6D8',ink:'#3D3524',c:'#E8DCC0'},
+  move:{l:'Taşınma',g:'event',p:'#FFDFCB',ink:'#74300D',c:'#FF9E6B'},
+  doctor:{l:'Dr. randevusu',g:'task',p:'#CDF2E0',ink:'#0C4A32',c:'#5FE0A8'},
+  task:{l:'Görev',g:'task',p:'#E1E5EA',ink:'#28313D',c:'#A9B4C2'}
+};
+var ACT={bday:['Mesaj hazırla','Hediye notu'],anniv:['Rezervasyon','Hediye notu'],wedding:['Hediye notu','Yol tarifi'],concert:['Bileti göster','Yol tarifi'],edu:['Takvime ekle','Not ekle'],move:['Yapılacaklar','Not ekle'],doctor:['Takvime ekle','Soru notu'],task:['Takvime ekle','Not ekle']};
+var FILTERS=[['all','Tümü'],['special','Özel günler'],['event','Etkinlik'],['task','Randevu']];
 
-  const CATEGORIES = {
-    dugun:       { label: 'Düğün',         icon: '💍', cls: 'cat-dugun' },
-    dogum:       { label: 'Doğum Günü',    icon: '🎂', cls: 'cat-dogum' },
-    konser:      { label: 'Konser',        icon: '🎵', cls: 'cat-konser' },
-    seyahat:     { label: 'Seyahat',       icon: '✈️', cls: 'cat-seyahat' },
-    kutlama:     { label: 'Kutlama',       icon: '🎉', cls: 'cat-kutlama' },
-    yildonumu:   { label: 'Yıldönümü',     icon: '💝', cls: 'cat-yildonumu' },
-    saglik:      { label: 'Sağlık',        icon: '🏥', cls: 'cat-saglik' },
-    spor:        { label: 'Spor',          icon: '💪', cls: 'cat-spor' },
-    alisveris:   { label: 'Alışveriş',     icon: '🛍️', cls: 'cat-alisveris' },
-    sinema:      { label: 'Sinema',        icon: '🎬', cls: 'cat-sinema' },
-    standup:     { label: 'Stand Up',      icon: '😜', cls: 'cat-standup' },
-    tiyatro:     { label: 'Tiyatro',       icon: '🎭', cls: 'cat-tiyatro' },
-    mac:         { label: 'Maç İzleme',    icon: '⚽', cls: 'cat-mac' },
-    bayram:      { label: 'Bayram',        icon: '🌙', cls: 'cat-bayram' },
-    meditasyon:  { label: 'Meditasyon',    icon: '🧘', cls: 'cat-meditasyon' },
-    egitim:      { label: 'Eğitim',        icon: '📚', cls: 'cat-egitim' },
-    toplanti:    { label: 'Toplantı',      icon: '📅', cls: 'cat-toplanti' },
-    doktor:      { label: 'Muayene',       icon: '🩺', cls: 'cat-doktor' },
-    fizik:       { label: 'Fizik Tedavi',  icon: '🦵', cls: 'cat-fizik' },
-    ilac:        { label: 'İlaç & Vitamin',icon: '💊', cls: 'cat-ilac' },
-    veteriner:   { label: 'Veteriner',     icon: '🐾', cls: 'cat-veteriner' },
-    hediye:      { label: 'Hediye',        icon: '🎁', cls: 'cat-hediye' },
-    diger:       { label: 'Diğer',         icon: '✦',  cls: 'cat-diger' }
-  };
+function at(off,h,m){var d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()+off);d.setHours(h,m,0,0);return d;}
+function mid(d){var x=new Date(d);x.setHours(0,0,0,0);return x;}
+var events=[
+  {id:1,cat:'bday',title:'Annemin doğum günü',note:'58 yaşına giriyor',when:at(3,0,0),allDay:true},
+  {id:2,cat:'doctor',title:'Diş kontrolü',note:'14:30',when:at(5,14,30)},
+  {id:3,cat:'wedding',title:'Elif & Kerem düğünü',note:'Kır düğünü, 19:00',when:at(8,19,0)},
+  {id:4,cat:'concert',title:'Açık hava konseri',note:'Kapı açılış 20:00',when:at(12,20,0)},
+  {id:5,cat:'task',title:'Araç muayenesi',note:'10:30',when:at(19,10,30)},
+  {id:6,cat:'edu',title:'Claude Full Reset',note:'Tam gün',when:at(28,9,0)},
+  {id:7,cat:'move',title:'Taşınma',note:'Nakliye 08:00',when:at(32,8,0)},
+  {id:8,cat:'anniv',title:'Annemle babamın yıldönümü',note:'35. yıl',when:at(41,0,0),allDay:true}
+];
+var nextId=9;
+var state={v:'c',filter:'all',open:null,sheet:false,newCat:'bday'};
+var phone=document.getElementById('phone');
 
-  const SPENDING_CATEGORIES = ['dugun', 'dogum'];
-  const SPENDING_CONFIG = {
-    dugun: { label: 'Takı + Para (₺)', placeholder: 'ör. 2 çeyrek altın + 2000 TL' },
-    dogum: { label: 'Hediye Harcaması (₺)', placeholder: 'ör. Hediye + tatlı, 800 TL' }
-  };
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function byId(id){for(var i=0;i<events.length;i++)if(events[i].id===+id)return events[i];}
+function dayDiff(e){return Math.round((mid(e.when)-mid(new Date()))/DAY);}
+function dl(e){var n=dayDiff(e);return n<=0?['Bugün','',1]:n===1?['Yarın','',1]:[n,'gün',0];}
+function dateLabel(e){var d=e.when;return d.getDate()+' '+MON[d.getMonth()]+' · '+WD[d.getDay()];}
+function p2(n){return (n<10?'0':'')+n;}
+function parts(e){var ms=Math.max(0,(e.allDay?mid(e.when):e.when)-new Date());return{d:Math.floor(ms/DAY),h:Math.floor(ms/36e5)%24,m:Math.floor(ms/6e4)%60,s:Math.floor(ms/1e3)%60};}
+function sorted(){return events.slice().sort(function(a,b){return a.when-b.when;});}
 
-  const HOLIDAYS_2026 = [
-    { date: '2026-01-01', title: 'Yılbaşı', emoji: '🎊', cls: 'cat-kutlama' },
-    { date: '2026-03-20', endDate: '2026-03-22', title: 'Ramazan Bayramı', emoji: '🌙', cls: 'cat-bayram', durationLabel: '3 gün' },
-    { date: '2026-04-23', title: 'Ulusal Egemenlik ve Çocuk Bayramı', emoji: '🇹🇷', cls: 'cat-flag' },
-    { date: '2026-05-01', title: 'Emek ve Dayanışma Günü', emoji: '🌹', cls: 'cat-yildonumu' },
-    { date: '2026-05-19', title: 'Atatürk\'ü Anma, Gençlik ve Spor Bayramı', emoji: '🇹🇷', cls: 'cat-flag' },
-    { date: '2026-05-26', endDate: '2026-05-29', title: 'Kurban Bayramı', emoji: '🌙', cls: 'cat-bayram', durationLabel: '4 gün' },
-    { date: '2026-07-15', title: 'Demokrasi ve Milli Birlik Günü', emoji: '🇹🇷', cls: 'cat-flag' },
-    { date: '2026-08-30', title: 'Zafer Bayramı', emoji: '🇹🇷', cls: 'cat-flag' },
-    { date: '2026-10-29', title: 'Cumhuriyet Bayramı', emoji: '🇹🇷', cls: 'cat-flag' }
-  ];
+function det(e){
+  if(e.done)return '<div class="det"><div class="det-a"><button class="btn pri" data-act="undo" data-id="'+e.id+'">Geri al</button><button class="btn" data-act="del" data-id="'+e.id+'">Sil</button></div></div>';
+  var a=ACT[e.cat];
+  return '<div class="det"><div class="det-l">Hatırlat</div><div class="chips">'+
+    ['1 hafta önce','1 gün önce','O gün'].map(function(t,i){return '<button class="chip'+(i?' on':'')+'" data-act="chip" aria-pressed="'+(i?'true':'false')+'">'+t+'</button>';}).join('')+
+    '</div><div class="det-a"><button class="btn pri" data-act="demo">'+a[0]+'</button><button class="btn" data-act="demo">'+a[1]+'</button>'+
+    '<button class="btn ok" data-act="done" data-id="'+e.id+'" aria-label="Tamamlandı olarak işaretle">'+ICON.check+'</button></div></div>';
+}
+function ev(e,i,arr,hero){
+  var c=CATS[e.cat],d=e.done?['Tamam','',1]:dl(e),open=state.open===e.id;
+  return '<article class="ev cat-'+e.cat+(hero?' hero':'')+(open?' open':'')+(!e.done&&dayDiff(e)<=3?' soon':'')+'" style="--p:'+c.p+';--ink:'+c.ink+';--c:'+c.c+'">'+
+    '<button class="ev-h" data-act="open" data-id="'+e.id+'" aria-expanded="'+open+'">'+
+    '<span class="ev-ic">'+ICON[e.cat]+'</span>'+
+    '<span class="ev-t"><small>'+c.l+'</small><b>'+esc(e.title)+'</b><i>'+dateLabel(e)+(e.note?' · '+esc(e.note):'')+'</i></span>'+
+    '<span class="ev-d"><b'+(d[2]?' class="txt"':'')+'>'+d[0]+'</b><i>'+d[1]+'</i></span>'+
+    '<em class="stk">Az kaldı</em></button>'+(open?det(e):'')+'</article>';
+}
+function listHtml(list){return list.length?list.map(ev).join(''):'<p class="empty">Bu filtrede bir şey yok. Artıya basıp ekleyebilirsin.</p>';}
+function filters(){return '<div class="fl x" role="group" aria-label="Filtre">'+FILTERS.map(function(f){return '<button data-act="filter" data-f="'+f[0]+'" class="'+(state.filter===f[0]?'on':'')+'" aria-pressed="'+(state.filter===f[0])+'">'+f[1]+'</button>';}).join('')+'</div>';}
+function todayLabel(){var n=new Date();return n.getDate()+' '+MON[n.getMonth()]+' '+WD[n.getDay()];}
 
-  const SPECIAL_DAYS_2026 = [
-    { date: '2026-02-14', title: 'Sevgililer Günü', emoji: '💌', cls: 'cat-yildonumu' },
-    { date: '2026-03-08', title: 'Dünya Kadınlar Günü', emoji: '💜', cls: 'cat-konser' },
-    { date: '2026-03-18', title: 'Çanakkale Şehitler Günü', emoji: '🌹', cls: 'cat-tiyatro' },
-    { date: '2026-05-10', title: 'Anneler Günü', emoji: '🌸', cls: 'cat-dugun' },
-    { date: '2026-06-14', title: 'Avustralya - Türkiye', subtitle: '07.00 TSİ · D Grubu', emoji: '⚽', cls: 'cat-mac' },
-    { date: '2026-06-19', title: 'Türkiye - Paraguay', subtitle: '06.00 TSİ · D Grubu', emoji: '⚽', cls: 'cat-mac' },
-    { date: '2026-06-21', title: 'Babalar Günü', emoji: '👔', cls: 'cat-seyahat' },
-    { date: '2026-06-25', title: 'Türkiye - ABD', subtitle: '05.00 TSİ · D Grubu', emoji: '⚽', cls: 'cat-mac' },
-    { date: '2026-11-24', title: 'Öğretmenler Günü', emoji: '📚', cls: 'cat-egitim' }
-  ];
+var R={
+c:function(all0,list0){
+  var all=all0.filter(function(e){return !e.done;}),list=list0.filter(function(e){return !e.done;});
+  var done=list0.filter(function(e){return e.done;}).sort(function(a,b){return (b.doneAt||0)-(a.doneAt||0);});
+  var first=all[0];
+  return '<header class="hd"><div><h1>Sırada ne var?</h1><p class="sub">'+all.length+' gün işaretli'+(first?' · en yakını '+(dayDiff(first)<=0?'bugün':dayDiff(first)+' gün sonra'):'')+'</p></div><div class="rb" aria-hidden="true">M</div></header>'+
+    filters()+'<div class="list">'+(list.length?list.map(function(e,i){return ev(e,i,null,i===0)+(i===0&&list.length>1?'<p class="lv-sep">Sonra</p>':'');}).join(''):listHtml(list))+'</div>'+
+    (done.length?'<section class="donew'+(state.doneOpen?' open':'')+'"><button class="done-t" data-act="doneToggle" aria-expanded="'+!!state.doneOpen+'"><span>Tamamlananlar · '+done.length+'</span>'+ICON.cr+'</button>'+(state.doneOpen?'<div class="list done-l">'+done.map(function(e){return ev(e);}).join('')+'</div>':'')+'</section>':'');
+}};
 
-  const REL_LABEL = {
-    kendi: 'Ben', anne: 'Anne', baba: 'Baba', es: 'Eş', nisanli: 'Nişanlı',
-    'kiz-arkadas': 'Kız Arkadaş', 'erkek-arkadas': 'Erkek Arkadaş', sevgili: 'Sevgili',
-    kardes: 'Kardeş', cocuk: 'Çocuk'
-  };
-  const PARTNER_RELS = ['es','nisanli','kiz-arkadas','erkek-arkadas','sevgili'];
-  function relationClass(rel) {
-    if (rel === 'kendi') return 'kendi';
-    if (PARTNER_RELS.includes(rel)) return 'partner';
-    return rel;
+var PCOL=[['#FFE1B0','#5E3A00'],['#CDF2E0','#0C4A32'],['#E5D9FF','#3F2275'],['#CCE4FF','#0E3B6E'],['#FFD3D8','#73182D'],['#FFDFCB','#74300D']];
+var people=[{id:1,name:'Annem',group:'Aile',notes:['Seramik atölyesi','Keten masa örtüsü']},{id:2,name:'Babam',group:'Aile',notes:[]},{id:3,name:'Elif',group:'Arkadaş',notes:[]},{id:4,name:'Deniz',group:'Arkadaş',notes:['Plak']},{id:5,name:'Selin',group:'İş',notes:[]}];
+var nextP=6;
+var CONTACTS=['Ahmet Yılmaz','Ayşe Kaya','Burak Aksoy','Canan Şahin','Emre Çelik','Gizem Aydın','Hakan Öztürk','İrem Arslan','Murat Doğan','Zeynep Koç'];
+var HOL={'1-1':'Yılbaşı','4-23':'Ulusal Egemenlik ve Çocuk Bayramı','5-1':'Emek ve Dayanışma Günü','5-19':'Gençlik ve Spor Bayramı','7-15':'Demokrasi ve Millî Birlik Günü','8-30':'Zafer Bayramı','10-29':'Cumhuriyet Bayramı'};
+var GROUPS=['Aile','Arkadaş','İş'];
+byId(1).persons=[1];byId(3).persons=[3];byId(8).persons=[1,2];
+events.push({id:9,cat:'bday',title:'Deniz doğum günü',note:'',when:at(52,0,0),allDay:true,persons:[4]},{id:10,cat:'bday',title:'Babamın doğum günü',note:'',when:at(96,0,0),allDay:true,persons:[2]});
+events.push({id:11,cat:'doctor',title:'Göz kontrolü',note:'11:00',when:at(-4,11,0),done:true,doneAt:Date.now()-4*864e5,persons:[]},{id:12,cat:'task',title:'Kasko yenileme',note:'',when:at(-9,0,0),allDay:true,done:true,doneAt:Date.now()-9*864e5,persons:[]});
+nextId=13;
+var LS={e:'kalender.p.events',p:'kalender.p.people',s:'kalender.p.set'};
+try{
+  var se=localStorage.getItem(LS.e),sp=localStorage.getItem(LS.p);
+  if(se)events=JSON.parse(se).map(function(e){e.when=new Date(e.when);return e;});
+  if(sp)people=JSON.parse(sp);
+}catch(err){}
+nextId=events.reduce(function(m,e){return Math.max(m,e.id);},0)+1;
+nextP=people.reduce(function(m,p){return Math.max(m,p.id);},0)+1;
+function persist(){try{localStorage.setItem(LS.e,JSON.stringify(events));localStorage.setItem(LS.p,JSON.stringify(people));localStorage.setItem(LS.s,JSON.stringify(state.set));}catch(err){}}
+state.tab='home';state.person=null;state.pgroup='all';state.newGrp='Aile';state.pick={};
+state.sel=mid(new Date());state.calY=state.sel.getFullYear();state.calM=state.sel.getMonth();
+state.set={quiet:true,hol:true,contacts:false,w:false,d:true,o:true,view:'cards'};
+try{var ss=localStorage.getItem(LS.s);if(ss){var so=JSON.parse(ss);for(var k0 in so)state.set[k0]=so[k0];}}catch(e){}
+try{var sv=localStorage.getItem('kalender.view');if(sv==='list'||sv==='cards')state.set.view=sv;}catch(e){}
+ICON.users=svg('<circle cx="9" cy="9" r="3.5"/><path d="M3 19c.6-3.200 3-5 6-5s5.400 1.800 6 5"/><path d="M16 5.800a3.500 3.500 0 0 1 0 6.400M18 14.500c1.600.8 2.600 2.300 3 4.500"/>');
+ICON.cal=svg('<rect x="4" y="5" width="16" height="15" rx="3.5"/><path d="M4 10h16M8 3v4M16 3v4"/>');
+ICON.cl=svg('<path d="M14.500 6l-6 6 6 6"/>');
+ICON.cr=svg('<path d="M9.500 6l6 6-6 6"/>');
+
+function pOf(id){for(var i=0;i<people.length;i++)if(people[i].id===+id)return people[i];}
+function pEvents(id){return sorted().filter(function(e){return !e.done&&e.persons&&e.persons.indexOf(id)>=0;});}
+function av(p,big){var c=PCOL[(p.id-1)%PCOL.length];return '<span class="av'+(big?' big':'')+'" style="--p:'+c[0]+';--ink:'+c[1]+'">'+esc(p.name.charAt(0).toLocaleUpperCase('tr'))+'</span>';}
+function low(s){return s.toLocaleLowerCase('tr');}
+function iso(d){return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate());}
+function sw(k,label,hint){return '<button class="set-r" role="switch" aria-checked="'+!!state.set[k]+'" data-act="tg" data-k="'+k+'"><span class="set-t">'+label+(hint?'<small>'+hint+'</small>':'')+'</span><span class="tg"></span></button>';}
+
+var P={
+people:function(){
+  var list=people.filter(function(p){return state.pgroup==='all'||p.group===state.pgroup;});
+  return '<header class="hd"><div><div class="eyebrow">'+people.length+' kişi</div><h1>Kişiler</h1></div></header>'+
+    '<div class="act2"><button class="pri" data-act="sheet" data-s="person">'+ICON.plus+'<span>Kişi ekle</span></button><button data-act="sheet" data-s="contacts">'+ICON.users+'<span>Rehberden seç</span></button></div>'+
+    '<div class="srch">'+ICON.search+'<input id="pSearch" type="search" placeholder="Kişilerde ara" aria-label="Kişilerde ara"></div>'+
+    '<div class="fl x" role="group" aria-label="Grup">'+['all'].concat(GROUPS).map(function(g){return '<button data-act="pgroup" data-g="'+g+'" class="'+(state.pgroup===g?'on':'')+'" aria-pressed="'+(state.pgroup===g)+'">'+(g==='all'?'Tümü':g)+'</button>';}).join('')+'</div>'+
+    '<div class="list plain" id="plist">'+(list.length?list.map(function(p){
+      var es=pEvents(p.id),n=es[0];
+      return '<button class="pr" data-act="person" data-id="'+p.id+'" data-n="'+esc(low(p.name))+'">'+av(p)+'<span class="pr-t"><b>'+esc(p.name)+'</b><i>'+p.group+' · '+(n?CATS[n.cat].l+', '+(dayDiff(n)<=0?'bugün':dayDiff(n)+' gün sonra'):'gün eklenmedi')+'</i></span>'+(n&&dayDiff(n)<=7?'<span class="tag">Yakında</span>':'')+ICON.cr+'</button>';
+    }).join(''):'<p class="empty">Bu grupta kimse yok.</p>')+'</div>';
+},
+person:function(){
+  var p=pOf(state.person),es=pEvents(p.id);
+  return '<div class="hd"><button class="rb" data-act="back" aria-label="Kişilere dön">'+ICON.cl+'</button><button class="btn sm" data-act="demo">Düzenle</button></div>'+
+    '<div class="pd">'+av(p,true)+'<div><h1>'+esc(p.name)+'</h1><p class="sub">'+p.group+' · '+es.length+' gün kayıtlı</p></div></div>'+
+    '<h2>Günleri</h2><div class="list">'+(es.length?es.map(ev).join(''):'<p class="empty">Henüz gün yok. Doğum günüyle başlayabilirsin.</p>')+'</div>'+
+    '<button class="btn pri wide" data-act="add">'+esc(p.name)+' için gün ekle</button>'+
+    '<h2>Hediye notları</h2>'+(p.notes.length?'<div class="chips">'+p.notes.map(function(n){return '<span class="note">'+esc(n)+'</span>';}).join('')+'</div>':'')+
+    '<form class="noteadd" id="noteForm" autocomplete="off"><input id="fNote" type="text" placeholder="Aklına gelen bir fikir yaz" aria-label="Hediye notu" maxlength="40"><button type="submit" class="btn pri">Ekle</button></form>';
+},
+cal:function(){
+  var y=state.calY,m=state.calM,lead=(new Date(y,m,1).getDay()+6)%7,dim=new Date(y,m+1,0).getDate(),today=+mid(new Date()),all=sorted(),cells='',i,d;
+  for(i=0;i<lead;i++)cells+='<span></span>';
+  for(d=1;d<=dim;d++){
+    var dt=+new Date(y,m,d),evs=all.filter(function(e){return +mid(e.when)===dt;}),hol=state.set.hol&&HOL[(m+1)+'-'+d];
+    cells+='<button class="cday'+(dt===today?' today':'')+(dt===+state.sel?' sel':'')+(hol?' hol':'')+'" data-act="day" data-d="'+d+'" aria-label="'+d+' '+MON[m]+(evs.length?', '+evs.length+' kayıt':'')+(hol?', resmi tatil':'')+'"><b>'+d+'</b><i>'+evs.slice(0,3).map(function(e){return '<u style="--c:'+CATS[e.cat].c+';--ink:'+CATS[e.cat].ink+'"></u>';}).join('')+'</i></button>';
   }
+  var inM=all.filter(function(e){return e.when.getFullYear()===y&&e.when.getMonth()===m;}),s=state.sel;
+  var sevs=all.filter(function(e){return +mid(e.when)===+s;}),sh=state.set.hol&&HOL[(s.getMonth()+1)+'-'+s.getDate()];
+  return '<header class="hd"><div><div class="eyebrow">'+(inM.length?inM.length+' kayıt bu ay':'Bu ay boş')+'</div><h1>Takvim</h1></div></header>'+
+    '<section class="cal"><div class="cal-h"><button class="rb" data-act="mon" data-n="-1" aria-label="Önceki ay">'+ICON.cl+'</button><b>'+MON[m]+' '+y+'</b><button class="rb" data-act="mon" data-n="1" aria-label="Sonraki ay">'+ICON.cr+'</button></div>'+
+    '<div class="cal-w">'+['Pzt','Sal','Çar','Per','Cum','Cmt','Paz'].map(function(w){return '<span>'+w+'</span>';}).join('')+'</div><div class="cal-g">'+cells+'</div></section>'+
+    '<h2>'+s.getDate()+' '+MON[s.getMonth()]+' '+WD[s.getDay()]+'</h2>'+
+    (sh?'<div class="holrow"><b>Resmi tatil</b><span>'+sh+'</span></div>':'')+
+    '<div class="list">'+(sevs.length?sevs.map(ev).join(''):'<p class="empty">Bu gün boş.</p>')+'</div>'+
+    '<button class="btn wide" data-act="add">Bu güne ekle</button>';
+},
+me:function(){
+  var all=sorted(),month=all.filter(function(e){return dayDiff(e)<=30;}).length;
+  return '<header class="pd">'+'<span class="av big" style="--p:#FFD46B;--ink:#3B2A00">M</span><div><h1>Mustafa</h1><p class="sub">Profil ve ayarlar</p></div></header>'+
+    '<div class="stats"><div><b>'+all.length+'</b><span>gün</span></div><div><b>'+people.length+'</b><span>kişi</span></div><div><b>'+month+'</b><span>30 gün içinde</span></div></div>'+
+    '<div class="set-l">Hatırlatmalar</div><section class="set">'+
+      '<button class="set-r" data-act="demo"><span class="set-t">Bildirim saati</span><span class="v">09:00</span></button>'+
+      '<div class="set-r col"><span class="set-t">Yeni günlerde varsayılan plan</span><div class="chips">'+[['w','1 hafta önce'],['d','1 gün önce'],['o','O gün']].map(function(c){return '<button class="chip'+(state.set[c[0]]?' on':'')+'" data-act="tg" data-k="'+c[0]+'" aria-pressed="'+!!state.set[c[0]]+'">'+c[1]+'</button>';}).join('')+'</div></div>'+
+      sw('quiet','Sessiz saatler','23:00 ile 08:00 arası bildirim gelmez')+'</section>'+
+    '<div class="set-l">Görünüm</div><section class="set">'+
+      '<div class="set-r col"><span class="set-t">Gün görünümü<small>Liste, çok günün olduğunda daha kolay taranır</small></span><div class="seg2" role="group" aria-label="Gün görünümü">'+[['cards','Kartlar'],['list','Liste']].map(function(o){var on=state.set.view===o[0];return '<button class="'+(on?'on':'')+'" data-act="view" data-v="'+o[0]+'" aria-pressed="'+on+'">'+o[1]+'</button>';}).join('')+'</div></div>'+
+      sw('hol','Resmi tatilleri takvimde göster')+'</section>'+
+    '<div class="set-l">Veriler</div><section class="set">'+sw('contacts','Rehber erişimi','Yalnızca seçtiğin kişiler eklenir')+
+      '<button class="set-r" data-act="demo"><span class="set-t">Yedekle ve geri yükle</span>'+ICON.cr+'</button></section>'+
+    '<section class="pro"><b>Pro</b><p>Tek seferlik ödeme. Veri toplamaz, çevrimdışı çalışır.</p><button class="btn" data-act="demo">Pro&#39;yu incele</button></section>';
+}};
 
-  // ─────────── STORAGE ───────────
-  const STORAGE_KEY = 'onemliGunler.v1';
-  const FAM_KEY = 'kalender.aile.v1';
-  const ASIS_KEY = 'kalender.asistan.v1';
+function nav(){
+  var T=[['home','Ana Sayfa',ICON.home],['people','Kişiler',ICON.users],0,['cal','Takvim',ICON.cal],['me','Profil',ICON.user]];
+  return '<nav class="nav" aria-label="Ana menü">'+T.map(function(t){
+    if(!t)return '<button class="fab" data-act="add" aria-label="Yeni gün ekle">'+ICON.plus+'</button>';
+    var on=state.tab===t[0];
+    return '<button class="'+(on?'on':'')+'" data-act="tab" data-t="'+t[0]+'"'+(on?' aria-current="page"':'')+'>'+t[2]+'<span>'+t[1]+'</span></button>';
+  }).join('')+'</nav>';
+}
+function sheetHead(t){return '<span class="grab"></span><div class="sheet-h"><h2>'+t+'</h2><button type="button" class="rb" data-act="close" aria-label="Kapat">'+ICON.x+'</button></div>';}
+var SHEETS={
+event:function(){
+  var p=state.person&&pOf(state.person),d=state.tab==='cal'&&!p&&state.sel>=mid(new Date())?state.sel:at(7,0,0);
+  return '<div class="sheet-bg" data-act="close"></div><form class="sheet" id="addForm" autocomplete="off">'+sheetHead(p?esc(p.name)+' için gün ekle':'Yeni gün ekle')+
+    '<div class="chips" id="catChips">'+Object.keys(CATS).map(function(k){return '<button type="button" class="chip'+(state.newCat===k?' on':'')+'" data-act="cat" data-c="'+k+'" aria-pressed="'+(state.newCat===k)+'">'+CATS[k].l+'</button>';}).join('')+'</div>'+
+    '<label for="fTitle">Başlık<input id="fTitle" name="title" type="text" placeholder="Örn. Konser, düğün, randevu" maxlength="40"></label>'+
+    '<label for="fDate">Tarih<input id="fDate" name="date" type="date" value="'+iso(d)+'"></label>'+
+    '<button type="submit" class="btn pri">Ekle</button></form>';
+},
+person:function(){
+  return '<div class="sheet-bg" data-act="close"></div><form class="sheet" id="personForm" autocomplete="off">'+sheetHead('Kişi ekle')+
+    '<label for="fName">Ad<input id="fName" type="text" placeholder="Örn. Ayşe teyze" maxlength="30"></label>'+
+    '<div class="chips" id="grpChips">'+GROUPS.map(function(g){return '<button type="button" class="chip'+(state.newGrp===g?' on':'')+'" data-act="grp" data-g="'+g+'" aria-pressed="'+(state.newGrp===g)+'">'+g+'</button>';}).join('')+'</div>'+
+    '<label for="fBday">Doğum günü (isteğe bağlı)<input id="fBday" type="date"></label>'+
+    '<button type="submit" class="btn pri">Kişiyi ekle</button>'+
+    '<button type="button" class="btn" data-act="sheet" data-s="contacts">Rehberden seç</button></form>';
+},
+contacts:function(){
+  var have=people.map(function(p){return p.name;});
+  return '<div class="sheet-bg" data-act="close"></div><div class="sheet tall">'+sheetHead('Rehberden seç')+
+    '<p class="sub">Örnek rehber. Uygulamada telefonundaki kişiler listelenir, yalnızca işaretlediklerin eklenir.</p>'+
+    '<div class="srch">'+ICON.search+'<input id="cSearch" type="search" placeholder="Rehberde ara" aria-label="Rehberde ara"></div>'+
+    '<div class="clist" id="clist">'+CONTACTS.map(function(n,i){
+      var done=have.indexOf(n)>=0;
+      return '<button class="crow" data-act="pick" data-i="'+i+'" data-n="'+esc(low(n))+'" aria-pressed="false"'+(done?' disabled':'')+'>'+av({id:i+1,name:n})+'<span class="pr-t"><b>'+n+'</b>'+(done?'<i>Zaten ekli</i>':'')+'</span><span class="ck">'+ICON.check+'</span></button>';
+    }).join('')+'</div>'+
+    '<button class="btn pri" id="impBtn" data-act="import">Kişi seç</button></div>';
+}};
 
-  let events = loadStorage(STORAGE_KEY, []);
-  let familyMembers = loadStorage(FAM_KEY, []);
-  let conversations = loadStorage(ASIS_KEY, []);
-  let currentView = 'days';
-  let activeTab = 'upcoming';
-  let editingId = null;
-  let familyEditingId = null;
-  let familyPhotoData = null;
-  let activeConvId = null;
+function render(keep){
+  persist();
+  var sc=phone.querySelector('.scroll'),st=keep&&sc?sc.scrollTop:0;
+  var all=sorted(),list=all.filter(function(e){return state.filter==='all'||CATS[e.cat].g===state.filter;});
+  phone.className='phone v-c'+(state.set.view==='list'?' lv':'');
+  var body=state.person?P.person():state.tab==='home'?R[state.v](all,list):P[state.tab]();
+  phone.innerHTML='<div class="scroll">'+body+'</div>'+nav()+(state.sheet?SHEETS[state.sheet]():'')+'<div class="toast" id="toast" role="status"></div>';
+  phone.querySelector('.scroll').scrollTop=st;
+  tick();
+}
+function tick(){
+  var els=phone.querySelectorAll('[data-cd]');
+  for(var i=0;i<els.length;i++){
+    var e=byId(els[i].dataset.cd);if(!e)continue;var p=parts(e);
+    els[i].textContent=(p.d?p.d+' g ':'')+p2(p.h)+' sa '+p2(p.m)+' dk '+p2(p.s)+' sn';
+  }
+}
+var toastT;
+function toast(msg){var t=document.getElementById('toast');if(!t)return;t.textContent=msg;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(function(){t.classList.remove('show');},1800);}
+function press(wrapId,b){var cs=document.getElementById(wrapId).children;for(var i=0;i<cs.length;i++){var on=cs[i]===b;cs[i].classList.toggle('on',on);cs[i].setAttribute('aria-pressed',on);}}
+function pickCount(){var n=0;for(var k in state.pick)if(state.pick[k])n++;return n;}
 
-  function loadStorage(key, def) {
-    try { const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : def; }
-    catch { return def; }
+phone.addEventListener('click',function(ev0){
+  var b=ev0.target.closest('[data-act]');if(!b)return;
+  var a=b.dataset.act;
+  if(a==='open'){state.open=state.open===+b.dataset.id?null:+b.dataset.id;render(true);}
+  else if(a==='filter'){state.filter=b.dataset.f;state.open=null;render(true);}
+  else if(a==='tab'){state.tab=b.dataset.t;state.person=null;state.open=null;state.sheet=false;render(false);}
+  else if(a==='person'){state.person=+b.dataset.id;state.open=null;render(false);}
+  else if(a==='back'){state.person=null;state.open=null;render(false);}
+  else if(a==='pgroup'){state.pgroup=b.dataset.g;render(true);}
+  else if(a==='add'){state.sheet='event';render(true);var f=document.getElementById('fTitle');if(f)f.focus();}
+  else if(a==='sheet'){state.sheet=b.dataset.s;state.pick={};render(true);var f2=document.getElementById('fName');if(f2)f2.focus();}
+  else if(a==='close'){state.sheet=false;render(true);}
+  else if(a==='cat'){state.newCat=b.dataset.c;press('catChips',b);}
+  else if(a==='grp'){state.newGrp=b.dataset.g;press('grpChips',b);}
+  else if(a==='chip'){var on2=b.classList.toggle('on');b.setAttribute('aria-pressed',on2);}
+  else if(a==='pick'){var i=b.dataset.i;state.pick[i]=!state.pick[i];b.setAttribute('aria-pressed',!!state.pick[i]);var n=pickCount();document.getElementById('impBtn').textContent=n?n+' kişiyi ekle':'Kişi seç';}
+  else if(a==='import'){
+    var n2=pickCount();if(!n2){toast('Önce listeden kişi işaretle');return;}
+    for(var k in state.pick)if(state.pick[k])people.push({id:nextP++,name:CONTACTS[k],group:'Arkadaş',notes:[]});
+    state.sheet=false;state.pgroup='all';state.tab='people';state.person=null;render(false);toast(n2+' kişi eklendi');
   }
-  function saveStorage(key, data) {
-    try { localStorage.setItem(key, JSON.stringify(data)); } catch(e){}
-  }
-  function saveEvents() { saveStorage(STORAGE_KEY, events); }
-  function familySave() { saveStorage(FAM_KEY, familyMembers); }
-  function asisSave() { saveStorage(ASIS_KEY, conversations); }
-
-  // ─────────── HELPERS ───────────
-  function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
-  function todayDate() { const d = new Date(); d.setHours(0,0,0,0); return d; }
-  function parseDate(s) { const [y,m,d] = s.split('-').map(Number); return new Date(y, m-1, d); }
-  function nextOccurrence(ev) {
-    const orig = parseDate(ev.date);
-    if (!ev.recurring) return orig;
-    const today = todayDate();
-    const cand = new Date(today.getFullYear(), orig.getMonth(), orig.getDate());
-    if (cand < today) cand.setFullYear(today.getFullYear()+1);
-    return cand;
-  }
-  function daysUntil(d) { return Math.round((d - todayDate()) / 86400000); }
-  function fmtDateShort(d) { return `${d.getDate()} ${TR_MONTHS_FULL[d.getMonth()]} · ${TR_DAYS[d.getDay()]}`; }
-  function fmtDateMono(d) { return `${d.getDate()} ${TR_MONTHS_SHORT[d.getMonth()]} · ${TR_DAYS_SHORT[d.getDay()]}`; }
-  function escapeHtml(s) {
-    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  }
-  function familyInitial(name) {
-    const words = name.trim().split(/\s+/);
-    if (words.length === 1) return words[0].slice(0,1).toUpperCase();
-    return (words[0][0] + words[words.length-1][0]).toUpperCase();
-  }
-
-  // ─────────── GREETING ───────────
-  function updateGreeting() {
-    const self = familyMembers.find(m => m.relation === 'kendi');
-    const name = self ? self.name.split(/\s+/)[0] : 'Mustafa';
-    document.getElementById('greetSub').textContent = `Hoşgeldin ${name}`;
-    // Profile tile
-    const prof = document.querySelector('.prof-ava');
-    if (prof) prof.textContent = name.charAt(0).toUpperCase();
-    const profName = document.querySelector('.prof-name');
-    if (profName) profName.textContent = self ? self.name : 'Misafir';
-    const profSub = document.querySelector('.prof-sub');
-    if (profSub) profSub.textContent = self ? 'Üye' : 'Free Hesap';
-  }
-
-  // ─────────── RENDER: DAYS VIEW ───────────
-  function renderDays() {
-    const today = todayDate();
-    if (activeTab === 'holidays' || activeTab === 'special') {
-      renderHolidaysContent();
-      return;
+  else if(a==='day'){state.sel=new Date(state.calY,state.calM,+b.dataset.d);state.open=null;render(true);}
+  else if(a==='mon'){var d=new Date(state.calY,state.calM+(+b.dataset.n),1);state.calY=d.getFullYear();state.calM=d.getMonth();render(true);}
+  else if(a==='view'){state.set.view=b.dataset.v;try{localStorage.setItem('kalender.view',state.set.view);}catch(e){}render(true);toast(state.set.view==='list'?'Liste görünümü açık':'Kart görünümü açık');}
+  else if(a==='tg'){state.set[b.dataset.k]=!state.set[b.dataset.k];render(true);}
+  else if(a==='done'){var de=byId(b.dataset.id);de.done=true;de.doneAt=Date.now();state.open=null;render(true);toast('Tamamlandı, en alta taşındı');}
+  else if(a==='undo'){var ue=byId(b.dataset.id);ue.done=false;state.open=null;render(true);toast('Geri alındı');}
+  else if(a==='del'){var did=+b.dataset.id;events=events.filter(function(e){return e.id!==did;});state.open=null;render(true);toast('Silindi');}
+  else if(a==='doneToggle'){state.doneOpen=!state.doneOpen;render(true);}
+  else if(a==='demo'){toast('Bu adım demoda yok');}
+});
+phone.addEventListener('input',function(e){
+  var id=e.target.id,wrap=id==='pSearch'?'plist':id==='cSearch'?'clist':null;if(!wrap)return;
+  var q=low(e.target.value.trim()),rows=document.getElementById(wrap).children;
+  for(var i=0;i<rows.length;i++)if(rows[i].dataset.n!==undefined)rows[i].style.display=rows[i].dataset.n.indexOf(q)>=0?'':'none';
+});
+phone.addEventListener('submit',function(e){
+  e.preventDefault();
+  var fid=e.target.id;
+  if(fid==='addForm'){
+    var t=document.getElementById('fTitle'),d=document.getElementById('fDate');
+    if(!t.value.trim()){t.focus();toast('Önce bir başlık yaz');return;}
+    var when=d.value?new Date(d.value+'T00:00:00'):at(7,0,0);
+    if(isNaN(when)||when<mid(new Date())){d.focus();toast('Bugün ya da sonrası bir tarih seç');return;}
+    var id=nextId++;
+    events.push({id:id,cat:state.newCat,title:t.value.trim(),note:'',when:when,allDay:true,persons:state.person?[state.person]:[]});
+    state.sheet=false;state.filter='all';state.open=id;
+    if(state.tab==='cal'&&!state.person){state.sel=mid(when);state.calY=when.getFullYear();state.calM=when.getMonth();}
+    render(true);toast('Eklendi');
+  }else if(fid==='personForm'){
+    var nm=document.getElementById('fName'),bd=document.getElementById('fBday');
+    if(!nm.value.trim()){nm.focus();toast('Önce bir ad yaz');return;}
+    var p={id:nextP++,name:nm.value.trim(),group:state.newGrp,notes:[]};people.push(p);
+    if(bd.value){
+      var src=new Date(bd.value+'T00:00:00'),now=mid(new Date()),nx=new Date(now.getFullYear(),src.getMonth(),src.getDate());
+      if(nx<now)nx.setFullYear(nx.getFullYear()+1);
+      events.push({id:nextId++,cat:'bday',title:p.name+' doğum günü',note:'',when:nx,allDay:true,persons:[p.id]});
     }
-
-    const decorated = events.map(ev => ({ ev, occursAt: nextOccurrence(ev) }));
-    const upcoming = decorated
-      .filter(x => x.occursAt >= today || x.ev.recurring)
-      .sort((a,b) => a.occursAt - b.occursAt);
-    const past = decorated.filter(x => !x.ev.recurring && x.occursAt < today)
-      .sort((a,b) => b.occursAt - a.occursAt);
-
-    // Hero
-    const heroSlot = document.getElementById('heroSlot');
-    if (upcoming.length > 0) {
-      const first = upcoming[0];
-      const d = daysUntil(first.occursAt);
-      const cat = CATEGORIES[first.ev.category] || CATEGORIES.diger;
-      const dateStr = `<strong>${first.occursAt.getDate()} ${TR_MONTHS_SHORT[first.occursAt.getMonth()]}</strong> · ${TR_DAYS_SHORT[first.occursAt.getDay()]}`;
-      const countHtml = d === 0
-        ? `<div class="pill-today">BUGÜN</div>`
-        : `<div class="hero-count-big">${d}</div><div class="hero-count-lbl">Gün Kaldı</div>`;
-      heroSlot.innerHTML = `
-        <div class="hero-card ${d === 0 ? 'hero-today' : ''}" data-id="${first.ev.id}">
-          <div class="hero-cat">Sıradaki · ${cat.label}</div>
-          <div class="hero-date">${dateStr}</div>
-          <div class="hero-event-title">${escapeHtml(first.ev.title)}</div>
-          <div class="hero-right">${countHtml}</div>
-        </div>
-      `;
-    } else {
-      heroSlot.innerHTML = '';
-    }
-
-    // Content
-    const content = document.getElementById('daysContent');
-    if (events.length === 0) {
-      content.innerHTML = `
-        <div class="empty">
-          <div class="glyph">✦</div>
-          <h3>Henüz bir gün eklemediniz</h3>
-          <p>Düğünler, doğum günleri, yıldönümleri — unutulmayacak tarihleri ekleyin.</p>
-          <button class="cta" id="emptyAdd" type="button">İlk gününüzü ekleyin</button>
-        </div>
-      `;
-      document.getElementById('emptyAdd').addEventListener('click', () => openEventSheet());
-      return;
-    }
-
-    const upcomingRest = upcoming.slice(1);
-    let html = '';
-    if (upcomingRest.length > 0) {
-      html += `<div class="section-head"><h3>Yaklaşanlar</h3></div>`;
-      html += `<div class="list">`;
-      upcomingRest.forEach(x => { html += renderEventMini(x.ev, x.occursAt); });
-      html += `</div>`;
-    } else if (upcoming.length === 1) {
-      // only hero shown, nothing else upcoming
-      html += `<div class="section-head"><h3>Yaklaşanlar</h3></div>`;
-      html += `<div class="empty" style="padding:30px"><p>Hero'daki dışında yaklaşan başka gün yok.</p></div>`;
-    }
-
-    if (past.length > 0) {
-      html += `<div class="past-wrap" id="pastWrap">
-        <button class="past-toggle" id="pastToggle" type="button">
-          <span>Geçmiş · ${past.length}</span>
-          <span class="chev">▾</span>
-        </button>
-        <div class="past-list">
-          <div style="padding:4px 0">`;
-      past.forEach(x => { html += renderEventMini(x.ev, x.occursAt, true); });
-      html += `</div></div></div>`;
-    }
-
-    content.innerHTML = html;
-    const pt = document.getElementById('pastToggle');
-    if (pt) pt.addEventListener('click', () => document.getElementById('pastWrap').classList.toggle('open'));
+    state.sheet=false;state.tab='people';state.person=p.id;render(false);toast('Kişi eklendi');
+  }else if(fid==='noteForm'){
+    var nt=document.getElementById('fNote');if(!nt.value.trim()){nt.focus();return;}
+    pOf(state.person).notes.push(nt.value.trim());render(true);toast('Not eklendi');
   }
-
-  function renderEventMini(ev, occursAt, isPast = false) {
-    const cat = CATEGORIES[ev.category] || CATEGORIES.diger;
-    const d = daysUntil(occursAt);
-    const dateStr = `${occursAt.getDate()} ${TR_MONTHS_FULL[occursAt.getMonth()]} · ${TR_DAYS[occursAt.getDay()]}`;
-    const num = d === 0 ? 'BUGÜN' : (isPast ? Math.abs(d) : d);
-    const lbl = d === 0 ? '' : (isPast ? 'Gün Önce' : 'Gün');
-    return `
-      <div class="mini-card ${isPast ? 'past' : ''}" data-id="${ev.id}">
-        <div class="mini-emoji ${cat.cls}">${cat.icon}</div>
-        <div>
-          <div class="mini-title">${escapeHtml(ev.title)}</div>
-          <div class="mini-sub">${dateStr}</div>
-        </div>
-        <div class="mini-days">
-          <div class="num">${num}</div>
-          <div class="lbl">${lbl}</div>
-        </div>
-      </div>
-    `;
-  }
-
-  function renderHolidaysContent() {
-    const items = activeTab === 'holidays' ? HOLIDAYS_2026 : SPECIAL_DAYS_2026;
-    const today = todayDate();
-    const past = [], todayItems = [], upcoming = [];
-    items.forEach(h => {
-      const start = parseDate(h.date);
-      const end = h.endDate ? parseDate(h.endDate) : start;
-      if (today >= start && today <= end) todayItems.push({...h, _bucket:'today', _days: 0});
-      else if (today > end) past.push({...h, _bucket:'past', _days: -daysUntil(end)});
-      else upcoming.push({...h, _bucket:'upcoming', _days: daysUntil(start)});
-    });
-    upcoming.sort((a,b) => a._days - b._days);
-    past.sort((a,b) => a._days - b._days);
-
-    // Hero slot: today item or first upcoming
-    const heroSlot = document.getElementById('heroSlot');
-    const feat = todayItems[0] || upcoming[0];
-    if (feat) {
-      const start = parseDate(feat.date);
-      const dateStr = `<strong>${start.getDate()} ${TR_MONTHS_SHORT[start.getMonth()]}</strong> · ${TR_DAYS_SHORT[start.getDay()]}`;
-      const catLbl = activeTab === 'holidays' ? 'Resmi Tatil' : 'Özel Gün';
-      const countHtml = feat._bucket === 'today'
-        ? `<div class="pill-today">BUGÜN</div>`
-        : `<div class="hero-count-big">${feat._days}</div><div class="hero-count-lbl">Gün Kaldı</div>`;
-      heroSlot.innerHTML = `
-        <div class="hero-card ${feat._bucket === 'today' ? 'hero-today' : ''}">
-          <div class="hero-cat">${catLbl}</div>
-          <div class="hero-date">${dateStr}</div>
-          <div class="hero-event-title">${escapeHtml(feat.title)}</div>
-          <div class="hero-right">${countHtml}</div>
-        </div>
-      `;
-    } else {
-      heroSlot.innerHTML = '';
-    }
-
-    // Content: rest of upcoming + past dropdown
-    const content = document.getElementById('daysContent');
-    let html = '';
-    const rest = feat && feat._bucket === 'today'
-      ? upcoming
-      : (feat ? upcoming.slice(1) : upcoming);
-
-    if (rest.length > 0) {
-      html += `<div class="section-head"><h3>Yaklaşanlar</h3></div>`;
-      html += `<div class="list">`;
-      rest.forEach(h => { html += renderHolidayMini(h); });
-      html += `</div>`;
-    } else if (!feat) {
-      const noun = activeTab === 'holidays' ? 'resmi tatilleri' : 'önemli günleri';
-      html += `<div class="empty" style="padding:30px 30px 10px"><h3>Hepsi geçti</h3><p>2026'nın tüm ${noun} geride kaldı.</p></div>`;
-    }
-
-    if (past.length > 0) {
-      const noun = activeTab === 'holidays' ? 'tatil' : 'gün';
-      html += `<div class="past-wrap" id="pastWrap2">
-        <button class="past-toggle" id="pastToggle2" type="button">
-          <span>Geçti · ${past.length} ${noun}</span>
-          <span class="chev">▾</span>
-        </button>
-        <div class="past-list">
-          <div style="padding:4px 0">`;
-      past.forEach(h => { html += renderHolidayMini(h, true); });
-      html += `</div></div></div>`;
-    }
-    content.innerHTML = html;
-    const pt = document.getElementById('pastToggle2');
-    if (pt) pt.addEventListener('click', () => document.getElementById('pastWrap2').classList.toggle('open'));
-  }
-
-  function renderHolidayMini(h, isPast = false) {
-    const start = parseDate(h.date);
-    const isMulti = !!h.endDate;
-    let dateText;
-    if (isMulti) {
-      const end = parseDate(h.endDate);
-      dateText = `${start.getDate()}–${end.getDate()} ${TR_MONTHS_FULL[start.getMonth()]} · ${h.durationLabel || ''}`;
-    } else {
-      dateText = `${start.getDate()} ${TR_MONTHS_FULL[start.getMonth()]} · ${TR_DAYS[start.getDay()]}`;
-    }
-    if (h.subtitle) dateText += ` · ${h.subtitle}`;
-
-    const num = isPast ? h._days : h._days;
-    const lbl = isPast ? 'Gün Önce' : 'Gün';
-    return `
-      <div class="mini-card ${isPast ? 'past' : ''}">
-        <div class="mini-emoji ${h.cls}">${h.emoji}</div>
-        <div>
-          <div class="mini-title">${escapeHtml(h.title)}</div>
-          <div class="mini-sub">${dateText}</div>
-        </div>
-        <div class="mini-days">
-          <div class="num">${num}</div>
-          <div class="lbl">${lbl}</div>
-        </div>
-      </div>
-    `;
-  }
-
-  // ─────────── RENDER: FAMILY ───────────
-  function familyAvatarHtml(m) {
-    const cls = relationClass(m.relation);
-    if (m.photo) {
-      return `<div class="fm-avatar rel-${cls}" style="background-image:url('${m.photo}')"></div>`;
-    }
-    return `<div class="fm-avatar rel-${cls}">${familyInitial(m.name)}</div>`;
-  }
-
-  function familyMetaHtml(m) {
-    const parts = [];
-    if (m.birthday) {
-      const d = parseDate(m.birthday);
-      parts.push(`${d.getDate()} ${TR_MONTHS_SHORT[d.getMonth()]}`);
-    }
-    if (m.relation !== 'kendi') parts.push(REL_LABEL[m.relation] || '');
-    if (m.blood) parts.push(m.blood);
-    return parts.filter(Boolean).join(' · ');
-  }
-
-  function renderFamily() {
-    const total = familyMembers.length;
-    const meta = document.getElementById('familyMeta');
-    meta.textContent = total === 0 ? 'HENÜZ ÜYE YOK' : `${total} ÜYE · ÇEKİRDEK AİLE`;
-
-    const content = document.getElementById('familyContent');
-    if (total === 0) {
-      content.innerHTML = `
-        <div class="empty">
-          <div class="glyph">✦</div>
-          <h3>Aile ağacın bekliyor</h3>
-          <p>Önce kendini ekle, sonra anne, baba, eş, kardeş ve çocuklarını.</p>
-          <button class="cta" data-fm-add="kendi" type="button">Önce Kendini Ekle</button>
-        </div>
-      `;
-      return;
-    }
-
-    const self = familyMembers.find(m => m.relation === 'kendi');
-    const partners = familyMembers.filter(m => PARTNER_RELS.includes(m.relation));
-    const parents = familyMembers.filter(m => m.relation === 'anne' || m.relation === 'baba')
-      .sort((a,b) => a.relation === 'anne' ? -1 : 1);
-    const kardesler = familyMembers.filter(m => m.relation === 'kardes');
-    const cocuklar = familyMembers.filter(m => m.relation === 'cocuk');
-
-    let html = '';
-
-    // BEN
-    html += `<div class="section-label">Ben</div>`;
-    if (self) {
-      html += memberCard(self);
-    } else {
-      html += `<button class="fm-add-card" data-fm-add="kendi" type="button">
-        <div class="fm-add-icon">+</div><div class="fm-add-text">Kendini ekle</div>
-      </button>`;
-    }
-
-    // EŞ / SEVGİLİ
-    const partnerLbl = partners.length ? `Eş / Sevgili (${partners.length})` : 'Eş / Sevgili';
-    html += `<div class="section-label">${partnerLbl}</div>`;
-    partners.forEach(m => { html += memberCard(m); });
-    html += `<button class="fm-add-card" data-fm-add="es" type="button">
-      <div class="fm-add-icon">+</div><div class="fm-add-text">Eş / sevgili ekle</div>
-    </button>`;
-
-    // EBEVEYNLER
-    const hasAnne = parents.some(m => m.relation === 'anne');
-    const hasBaba = parents.some(m => m.relation === 'baba');
-    html += `<div class="section-label">Ebeveynler</div>`;
-    parents.forEach(m => { html += memberCard(m); });
-    if (!hasAnne) {
-      html += `<button class="fm-add-card" data-fm-add="anne" type="button">
-        <div class="fm-add-icon">+</div><div class="fm-add-text">Anne ekle</div>
-      </button>`;
-    }
-    if (!hasBaba) {
-      html += `<button class="fm-add-card" data-fm-add="baba" type="button">
-        <div class="fm-add-icon">+</div><div class="fm-add-text">Baba ekle</div>
-      </button>`;
-    }
-
-    // KARDEŞLER
-    html += `<div class="section-label">Kardeşler${kardesler.length ? ' (' + kardesler.length + ')' : ''}</div>`;
-    kardesler.forEach(m => { html += memberCard(m); });
-    html += `<button class="fm-add-card" data-fm-add="kardes" type="button">
-      <div class="fm-add-icon">+</div><div class="fm-add-text">Kardeş ekle</div>
-    </button>`;
-
-    // ÇOCUKLAR
-    html += `<div class="section-label">Çocuklar${cocuklar.length ? ' (' + cocuklar.length + ')' : ''}</div>`;
-    cocuklar.forEach(m => { html += memberCard(m); });
-    html += `<button class="fm-add-card" data-fm-add="cocuk" type="button">
-      <div class="fm-add-icon">+</div><div class="fm-add-text">Çocuk ekle</div>
-    </button>`;
-
-    content.innerHTML = html;
-  }
-
-  function memberCard(m) {
-    return `
-      <div class="fm-card" data-fm-id="${m.id}">
-        ${familyAvatarHtml(m)}
-        <div>
-          <div class="fm-name">${escapeHtml(m.name)}</div>
-          <div class="fm-meta">${familyMetaHtml(m)}</div>
-        </div>
-        <div class="fm-arrow">↗</div>
-      </div>
-    `;
-  }
-
-  // ─────────── RENDER: PROFILE ───────────
-  function renderProfile() {
-    const year = new Date().getFullYear();
-    const yearEvents = events.filter(e => {
-      const d = parseDate(e.date);
-      return d.getFullYear() === year;
-    });
-    const count = yearEvents.length;
-    document.getElementById('scoreHead').innerHTML = `Bu yıl ${count} önemli<br>gün yaşadın`;
-
-    // Year progress
-    const start = new Date(year, 0, 1);
-    const end = new Date(year, 11, 31);
-    const today = todayDate();
-    const total = (end - start) / 86400000;
-    const past = (today - start) / 86400000;
-    const pct = Math.max(0, Math.min(100, Math.round((past / total) * 100)));
-    document.getElementById('scoreSub').textContent = `Yılın %${pct}'ı tamamlandı`;
-
-    const circumference = 2 * Math.PI * 36; // ~226.19
-    const offset = circumference * (1 - pct / 100);
-    document.getElementById('scoreRingFill').setAttribute('stroke-dashoffset', offset);
-    document.getElementById('scoreRingNum').innerHTML = `${pct}<small>Yıl</small>`;
-
-    document.getElementById('tileFamilyCount').textContent = `${familyMembers.length} üye`;
-    document.getElementById('tileAnnivCount').textContent = `${events.filter(e => e.category === 'yildonumu').length} kayıtlı`;
-  }
-
-  // ─────────── VIEW SWITCH ───────────
-  function switchView(view) {
-    currentView = view;
-    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    document.getElementById(view + 'View').classList.add('active');
-    document.querySelectorAll('.bnav .tab').forEach(t => {
-      t.classList.toggle('active', t.dataset.view === view);
-    });
-
-    if (view === 'days') renderDays();
-    else if (view === 'family') renderFamily();
-    else if (view === 'profile') renderProfile();
-    else if (view === 'asistan') renderAsistan();
-  }
-
-  // ─────────── EVENT SHEET ───────────
-  const eventSheet = document.getElementById('eventSheet');
-  const sheetBackdrop = document.getElementById('sheetBackdrop');
-  const familySheet = document.getElementById('familySheet');
-
-  function openEventSheet(id = null) {
-    editingId = id;
-    const title = document.getElementById('eventSheetTitle');
-    const form = document.getElementById('eventForm');
-    form.reset();
-
-    // Build category chips
-    const chipsWrap = document.getElementById('evCategoryChips');
-    chipsWrap.innerHTML = '';
-    Object.entries(CATEGORIES).forEach(([k, c]) => {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'chip';
-      btn.dataset.cat = k;
-      btn.innerHTML = `${c.icon} ${c.label}`;
-      chipsWrap.appendChild(btn);
-    });
-
-    if (id) {
-      const ev = events.find(e => e.id === id);
-      if (!ev) return;
-      title.textContent = 'Günü Düzenle';
-      document.getElementById('evTitle').value = ev.title || '';
-      document.getElementById('evDate').value = ev.date || '';
-      document.getElementById('evNote').value = ev.note || '';
-      document.getElementById('evRecurring').checked = !!ev.recurring;
-      document.getElementById('evFavorite').checked = !!ev.favorite;
-      const chip = chipsWrap.querySelector(`[data-cat="${ev.category}"]`);
-      if (chip) chip.classList.add('active');
-      updateSpendingField(ev.category, ev.spending);
-    } else {
-      title.textContent = 'Yeni Gün';
-      // Default category: dugun
-      const defaultChip = chipsWrap.querySelector('[data-cat="dugun"]');
-      if (defaultChip) defaultChip.classList.add('active');
-      updateSpendingField('dugun', '');
-    }
-
-    sheetBackdrop.classList.add('open');
-    eventSheet.classList.add('open');
-  }
-
-  function closeEventSheet() {
-    sheetBackdrop.classList.remove('open');
-    eventSheet.classList.remove('open');
-  }
-
-  function updateSpendingField(cat, val) {
-    const wrap = document.getElementById('spendingField');
-    if (SPENDING_CATEGORIES.includes(cat)) {
-      wrap.style.display = '';
-      const cfg = SPENDING_CONFIG[cat];
-      document.getElementById('spendingLbl').textContent = cfg.label;
-      document.getElementById('evSpending').placeholder = cfg.placeholder;
-      document.getElementById('evSpending').value = val || '';
-    } else {
-      wrap.style.display = 'none';
-    }
-  }
-
-  document.getElementById('evCategoryChips').addEventListener('click', e => {
-    const chip = e.target.closest('.chip');
-    if (!chip) return;
-    document.querySelectorAll('#evCategoryChips .chip').forEach(c => c.classList.remove('active'));
-    chip.classList.add('active');
-    updateSpendingField(chip.dataset.cat, document.getElementById('evSpending').value);
-  });
-
-  document.getElementById('eventForm').addEventListener('submit', e => {
-    e.preventDefault();
-    const title = document.getElementById('evTitle').value.trim();
-    const date = document.getElementById('evDate').value;
-    const catChip = document.querySelector('#evCategoryChips .chip.active');
-    if (!title || !date || !catChip) return;
-    const payload = {
-      id: editingId || uid(),
-      title,
-      date,
-      category: catChip.dataset.cat,
-      note: document.getElementById('evNote').value.trim(),
-      spending: document.getElementById('evSpending').value.trim(),
-      recurring: document.getElementById('evRecurring').checked,
-      favorite: document.getElementById('evFavorite').checked
-    };
-    if (editingId) {
-      events = events.map(e => e.id === editingId ? payload : e);
-    } else {
-      events.push(payload);
-    }
-    saveEvents();
-    closeEventSheet();
-    renderDays();
-    renderProfile();
-  });
-
-  document.getElementById('eventSheetCancel').addEventListener('click', closeEventSheet);
-
-  // ─────────── FAMILY SHEET ───────────
-  function openFamilySheet(prefillRel = null, editId = null) {
-    familyEditingId = editId;
-    familyPhotoData = null;
-    const form = document.getElementById('familyForm');
-    form.reset();
-    document.getElementById('familyPhotoBtn').style.backgroundImage = '';
-    document.getElementById('familyPhotoBtn').textContent = '+';
-    document.querySelectorAll('#familyRelationChips .chip').forEach(c => c.classList.remove('active'));
-    document.querySelectorAll('#familyBloodChips .chip').forEach(c => c.classList.remove('active'));
-
-    const title = document.getElementById('familySheetTitle');
-    if (editId) {
-      const m = familyMembers.find(x => x.id === editId);
-      if (!m) return;
-      title.textContent = 'Üyeyi Düzenle';
-      document.getElementById('familyNameInput').value = m.name;
-      document.getElementById('familyBirthInput').value = m.birthday || '';
-      if (m.photo) {
-        familyPhotoData = m.photo;
-        document.getElementById('familyPhotoBtn').style.backgroundImage = `url('${m.photo}')`;
-        document.getElementById('familyPhotoBtn').textContent = '';
-      }
-      const relChip = document.querySelector(`#familyRelationChips [data-rel="${m.relation}"]`);
-      if (relChip) relChip.classList.add('active');
-      if (m.blood) {
-        const bChip = document.querySelector(`#familyBloodChips [data-blood="${m.blood}"]`);
-        if (bChip) bChip.classList.add('active');
-      }
-    } else {
-      title.textContent = 'Üye Ekle';
-      if (prefillRel) {
-        const relChip = document.querySelector(`#familyRelationChips [data-rel="${prefillRel}"]`);
-        if (relChip) relChip.classList.add('active');
-      }
-    }
-    sheetBackdrop.classList.add('open');
-    familySheet.classList.add('open');
-  }
-  function closeFamilySheet() {
-    sheetBackdrop.classList.remove('open');
-    familySheet.classList.remove('open');
-  }
-
-  document.getElementById('familyRelationChips').addEventListener('click', e => {
-    const chip = e.target.closest('.chip');
-    if (!chip) return;
-    document.querySelectorAll('#familyRelationChips .chip').forEach(c => c.classList.remove('active'));
-    chip.classList.add('active');
-  });
-  document.getElementById('familyBloodChips').addEventListener('click', e => {
-    const chip = e.target.closest('.chip');
-    if (!chip) return;
-    document.querySelectorAll('#familyBloodChips .chip').forEach(c => c.classList.remove('active'));
-    chip.classList.add('active');
-  });
-
-  document.getElementById('familyPhotoBtn').addEventListener('click', () => {
-    document.getElementById('familyPhotoInput').click();
-  });
-  document.getElementById('familyPhotoInput').addEventListener('change', e => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = evt => {
-      familyPhotoData = evt.target.result;
-      document.getElementById('familyPhotoBtn').style.backgroundImage = `url('${familyPhotoData}')`;
-      document.getElementById('familyPhotoBtn').textContent = '';
-    };
-    reader.readAsDataURL(file);
-  });
-
-  document.getElementById('familyForm').addEventListener('submit', e => {
-    e.preventDefault();
-    const name = document.getElementById('familyNameInput').value.trim();
-    const relChip = document.querySelector('#familyRelationChips .chip.active');
-    const bChip = document.querySelector('#familyBloodChips .chip.active');
-    if (!name) return;
-    if (!relChip) { alert('Yakınlık seç.'); return; }
-    const newRel = relChip.dataset.rel;
-    if (newRel === 'kendi') {
-      const existing = familyMembers.find(m => m.relation === 'kendi');
-      if (existing && existing.id !== familyEditingId) {
-        alert('Zaten kendini eklemişsin.'); return;
-      }
-    }
-    const payload = {
-      id: familyEditingId || uid(),
-      name,
-      relation: newRel,
-      birthday: document.getElementById('familyBirthInput').value || null,
-      blood: bChip ? bChip.dataset.blood : null,
-      photo: familyPhotoData || null,
-      createdAt: Date.now()
-    };
-    if (familyEditingId) {
-      familyMembers = familyMembers.map(m => m.id === familyEditingId ? payload : m);
-    } else {
-      familyMembers.push(payload);
-    }
-    familySave();
-    closeFamilySheet();
-    renderFamily();
-    updateGreeting();
-    renderProfile();
-  });
-
-  document.getElementById('familySheetCancel').addEventListener('click', closeFamilySheet);
-
-  // ─────────── ASISTAN ───────────
-  function renderAsistan() {
-    document.getElementById('asistanList').style.display = 'block';
-    document.getElementById('convDetail').classList.remove('active');
-    document.getElementById('asisInputWrap').style.display = 'flex';
-    const histWrap = document.getElementById('convHistory');
-    if (conversations.length === 0) {
-      histWrap.innerHTML = '';
-      return;
-    }
-    const sorted = [...conversations].sort((a,b) => b.updatedAt - a.updatedAt);
-    let html = `<div class="section-label" style="margin-left:20px;margin-right:20px">Sohbet Geçmişi</div>`;
-    html += `<div class="list">`;
-    sorted.forEach(c => {
-      const relTime = relativeTime(c.updatedAt);
-      html += `
-        <div class="mini-card" data-conv-id="${c.id}">
-          <div class="mini-emoji ink">💬</div>
-          <div>
-            <div class="mini-title">${escapeHtml(c.title || 'Yeni Sohbet')}</div>
-            <div class="mini-sub">${relTime} · ${c.messages.length} mesaj</div>
-          </div>
-          <div class="fm-arrow">↗</div>
-        </div>
-      `;
-    });
-    html += `</div>`;
-    histWrap.innerHTML = html;
-  }
-
-  function relativeTime(ts) {
-    const diff = (Date.now() - ts) / 60000;
-    if (diff < 1) return 'Az önce';
-    if (diff < 60) return `${Math.round(diff)} dk önce`;
-    if (diff < 1440) return `${Math.round(diff/60)} saat önce`;
-    if (diff < 2880) return 'Dün';
-    return `${Math.round(diff/1440)} gün önce`;
-  }
-
-  const FAKE_AI_REPLIES = [
-    "Şu anlık bunu cevaplayamıyorum, ama yakında öğreniyor olacağım. Önemli günlerini eklemeyi unutma.",
-    "Bu özelliği geliştirmek üzereyim. Sen de bu arada aile ağacını güncelleyebilirsin.",
-    "AI yardımcın hazırlanıyor. Yakında Premium ile tam cevaplar alacaksın."
-  ];
-
-  function openConversation(id) {
-    const conv = conversations.find(c => c.id === id);
-    if (!conv) return;
-    activeConvId = id;
-    document.getElementById('asistanList').style.display = 'none';
-    document.getElementById('convDetail').classList.add('active');
-    document.getElementById('convTitle').textContent = conv.title || 'Sohbet';
-    const msgsWrap = document.getElementById('convMsgs');
-    msgsWrap.innerHTML = conv.messages.map(m =>
-      `<div class="msg ${m.role}">${escapeHtml(m.text)}</div>`
-    ).join('');
-    msgsWrap.scrollTop = msgsWrap.scrollHeight;
-  }
-
-  document.getElementById('convBack').addEventListener('click', () => {
-    activeConvId = null;
-    renderAsistan();
-  });
-
-  document.getElementById('convDel').addEventListener('click', () => {
-    if (!activeConvId) return;
-    if (!confirm('Bu sohbeti silmek istiyor musun?')) return;
-    conversations = conversations.filter(c => c.id !== activeConvId);
-    asisSave();
-    activeConvId = null;
-    renderAsistan();
-  });
-
-  function sendAsisMessage(text) {
-    text = text.trim();
-    if (!text) return;
-    let conv;
-    if (activeConvId) {
-      conv = conversations.find(c => c.id === activeConvId);
-    } else {
-      conv = { id: uid(), title: text.slice(0, 40), messages: [], createdAt: Date.now(), updatedAt: Date.now() };
-      conversations.push(conv);
-      activeConvId = conv.id;
-    }
-    conv.messages.push({ role: 'user', text });
-    conv.updatedAt = Date.now();
-    asisSave();
-    openConversation(conv.id);
-
-    setTimeout(() => {
-      const reply = FAKE_AI_REPLIES[Math.floor(Math.random() * FAKE_AI_REPLIES.length)];
-      conv.messages.push({ role: 'ai', text: reply });
-      conv.updatedAt = Date.now();
-      asisSave();
-      openConversation(conv.id);
-    }, 700);
-  }
-
-  document.getElementById('asisSend').addEventListener('click', () => {
-    const input = document.getElementById('asisInput');
-    sendAsisMessage(input.value);
-    input.value = '';
-  });
-
-  document.getElementById('asisInput').addEventListener('keydown', e => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      sendAsisMessage(e.target.value);
-      e.target.value = '';
-    }
-  });
-
-  document.querySelectorAll('.asis-chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      sendAsisMessage(chip.dataset.prompt);
-    });
-  });
-
-  // ─────────── DETAIL VIEW ───────────
-  const detailView = document.getElementById('detailView');
-  let detailEventId = null;
-
-  function openDetail(id) {
-    const ev = events.find(e => e.id === id);
-    if (!ev) return;
-    detailEventId = id;
-    const cat = CATEGORIES[ev.category] || CATEGORIES.diger;
-    const occursAt = nextOccurrence(ev);
-    const d = daysUntil(occursAt);
-    const relStr = d === 0 ? 'Bugün' : (d > 0 ? `${d} gün kaldı` : `${Math.abs(d)} gün önce`);
-
-    document.getElementById('detailBody').innerHTML = `
-      <div class="detail-emoji-big mini-emoji ${cat.cls}">${cat.icon}</div>
-      <div class="detail-title">${escapeHtml(ev.title)}</div>
-      <div class="detail-meta">${fmtDateShort(occursAt)} · ${relStr}</div>
-      <div class="detail-row">
-        <div class="detail-row-lbl">Kategori</div>
-        <div class="detail-row-val">${cat.label}</div>
-      </div>
-      <div class="detail-row">
-        <div class="detail-row-lbl">Tekrarlı</div>
-        <div class="detail-row-val">${ev.recurring ? 'Her yıl' : 'Tek seferlik'}</div>
-      </div>
-      <div class="detail-row">
-        <div class="detail-row-lbl">Favori</div>
-        <div class="detail-row-val">${ev.favorite ? '⭐ Evet' : 'Hayır'}</div>
-      </div>
-      ${ev.spending ? `<div class="detail-row">
-        <div class="detail-row-lbl">${SPENDING_CONFIG[ev.category]?.label || 'Harcama'}</div>
-        <div class="detail-row-val">${escapeHtml(ev.spending)}</div>
-      </div>` : ''}
-      ${ev.note ? `<div class="detail-row" style="flex-direction:column;align-items:flex-start;gap:8px">
-        <div class="detail-row-lbl">Not</div>
-        <div style="font-size:0.92rem;line-height:1.5;color:var(--ink)">${escapeHtml(ev.note)}</div>
-      </div>` : ''}
-    `;
-    document.getElementById('detailFavBtn').textContent = ev.favorite ? '★' : '☆';
-    detailView.classList.add('open');
-  }
-
-  document.getElementById('detailBack').addEventListener('click', () => {
-    detailView.classList.remove('open');
-  });
-
-  document.getElementById('detailEditBtn').addEventListener('click', () => {
-    detailView.classList.remove('open');
-    setTimeout(() => openEventSheet(detailEventId), 200);
-  });
-
-  document.getElementById('detailFavBtn').addEventListener('click', () => {
-    const ev = events.find(e => e.id === detailEventId);
-    if (!ev) return;
-    ev.favorite = !ev.favorite;
-    saveEvents();
-    document.getElementById('detailFavBtn').textContent = ev.favorite ? '★' : '☆';
-    renderDays();
-  });
-
-  document.getElementById('detailDelBtn').addEventListener('click', () => {
-    if (!confirm('Bu günü silmek istiyor musun?')) return;
-    events = events.filter(e => e.id !== detailEventId);
-    saveEvents();
-    detailView.classList.remove('open');
-    renderDays();
-    renderProfile();
-  });
-
-  // ─────────── EVENT DELEGATION ───────────
-  document.getElementById('daysContent').addEventListener('click', e => {
-    const card = e.target.closest('[data-id]');
-    if (card) openDetail(card.dataset.id);
-  });
-  document.getElementById('heroSlot').addEventListener('click', e => {
-    const card = e.target.closest('[data-id]');
-    if (card) openDetail(card.dataset.id);
-  });
-
-  document.getElementById('familyContent').addEventListener('click', e => {
-    const addBtn = e.target.closest('[data-fm-add]');
-    if (addBtn) { openFamilySheet(addBtn.dataset.fmAdd); return; }
-    const card = e.target.closest('[data-fm-id]');
-    if (card) openFamilySheet(null, card.dataset.fmId);
-  });
-
-  document.getElementById('convHistory').addEventListener('click', e => {
-    const card = e.target.closest('[data-conv-id]');
-    if (card) openConversation(card.dataset.convId);
-  });
-
-  // ─────────── TABS (days) ───────────
-  document.getElementById('daysTabs').addEventListener('click', e => {
-    const btn = e.target.closest('.ctab');
-    if (!btn) return;
-    activeTab = btn.dataset.tab;
-    document.querySelectorAll('#daysTabs .ctab').forEach(c => c.classList.toggle('active', c === btn));
-    renderDays();
-  });
-
-  // ─────────── NAV ───────────
-  document.querySelectorAll('.bnav .tab').forEach(t => {
-    t.addEventListener('click', () => switchView(t.dataset.view));
-  });
-  document.getElementById('addBtn').addEventListener('click', () => openEventSheet());
-  document.getElementById('familyAddBtn').addEventListener('click', () => openFamilySheet());
-
-  // Profile → Premium
-  document.getElementById('profPremiumBtn').addEventListener('click', () => {
-    switchView('premium');
-  });
-  document.getElementById('premiumBack').addEventListener('click', () => {
-    switchView('profile');
-  });
-
-  // Premium billing tabs
-  const premiumView = document.getElementById('premiumView');
-  premiumView.querySelectorAll('.pr-tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      const b = tab.dataset.billingTab;
-      premiumView.dataset.billing = b;
-      premiumView.querySelectorAll('.pr-tab').forEach(t =>
-        t.classList.toggle('active', t.dataset.billingTab === b)
-      );
-    });
-  });
-
-  // Backdrop click closes sheets
-  sheetBackdrop.addEventListener('click', () => {
-    closeEventSheet();
-    closeFamilySheet();
-  });
-
-  // ─────────── INIT ───────────
-  updateGreeting();
-  renderDays();
-  renderProfile();
-
-  // Service Worker
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('service-worker.js').catch(() => {});
-    });
-  }
+});
+render(false);
+setInterval(tick,1000);
+if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('service-worker.js').catch(function(){});});}
+})();
 </script>
-
 </body>
 </html>
