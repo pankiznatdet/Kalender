@@ -405,6 +405,54 @@ try{
 }catch(err){}
 nextId=events.reduce(function(m,e){return Math.max(m,e.id);},0)+1;
 nextP=people.reduce(function(m,p){return Math.max(m,p.id);},0)+1;
+
+/* v35.1 — eski sürümden (v33) günleri ve aile üyelerini bir kez içe aktar */
+(function migrateOld(){
+  try{
+    if(localStorage.getItem('kalender.p.migrated'))return;
+    var oe=JSON.parse(localStorage.getItem('onemliGunler.v1')||'[]');
+    var of=JSON.parse(localStorage.getItem('kalender.aile.v1')||'[]');
+    if(!oe.length&&!of.length){localStorage.setItem('kalender.p.migrated','1');return;}
+    // örnek (demo) kayıtları at, sonradan eklediklerini koru
+    events=events.filter(function(e){return e.id>12;});
+    people=people.filter(function(p){return p.id>5;});
+    var eid=events.reduce(function(m,e){return Math.max(m,e.id);},12)+1;
+    var pid=people.reduce(function(m,p){return Math.max(m,p.id);},5)+1;
+    var today=mid(new Date());
+    function d0(iso){var a=iso.split('-');return new Date(+a[0],+a[1]-1,+a[2]);}
+    function nextOcc(iso){var o=d0(iso),n=new Date(today.getFullYear(),o.getMonth(),o.getDate());if(n<today)n.setFullYear(n.getFullYear()+1);return n;}
+    var CMAP={dogum:'bday',yildonumu:'anniv',dugun:'wedding',konser:'concert',standup:'concert',tiyatro:'concert',sinema:'concert',mac:'concert',egitim:'edu',doktor:'doctor',saglik:'doctor',fizik:'doctor',ilac:'doctor',veteriner:'doctor'};
+    // aile üyeleri -> kişiler (+ doğum günü)
+    var pmap={};
+    of.forEach(function(m){
+      if(!m||!m.name)return;
+      if(m.relation==='kendi')return;
+      var np={id:pid++,name:m.name,group:'Aile',notes:[]};
+      people.push(np);pmap[m.name.toLocaleLowerCase('tr')]=np.id;
+      if(m.birthday){
+        var has=oe.some(function(e){return e.category==='dogum'&&e.title&&e.title.toLocaleLowerCase('tr').indexOf(m.name.toLocaleLowerCase('tr'))>=0;});
+        if(!has)events.push({id:eid++,cat:'bday',title:m.name+' doğum günü',note:'',when:nextOcc(m.birthday),allDay:true,persons:[np.id]});
+      }
+    });
+    // günler
+    oe.forEach(function(e){
+      if(!e||!e.title||!e.date)return;
+      var cat=CMAP[e.category]||'task',orig=d0(e.date),rec=!!e.recurring;
+      var when=rec?nextOcc(e.date):orig,past=!rec&&orig<today;
+      var note=[e.note,e.spending].filter(Boolean).join(' · ');
+      var persons=[];var lt=e.title.toLocaleLowerCase('tr');
+      for(var nm in pmap)if(lt.indexOf(nm)>=0)persons.push(pmap[nm]);
+      var ne={id:eid++,cat:cat,title:e.title,note:note,when:when,allDay:true,persons:persons};
+      if(past){ne.done=true;ne.doneAt=+orig;}
+      events.push(ne);
+    });
+    localStorage.setItem('kalender.p.migrated','1');
+    localStorage.setItem('kalender.p.events',JSON.stringify(events));
+    localStorage.setItem('kalender.p.people',JSON.stringify(people));
+  }catch(err){}
+})();
+nextId=events.reduce(function(m,e){return Math.max(m,e.id);},0)+1;
+nextP=people.reduce(function(m,p){return Math.max(m,p.id);},0)+1;
 function persist(){try{localStorage.setItem(LS.e,JSON.stringify(events));localStorage.setItem(LS.p,JSON.stringify(people));localStorage.setItem(LS.s,JSON.stringify(state.set));}catch(err){}}
 state.tab='home';state.person=null;state.pgroup='all';state.newGrp='Aile';state.pick={};
 state.sel=mid(new Date());state.calY=state.sel.getFullYear();state.calM=state.sel.getMonth();
