@@ -137,6 +137,7 @@ svg.i{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stro
 .sub{margin:6px 0 0;font-size:14px;line-height:1.4;color:var(--mut)}
 .act2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .act2 button{min-height:88px;display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;padding:14px 16px;border-radius:24px;background:var(--card);border:1px solid var(--line);font-size:15px;font-weight:600;text-align:left}
+.act2 button:only-child{grid-column:1/-1}
 .act2 button.pri{background:var(--acc);color:var(--acc-ink);border-color:transparent}
 .srch{position:relative}
 .srch svg{position:absolute;left:15px;top:13px;color:var(--mut);pointer-events:none}
@@ -333,16 +334,7 @@ var FILTERS=[['all','Tümü'],['special','Özel günler'],['event','Etkinlik'],[
 
 function at(off,h,m){var d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()+off);d.setHours(h,m,0,0);return d;}
 function mid(d){var x=new Date(d);x.setHours(0,0,0,0);return x;}
-var events=[
-  {id:1,cat:'bday',title:'Annemin doğum günü',note:'58 yaşına giriyor',when:at(3,0,0),allDay:true},
-  {id:2,cat:'doctor',title:'Diş kontrolü',note:'14:30',when:at(5,14,30)},
-  {id:3,cat:'wedding',title:'Elif & Kerem düğünü',note:'Kır düğünü, 19:00',when:at(8,19,0)},
-  {id:4,cat:'concert',title:'Açık hava konseri',note:'Kapı açılış 20:00',when:at(12,20,0)},
-  {id:5,cat:'task',title:'Araç muayenesi',note:'10:30',when:at(19,10,30)},
-  {id:6,cat:'edu',title:'Claude Full Reset',note:'Tam gün',when:at(28,9,0)},
-  {id:7,cat:'move',title:'Taşınma',note:'Nakliye 08:00',when:at(32,8,0)},
-  {id:8,cat:'anniv',title:'Annemle babamın yıldönümü',note:'35. yıl',when:at(41,0,0),allDay:true}
-];
+var events=[];
 var nextId=9;
 var state={v:'c',filter:'all',open:null,sheet:false,newCat:'bday'};
 var phone=document.getElementById('phone');
@@ -373,7 +365,7 @@ function ev(e,i,arr,hero){
     '<span class="ev-d"><b'+(d[2]?' class="txt"':'')+'>'+d[0]+'</b><i>'+d[1]+'</i></span>'+
     '<em class="stk">Az kaldı</em></button>'+(open?det(e):'')+'</article>';
 }
-function listHtml(list){return list.length?list.map(ev).join(''):'<p class="empty">Bu filtrede bir şey yok. Artıya basıp ekleyebilirsin.</p>';}
+function listHtml(list){return list.length?list.map(ev).join(''):'<p class="empty">'+(events.some(function(e){return !e.done;})?'Bu filtrede bir şey yok.':'Henüz gün yok. Artıya basıp ilk gününü ekle.')+'</p>';}
 function filters(){return '<div class="fl x" role="group" aria-label="Filtre">'+FILTERS.map(function(f){return '<button data-act="filter" data-f="'+f[0]+'" class="'+(state.filter===f[0]?'on':'')+'" aria-pressed="'+(state.filter===f[0])+'">'+f[1]+'</button>';}).join('')+'</div>';}
 function todayLabel(){var n=new Date();return n.getDate()+' '+MON[n.getMonth()]+' '+WD[n.getDay()];}
 
@@ -388,14 +380,12 @@ c:function(all0,list0){
 }};
 
 var PCOL=[['#FFE1B0','#5E3A00'],['#CDF2E0','#0C4A32'],['#E5D9FF','#3F2275'],['#CCE4FF','#0E3B6E'],['#FFD3D8','#73182D'],['#FFDFCB','#74300D']];
-var people=[{id:1,name:'Annem',group:'Aile',notes:['Seramik atölyesi','Keten masa örtüsü']},{id:2,name:'Babam',group:'Aile',notes:[]},{id:3,name:'Elif',group:'Arkadaş',notes:[]},{id:4,name:'Deniz',group:'Arkadaş',notes:['Plak']},{id:5,name:'Selin',group:'İş',notes:[]}];
+var people=[];
 var nextP=6;
-var CONTACTS=['Ahmet Yılmaz','Ayşe Kaya','Burak Aksoy','Canan Şahin','Emre Çelik','Gizem Aydın','Hakan Öztürk','İrem Arslan','Murat Doğan','Zeynep Koç'];
+var CONTACTS=[];
+var HAS_CONTACTS=('contacts' in navigator)&&('ContactsManager' in window);
 var HOL={'1-1':'Yılbaşı','4-23':'Ulusal Egemenlik ve Çocuk Bayramı','5-1':'Emek ve Dayanışma Günü','5-19':'Gençlik ve Spor Bayramı','7-15':'Demokrasi ve Millî Birlik Günü','8-30':'Zafer Bayramı','10-29':'Cumhuriyet Bayramı'};
 var GROUPS=['Aile','Arkadaş','İş'];
-byId(1).persons=[1];byId(3).persons=[3];byId(8).persons=[1,2];
-events.push({id:9,cat:'bday',title:'Deniz doğum günü',note:'',when:at(52,0,0),allDay:true,persons:[4]},{id:10,cat:'bday',title:'Babamın doğum günü',note:'',when:at(96,0,0),allDay:true,persons:[2]});
-events.push({id:11,cat:'doctor',title:'Göz kontrolü',note:'11:00',when:at(-4,11,0),done:true,doneAt:Date.now()-4*864e5,persons:[]},{id:12,cat:'task',title:'Kasko yenileme',note:'',when:at(-9,0,0),allDay:true,done:true,doneAt:Date.now()-9*864e5,persons:[]});
 nextId=13;
 var LS={e:'kalender.p.events',p:'kalender.p.people',s:'kalender.p.set'};
 try{
@@ -406,49 +396,13 @@ try{
 nextId=events.reduce(function(m,e){return Math.max(m,e.id);},0)+1;
 nextP=people.reduce(function(m,p){return Math.max(m,p.id);},0)+1;
 
-/* v35.1 — eski sürümden (v33) günleri ve aile üyelerini bir kez içe aktar */
-(function migrateOld(){
+/* v35.2 — taslak/örnek veriyi bir kez temizle, uygulama boş başlasın */
+(function resetDraft(){
   try{
-    if(localStorage.getItem('kalender.p.migrated'))return;
-    var oe=JSON.parse(localStorage.getItem('onemliGunler.v1')||'[]');
-    var of=JSON.parse(localStorage.getItem('kalender.aile.v1')||'[]');
-    if(!oe.length&&!of.length){localStorage.setItem('kalender.p.migrated','1');return;}
-    // örnek (demo) kayıtları at, sonradan eklediklerini koru
-    events=events.filter(function(e){return e.id>12;});
-    people=people.filter(function(p){return p.id>5;});
-    var eid=events.reduce(function(m,e){return Math.max(m,e.id);},12)+1;
-    var pid=people.reduce(function(m,p){return Math.max(m,p.id);},5)+1;
-    var today=mid(new Date());
-    function d0(iso){var a=iso.split('-');return new Date(+a[0],+a[1]-1,+a[2]);}
-    function nextOcc(iso){var o=d0(iso),n=new Date(today.getFullYear(),o.getMonth(),o.getDate());if(n<today)n.setFullYear(n.getFullYear()+1);return n;}
-    var CMAP={dogum:'bday',yildonumu:'anniv',dugun:'wedding',konser:'concert',standup:'concert',tiyatro:'concert',sinema:'concert',mac:'concert',egitim:'edu',doktor:'doctor',saglik:'doctor',fizik:'doctor',ilac:'doctor',veteriner:'doctor'};
-    // aile üyeleri -> kişiler (+ doğum günü)
-    var pmap={};
-    of.forEach(function(m){
-      if(!m||!m.name)return;
-      if(m.relation==='kendi')return;
-      var np={id:pid++,name:m.name,group:'Aile',notes:[]};
-      people.push(np);pmap[m.name.toLocaleLowerCase('tr')]=np.id;
-      if(m.birthday){
-        var has=oe.some(function(e){return e.category==='dogum'&&e.title&&e.title.toLocaleLowerCase('tr').indexOf(m.name.toLocaleLowerCase('tr'))>=0;});
-        if(!has)events.push({id:eid++,cat:'bday',title:m.name+' doğum günü',note:'',when:nextOcc(m.birthday),allDay:true,persons:[np.id]});
-      }
-    });
-    // günler
-    oe.forEach(function(e){
-      if(!e||!e.title||!e.date)return;
-      var cat=CMAP[e.category]||'task',orig=d0(e.date),rec=!!e.recurring;
-      var when=rec?nextOcc(e.date):orig,past=!rec&&orig<today;
-      var note=[e.note,e.spending].filter(Boolean).join(' · ');
-      var persons=[];var lt=e.title.toLocaleLowerCase('tr');
-      for(var nm in pmap)if(lt.indexOf(nm)>=0)persons.push(pmap[nm]);
-      var ne={id:eid++,cat:cat,title:e.title,note:note,when:when,allDay:true,persons:persons};
-      if(past){ne.done=true;ne.doneAt=+orig;}
-      events.push(ne);
-    });
-    localStorage.setItem('kalender.p.migrated','1');
-    localStorage.setItem('kalender.p.events',JSON.stringify(events));
-    localStorage.setItem('kalender.p.people',JSON.stringify(people));
+    if(localStorage.getItem('kalender.p.reset2'))return;
+    localStorage.removeItem('kalender.p.events');localStorage.removeItem('kalender.p.people');
+    localStorage.setItem('kalender.p.migrated','1');localStorage.setItem('kalender.p.reset2','1');
+    events=[];people=[];
   }catch(err){}
 })();
 nextId=events.reduce(function(m,e){return Math.max(m,e.id);},0)+1;
@@ -475,13 +429,13 @@ var P={
 people:function(){
   var list=people.filter(function(p){return state.pgroup==='all'||p.group===state.pgroup;});
   return '<header class="hd"><div><div class="eyebrow">'+people.length+' kişi</div><h1>Kişiler</h1></div></header>'+
-    '<div class="act2"><button class="pri" data-act="sheet" data-s="person">'+ICON.plus+'<span>Kişi ekle</span></button><button data-act="sheet" data-s="contacts">'+ICON.users+'<span>Rehberden seç</span></button></div>'+
+    '<div class="act2"><button class="pri" data-act="sheet" data-s="person">'+ICON.plus+'<span>Kişi ekle</span></button>'+(HAS_CONTACTS?'<button data-act="pickContacts">'+ICON.users+'<span>Rehberden seç</span></button>':'')+'</div>'+
     '<div class="srch">'+ICON.search+'<input id="pSearch" type="search" placeholder="Kişilerde ara" aria-label="Kişilerde ara"></div>'+
     '<div class="fl x" role="group" aria-label="Grup">'+['all'].concat(GROUPS).map(function(g){return '<button data-act="pgroup" data-g="'+g+'" class="'+(state.pgroup===g?'on':'')+'" aria-pressed="'+(state.pgroup===g)+'">'+(g==='all'?'Tümü':g)+'</button>';}).join('')+'</div>'+
     '<div class="list plain" id="plist">'+(list.length?list.map(function(p){
       var es=pEvents(p.id),n=es[0];
       return '<button class="pr" data-act="person" data-id="'+p.id+'" data-n="'+esc(low(p.name))+'">'+av(p)+'<span class="pr-t"><b>'+esc(p.name)+'</b><i>'+p.group+' · '+(n?CATS[n.cat].l+', '+(dayDiff(n)<=0?'bugün':dayDiff(n)+' gün sonra'):'gün eklenmedi')+'</i></span>'+(n&&dayDiff(n)<=7?'<span class="tag">Yakında</span>':'')+ICON.cr+'</button>';
-    }).join(''):'<p class="empty">Bu grupta kimse yok.</p>')+'</div>';
+    }).join(''):'<p class="empty">'+(people.length?'Bu grupta kimse yok.':'Henüz kimse yok. Kişi ekleyerek başla.')+'</p>')+'</div>';
 },
 person:function(){
   var p=pOf(state.person),es=pEvents(p.id);
@@ -549,7 +503,7 @@ person:function(){
     '<div class="chips" id="grpChips">'+GROUPS.map(function(g){return '<button type="button" class="chip'+(state.newGrp===g?' on':'')+'" data-act="grp" data-g="'+g+'" aria-pressed="'+(state.newGrp===g)+'">'+g+'</button>';}).join('')+'</div>'+
     '<label for="fBday">Doğum günü (isteğe bağlı)<input id="fBday" type="date"></label>'+
     '<button type="submit" class="btn pri">Kişiyi ekle</button>'+
-    '<button type="button" class="btn" data-act="sheet" data-s="contacts">Rehberden seç</button></form>';
+    (HAS_CONTACTS?'<button type="button" class="btn" data-act="pickContacts">Rehberden seç</button>':'')+'</form>';
 },
 contacts:function(){
   var have=people.map(function(p){return p.name;});
@@ -601,6 +555,12 @@ phone.addEventListener('click',function(ev0){
   else if(a==='grp'){state.newGrp=b.dataset.g;press('grpChips',b);}
   else if(a==='chip'){var on2=b.classList.toggle('on');b.setAttribute('aria-pressed',on2);}
   else if(a==='pick'){var i=b.dataset.i;state.pick[i]=!state.pick[i];b.setAttribute('aria-pressed',!!state.pick[i]);var n=pickCount();document.getElementById('impBtn').textContent=n?n+' kişiyi ekle':'Kişi seç';}
+  else if(a==='pickContacts'){
+    navigator.contacts.select(['name'],{multiple:true}).then(function(list){
+      var n=0;(list||[]).forEach(function(c){var nm=c.name&&c.name[0];if(nm&&!people.some(function(p){return p.name===nm;})){people.push({id:nextP++,name:nm,group:'Aile',notes:[]});n++;}});
+      state.sheet=false;state.tab='people';state.person=null;render(false);if(n)toast(n+' kişi eklendi');
+    }).catch(function(){});
+  }
   else if(a==='import'){
     var n2=pickCount();if(!n2){toast('Önce listeden kişi işaretle');return;}
     for(var k in state.pick)if(state.pick[k])people.push({id:nextP++,name:CONTACTS[k],group:'Arkadaş',notes:[]});
